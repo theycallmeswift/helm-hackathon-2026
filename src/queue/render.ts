@@ -18,11 +18,13 @@ export interface QueueColumn {
   header: string;
   /** The cell's unescaped text; each renderer escapes it for its format. */
   cell: (entry: QueueEntry, now: Date) => string;
+  /** Whether formats with links link this cell to the pull request. */
+  linksToPr?: boolean;
 }
 
 /** The columns every queue row shows, in order. */
 export const QUEUE_COLUMNS: QueueColumn[] = [
-  { header: 'PR', cell: (entry) => `#${entry.snapshot.number}` },
+  { header: 'PR', cell: (entry) => `#${entry.snapshot.number}`, linksToPr: true },
   { header: 'Title', cell: (entry) => entry.snapshot.title },
   { header: 'Author', cell: (entry) => entry.snapshot.author.login },
   { header: 'Age', cell: (entry, now) => `${wholeDaysBetween(entry.snapshot.createdAt, now)}d` },

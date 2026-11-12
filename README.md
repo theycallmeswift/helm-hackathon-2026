@@ -77,6 +77,7 @@ GITHUB_TOKEN=$(gh auth token) node src/index.ts pr 14 --repo theycallmeswift/hel
 - [docs/checks.md](docs/checks.md): the deterministic readiness checks.
 - [docs/ai-flags.md](docs/ai-flags.md): the advisory AI flags.
 - [docs/queue.md](docs/queue.md): the open pull request queue and its buckets.
+- [docs/dashboard.md](docs/dashboard.md): the queue as a Pages dashboard.
 - [docs/github-action.md](docs/github-action.md): running the readiness
   comment Action.
 - [docs/style/](docs/style/): how code, tests, and docs are written.
