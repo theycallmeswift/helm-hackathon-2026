@@ -43,18 +43,29 @@ Expected flags list the answer key's non-null fields that differ from a
 clean PR: DCO signed, no conflict, not a draft, PR template edited, no tests
 touched, not breaking, no HIP needed. `AI` is the expected `ai_kind`.
 
-| ID  | PR                                                     | Expected flags                                                  | Comment | Match |
-| --- | ------------------------------------------------------ | --------------------------------------------------------------- | ------- | ----- |
-| S9  | [#1](https://github.com/theycallmeswift/helm/pull/1)   | AI docs                                                         |         |       |
-| S10 | [#2](https://github.com/theycallmeswift/helm/pull/2)   | draft; AI bug                                                   |         |       |
-| S5  | [#3](https://github.com/theycallmeswift/helm/pull/3)   | conflict; AI bug                                                |         |       |
-| S6  | [#4](https://github.com/theycallmeswift/helm/pull/4)   | AI feature, breaking, needs HIP                                 |         |       |
-| S7  | [#5](https://github.com/theycallmeswift/helm/pull/5)   | template untouched; AI feature, needs HIP                       |         |       |
-| S8  | [#6](https://github.com/theycallmeswift/helm/pull/6)   | CI failing; AI bug                                              |         |       |
-| R1  | [#7](https://github.com/theycallmeswift/helm/pull/7)   | tests touched; AI bug                                           |         |       |
-| R2  | [#8](https://github.com/theycallmeswift/helm/pull/8)   | tests touched; AI chore                                         |         |       |
-| R3  | [#9](https://github.com/theycallmeswift/helm/pull/9)   | template untouched; AI bug                                      |         |       |
-| S1  | [#13](https://github.com/theycallmeswift/helm/pull/13) | links #10; tests touched; AI bug                                |         |       |
-| S2  | [#14](https://github.com/theycallmeswift/helm/pull/14) | DCO missing; links #10; duplicate of #13; tests touched; AI bug |         |       |
-| S3  | [#15](https://github.com/theycallmeswift/helm/pull/15) | links #11; tests touched; AI bug                                |         |       |
-| S4  | [#16](https://github.com/theycallmeswift/helm/pull/16) | links #11; duplicate of #15; AI bug                             |         |       |
+| ID  | PR                                                     | Expected flags                                                  | Comment                                                                            | Match                                                                                                             |
+| --- | ------------------------------------------------------ | --------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| S9  | [#1](https://github.com/theycallmeswift/helm/pull/1)   | AI docs                                                         | [comment](https://github.com/theycallmeswift/helm/pull/1#issuecomment-6837485887)  | ✅ match                                                                                                          |
+| S10 | [#2](https://github.com/theycallmeswift/helm/pull/2)   | draft; AI bug                                                   | [comment](https://github.com/theycallmeswift/helm/pull/2#issuecomment-6837488445)  | ❌ draft not shown ([#21](https://github.com/theycallmeswift/helm-hackathon-2026/issues/21)); ⚠️ AI kind refactor |
+| S5  | [#3](https://github.com/theycallmeswift/helm/pull/3)   | conflict; AI bug                                                | [comment](https://github.com/theycallmeswift/helm/pull/3#issuecomment-6837487575)  | ✅ checks; ⚠️ AI breaking possible                                                                                |
+| S6  | [#4](https://github.com/theycallmeswift/helm/pull/4)   | AI feature, breaking, needs HIP                                 | [comment](https://github.com/theycallmeswift/helm/pull/4#issuecomment-6837491086)  | ✅ checks; ⚠️ AI needs HIP possible                                                                               |
+| S7  | [#5](https://github.com/theycallmeswift/helm/pull/5)   | template untouched; AI feature, needs HIP                       | [comment](https://github.com/theycallmeswift/helm/pull/5#issuecomment-6837490787)  | ✅ checks; ⚠️ AI needs HIP possible                                                                               |
+| S8  | [#6](https://github.com/theycallmeswift/helm/pull/6)   | CI failing; AI bug                                              | [comment](https://github.com/theycallmeswift/helm/pull/6#issuecomment-6837492035)  | ✅ checks; ⚠️ AI breaking possible                                                                                |
+| R1  | [#7](https://github.com/theycallmeswift/helm/pull/7)   | tests touched; AI bug                                           | [comment](https://github.com/theycallmeswift/helm/pull/7#issuecomment-6837493542)  | ✅ checks; ⚠️ AI breaking possible                                                                                |
+| R2  | [#8](https://github.com/theycallmeswift/helm/pull/8)   | tests touched; AI chore                                         | [comment](https://github.com/theycallmeswift/helm/pull/8#issuecomment-6837494934)  | ✅ checks; ⚠️ AI breaking possible                                                                                |
+| R3  | [#9](https://github.com/theycallmeswift/helm/pull/9)   | template untouched; AI bug                                      | [comment](https://github.com/theycallmeswift/helm/pull/9#issuecomment-6837495571)  | ✅ checks; ⚠️ AI kind feature, needs HIP possible                                                                 |
+| S1  | [#13](https://github.com/theycallmeswift/helm/pull/13) | links #10; tests touched; AI bug                                | [comment](https://github.com/theycallmeswift/helm/pull/13#issuecomment-6837495408) | ✅ match                                                                                                          |
+| S2  | [#14](https://github.com/theycallmeswift/helm/pull/14) | DCO missing; links #10; duplicate of #13; tests touched; AI bug | [comment](https://github.com/theycallmeswift/helm/pull/14#issuecomment-6837467852) | ✅ match                                                                                                          |
+| S3  | [#15](https://github.com/theycallmeswift/helm/pull/15) | links #11; tests touched; AI bug                                | [comment](https://github.com/theycallmeswift/helm/pull/15#issuecomment-6837497980) | ✅ match                                                                                                          |
+| S4  | [#16](https://github.com/theycallmeswift/helm/pull/16) | links #11; duplicate of #15; AI bug                             | [comment](https://github.com/theycallmeswift/helm/pull/16#issuecomment-6837496533) | ✅ match                                                                                                          |
+
+Run on 2026-11-12 with `anthropic/claude-sonnet-5.5`. All 13 PRs have exactly one
+readiness comment, a re-run on #14 edited it in place, and all 14 workflow
+runs targeted `theycallmeswift/helm` only.
+
+- Every deterministic check matches the answer key except draft, which the
+  comment does not report yet.
+- ⚠️ rows are advisory AI disagreements, mostly hedged `possible` answers
+  where the key says yes or no. On #2 the diff is a pure refactor, so the
+  key's `bug` is arguably wrong; #9 adds a hash option, so `feature` is
+  defensible.
