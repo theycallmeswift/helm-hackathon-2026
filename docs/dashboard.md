@@ -17,8 +17,9 @@ text and markdown formats.
 | Footer   | With `--ai`, the counts of pull requests left without AI flags, if any |
 
 The page has inline CSS, no JavaScript, and no external assets, and follows
-`prefers-color-scheme` for light and dark. `renderQueueHtml` in
-`src/queue/html.ts` builds it.
+`prefers-color-scheme` for light and dark. Short columns don't wrap and the
+title column keeps a minimum width, so it stays readable on a phone.
+`renderQueueHtml` in `src/queue/html.ts` builds it.
 
 ## Publishing
 
@@ -34,11 +35,13 @@ unchanged pull request costs no OpenRouter request.
 
 To enable it on the fork:
 
-1. Copy the workflow into `.github/workflows/`.
-2. Set Settings → Pages → Source to **GitHub Actions**.
-3. Optionally add an `OPENROUTER_API_KEY` repository secret; without it the AI
+1. Enable Actions on the fork (Actions tab → enable workflows); forks start
+   with Actions and scheduled workflows turned off.
+2. Copy the workflow into `.github/workflows/`.
+3. Set Settings → Pages → Source to **GitHub Actions**.
+4. Optionally add an `OPENROUTER_API_KEY` repository secret; without it the AI
    columns show `-` for pull requests not already cached.
-4. Run it once from the Actions tab, or wait for the hourly schedule.
+5. Run it once from the Actions tab, or wait for the hourly schedule.
 
 ## Safety
 

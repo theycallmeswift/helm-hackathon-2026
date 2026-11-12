@@ -28,8 +28,6 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    env:
-      HELM_TRIAGE_CACHE_DIR: ${{ runner.temp }}/helm-triage-cache
     steps:
       - uses: actions/checkout@v5
         with:
@@ -45,6 +43,7 @@ jobs:
           restore-keys: helm-triage-ai-
       - name: Render the queue
         env:
+          HELM_TRIAGE_CACHE_DIR: ${{ runner.temp }}/helm-triage-cache
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |

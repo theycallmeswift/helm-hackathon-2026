@@ -42,6 +42,8 @@ header p, .empty, .notes { color: var(--muted); }
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 0.25rem 0.5rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.col-pr, .col-age, .col-waiting-since, .col-kind, .col-breaking, .col-needs-hip { white-space: nowrap; }
+.col-title { min-width: 12rem; }
 `;
 
 /** `value` with every HTML-significant character replaced by its entity. */
@@ -97,11 +99,13 @@ function sectionHtml(
     return `<section id="${section.bucket}">\n${heading}\n<p class="empty">None.</p>\n</section>`;
   }
 
-  const headerRow = columns.map((column) => `<th>${escapeHtml(column.header)}</th>`).join('');
+  const headerRow = columns
+    .map((column) => `<th class="${columnClass(column)}">${escapeHtml(column.header)}</th>`)
+    .join('');
   const rows = section.entries
     .map(
       (entry) =>
-        `<tr>${columns.map((column) => `<td>${cellHtml(column, entry, options)}</td>`).join('')}</tr>`,
+        `<tr>${columns.map((column) => `<td class="${columnClass(column)}">${cellHtml(column, entry, options)}</td>`).join('')}</tr>`,
     )
     .join('\n');
 
@@ -114,6 +118,16 @@ ${rows}
 </tbody>
 </table></div>
 </section>`;
+}
+
+/** The class naming a column in the stylesheet: `col-` and its header in kebab case. */
+function columnClass(column: QueueColumn): string {
+  const slug = column.header
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+  return `col-${slug}`;
 }
 
 /** A cell's escaped text, linked to the pull request when its column asks for that. */

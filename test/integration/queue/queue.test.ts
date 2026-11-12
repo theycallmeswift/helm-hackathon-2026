@@ -79,6 +79,6 @@ test('queue renders the recorded fork PRs as an HTML page with linked numbers', 
   expect(page).toContain('<h2>Duplicate (2)</h2>');
   expect(page).toContain('<h2>Ready for review (7)</h2>');
   expect(page).toContain('<a href="https://github.com/theycallmeswift/helm/pull/14">#14</a>');
-  expect(page.match(/<tr><td>/g)).toHaveLength(13);
+  expect(page.match(/<tr><td class="col-pr">/g)).toHaveLength(13);
   expect(page).not.toMatch(/<script|<link|src=/);
 });

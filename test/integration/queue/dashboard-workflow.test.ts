@@ -76,3 +76,11 @@ test('the dashboard workflow runs hourly or on demand, only on the fork', () => 
   expect(WORKFLOW).toContain("if: github.repository == 'theycallmeswift/helm'");
   expect(WORKFLOW).toContain('--format html --ai > site/index.html');
 });
+
+test('no job-level env reads the runner context, which Actions rejects there', () => {
+  const jobEnvBlocks = [...WORKFLOW.matchAll(/^ {4}env:\n((?: {6}.*\n)*)/gm)].map(
+    ([, block = '']) => block,
+  );
+
+  expect(jobEnvBlocks.filter((block) => block.includes('runner.'))).toEqual([]);
+});
