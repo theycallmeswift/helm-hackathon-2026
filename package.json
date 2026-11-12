@@ -2,6 +2,9 @@
   "name": "helm-hackathon-11-2026",
   "private": true,
   "type": "module",
+  "bin": {
+    "helm-triage": "src/index.ts"
+  },
   "engines": {
     "node": ">=26"
   },
