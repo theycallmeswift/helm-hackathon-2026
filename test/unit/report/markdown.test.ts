@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { promisify } from 'node:util';
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, onTestFinished, test } from 'vitest';
 
 import type { AiOutcome, CheckStatus } from '../../../src/pr/types.ts';
 import { READINESS_MARKER, renderMarkdown } from '../../../src/report/markdown.ts';
@@ -39,7 +39,7 @@ describe('renderMarkdown', () => {
     const output = renderMarkdown(report);
 
     expect(output).toContain(
-      '| [helm/helm#32887: fix(lint): handle an empty values file](https://github.com/helm/helm/pull/32887) | `abcdef1` |',
+      '| [helm/helm\u200B#32887: fix(lint): handle an empty values file](https://github.com/helm/helm/pull/32887) | `abcdef1` |',
     );
   });
 
@@ -108,7 +108,8 @@ describe('renderMarkdown', () => {
   });
 
   test('keeps tables well-formed when the title and evidence hold pipes, backticks, and HTML', () => {
-    const hostile = 'a | b `code` <img src=x onerror=alert(1)> [x](javascript:y) & *bold*\nnext';
+    const hostile =
+      'a | b `code` <img src=x onerror=alert(1)> [x](javascript:y) & *bold* @helm/maintainers helm/helm#1\nnext';
     const report = makeReport({
       pr: { ...makeReport().pr, title: hostile },
       checks: [makeCheck({ id: 'dco', summary: hostile, evidence: [hostile, 'plain'] })],
@@ -131,8 +132,9 @@ describe('renderMarkdown', () => {
     expect(tableRows(output).map(cellCount)).toEqual([2, 2, 2, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5]);
     expect(output).not.toMatch(/[^\\]<img/);
     expect(output).toContain(
-      'a \\| b \\`code\\` \\<img src=x onerror=alert(1)\\> \\[x\\](javascript:y) \\& \\*bold\\* next',
+      'a \\| b \\`code\\` \\<img src=x onerror=alert(1)\\> \\[x\\](javascript:y) \\& \\*bold\\* @\u200Bhelm/maintainers helm/helm\u200B#1 next',
     );
+    expect(output).not.toMatch(/@helm|helm\/helm#/);
   });
 
   test('passes markdownlint with the repository config', async () => {
@@ -140,6 +142,7 @@ describe('renderMarkdown', () => {
       checks: [...makeChecks('fail'), makeCheck({ id: 'size', evidence: ['x'.repeat(200)] })],
     });
     const directory = await mkdtemp(join(tmpdir(), 'readiness-'));
+    onTestFinished(() => rm(directory, { recursive: true }));
     await copyFile(
       join(REPO_ROOT, '.markdownlint-cli2.jsonc'),
       join(directory, '.markdownlint-cli2.jsonc'),
@@ -152,7 +155,5 @@ describe('renderMarkdown', () => {
     );
 
     expect(lint).toBe('clean');
-
-    await rm(directory, { recursive: true });
   });
 });

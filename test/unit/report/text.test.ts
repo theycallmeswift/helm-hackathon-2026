@@ -111,6 +111,19 @@ describe('renderText', () => {
     expect(output.split('\n')[0]).toBe('helm/helm#32887 first second (abcdef1)');
   });
 
+  test('strips control characters from untrusted text', () => {
+    const report = makeReport({
+      pr: { ...makeReport().pr, title: 'red \u001b[31mtitle\u0007\u007f' },
+      checks: [makeCheck({ id: 'dco', status: 'fail', evidence: ['clear \u001b[2J screen'] })],
+    });
+
+    const output = renderText(report);
+
+    expect(output).toContain('helm/helm#32887 red [31mtitle (abcdef1)');
+    expect(output).toContain('    - clear [2J screen');
+    expect(output.replaceAll('\n', '')).not.toMatch(/\p{Cc}/u);
+  });
+
   test('uses no ANSI escape codes', () => {
     const report = makeReport({ checks: makeChecks('fail') });
 

@@ -22,6 +22,9 @@ export const READINESS_MARKER = '<!-- helm-triage:readiness -->';
 /** Separates evidence lines inside one table cell, where line breaks would end the row. */
 const EVIDENCE_SEPARATOR = '; ';
 
+/** Invisible when rendered, but stops GitHub from linking what it splits. */
+const ZERO_WIDTH_SPACE = '\u200B';
+
 /** Fills a cell that has nothing to show, so no row has an empty column. */
 const EMPTY_CELL = '—';
 
@@ -98,10 +101,16 @@ function table(headers: string[], rows: string[][]): string {
 }
 
 /**
- * Makes untrusted text inert inside a table cell: line breaks become spaces,
- * and every character that could end the cell, open a code span, emphasis,
- * link, or HTML tag, or start an entity is backslash-escaped.
+ * Makes untrusted text inert inside a table cell: line breaks become spaces;
+ * every character that could end the cell, open a code span, emphasis, link,
+ * or HTML tag, or start an entity is backslash-escaped; and a zero-width space
+ * breaks `@` mentions and `owner/repo#N` cross-references, because GitHub
+ * would notify the people and issues they name, which are often upstream.
  */
 function escapeMarkdown(value: string): string {
-  return value.replace(/\s*[\r\n]+\s*/g, ' ').replace(/[\\`*_[\]|<>&]/g, '\\$&');
+  return value
+    .replace(/\s*[\r\n]+\s*/g, ' ')
+    .replace(/[\\`*_[\]|<>&]/g, '\\$&')
+    .replace(/@(?=\w)/g, `@${ZERO_WIDTH_SPACE}`)
+    .replace(/(\/[\w.\\-]+)#/g, `$1${ZERO_WIDTH_SPACE}#`);
 }

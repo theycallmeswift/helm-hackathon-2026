@@ -55,7 +55,13 @@ function aiLines(ai: AiOutcome): string[] {
   return [`${AI_PREFIX}${ADVISORY_NOTICE} Model: ${ai.model}.`, ...flagLines];
 }
 
-/** Collapses line breaks, so one field can never spill into a line of its own. */
+/**
+ * Collapses line breaks and strips other control characters, so one field can
+ * never spill into a line of its own or send escape sequences to the terminal.
+ */
 function flatten(value: string): string {
-  return value.replace(/\s*[\r\n]+\s*/g, ' ');
+  return value
+    .replace(/\s*[\r\n]+\s*/g, ' ')
+    .replaceAll('\t', ' ')
+    .replace(/\p{Cc}/gu, '');
 }
