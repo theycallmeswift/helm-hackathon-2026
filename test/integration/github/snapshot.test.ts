@@ -171,7 +171,8 @@ describe('fetchPrSnapshot', () => {
       headSha: HEAD_SHA,
       mergeableState: 'clean',
       labels: ['bug'],
-      linkedIssues: [10],
+      referencedIssues: [10],
+      closingIssues: [10],
       author: { login: 'ada', isBot: false, association: 'CONTRIBUTOR' },
     });
     expect(snapshot.commits.map((commit) => [commit.sha, commit.isMerge])).toEqual([
@@ -225,7 +226,7 @@ describe('fetchPrSnapshot', () => {
     });
   });
 
-  test('finds other open pull requests that reference the same issue', async () => {
+  test('finds other open pull requests that close the same issue', async () => {
     const config = await replayConfig(pullRecording());
 
     const snapshot = await fetchPrSnapshot(config, REPO, 7);

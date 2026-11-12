@@ -1,7 +1,7 @@
 /**
  * Turns a pull request number into a `PrSnapshot` with the GitHub REST API:
  * the pull request, its commits, files, reviews, comments, CI results, and
- * other open pull requests that reference the same issues.
+ * other open pull requests that close the same issues.
  */
 
 import { setTimeout as delay } from 'node:timers/promises';
@@ -24,7 +24,7 @@ import type {
   ReviewState,
 } from '../pr/types.ts';
 import { createGithubClient, type Fetch, GithubApiError, type GithubClient } from './client.ts';
-import { parseLinkedIssues } from './linked-issues.ts';
+import { parseClosingIssues, parseReferencedIssues } from './linked-issues.ts';
 import { findRelatedPrs, type GithubPullSummary, type OpenPr, toOpenPr } from './open-prs.ts';
 
 /** How many times to ask again while GitHub is still computing mergeability. */
@@ -183,7 +183,7 @@ export async function fetchPrSnapshot(
   const pullPath = `/repos/${repo}/pulls/${number}`;
   const pull = await fetchSettledPull(client, pullPath, options.sleep ?? defaultSleep);
   const headSha = pull.head.sha;
-  const linkedIssues = parseLinkedIssues(pull.title, pull.body ?? '');
+  const closingIssues = parseClosingIssues(pull.title, pull.body ?? '');
 
   const [commits, files, reviews, issueComments, reviewComments, checkRuns, status, related] =
     await Promise.all([
@@ -195,8 +195,8 @@ export async function fetchPrSnapshot(
       client.getAll<GithubCheckRun>(`/repos/${repo}/commits/${headSha}/check-runs`, 'check_runs'),
       client.get<GithubCombinedStatus>(`/repos/${repo}/commits/${headSha}/status?per_page=100`),
       options.openPrs === undefined
-        ? searchRelatedOpenPrs(client, repo, number, linkedIssues)
-        : findRelatedPrs(number, linkedIssues, options.openPrs),
+        ? searchRelatedOpenPrs(client, repo, number, closingIssues)
+        : findRelatedPrs(number, closingIssues, options.openPrs),
     ]);
   const submittedReviews = reviews.filter((review) => review.state !== 'PENDING');
 
@@ -216,7 +216,8 @@ export async function fetchPrSnapshot(
     baseRef: pull.base.ref,
     headSha,
     labels: pull.labels.map((label) => label.name),
-    linkedIssues,
+    referencedIssues: parseReferencedIssues(pull.title, pull.body ?? ''),
+    closingIssues,
     mergeableState: toMergeableState(pull, pullPath),
     commits: commits.map(toCommit),
     files: files.map(toFile),
@@ -439,18 +440,18 @@ export function ciState(checks: CiCheck[]): CiState {
 }
 
 /**
- * Other open pull requests in `repo` whose title or body references any of
- * `linkedIssues`, found with one issue search per issue number. Only the
+ * Other open pull requests in `repo` whose title or body links any of
+ * `closingIssues` with a closing keyword, found with one issue search per issue number. Only the
  * first page of each search is read, since search pages are rate-limited.
  */
 async function searchRelatedOpenPrs(
   client: GithubClient,
   repo: RepoName,
   number: number,
-  linkedIssues: number[],
+  closingIssues: number[],
 ): Promise<RelatedPr[]> {
   const searches = await Promise.all(
-    linkedIssues.map((issue) =>
+    closingIssues.map((issue) =>
       client.get<{ items: GithubSearchItem[] }>(
         `/search/issues?q=${encodeURIComponent(`repo:${repo} is:pr is:open ${issue}`)}&per_page=100`,
       ),
@@ -461,5 +462,5 @@ async function searchRelatedOpenPrs(
     .filter((item) => item.pull_request !== undefined)
     .map(toOpenPr);
 
-  return findRelatedPrs(number, linkedIssues, pullRequests);
+  return findRelatedPrs(number, closingIssues, pullRequests);
 }
