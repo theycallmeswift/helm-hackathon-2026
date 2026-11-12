@@ -1,12 +1,13 @@
 # Queue
 
-`helm-triage queue [--repo owner/name] [--format text|md] [--limit N] [--ai]` sorts
-every open pull request into one bucket by who must act next, so a triager
-works down a list instead of opening every pull request. It only reads from
-GitHub.
+`helm-triage queue [--repo owner/name] [--format text|md|html] [--limit N] [--ai]`
+sorts every open pull request into one bucket by who must act next, so a
+triager works down a list instead of opening every pull request. It only
+reads from GitHub.
 
 - `--repo` defaults to `GITHUB_REPOSITORY`, then `helm/helm`.
-- `--format md` prints a markdown table per bucket; the default is plain text.
+- `--format md` prints a markdown table per bucket, and `--format html` a
+  [dashboard page](dashboard.md); the default is plain text.
 - `--limit N` queues only the N oldest opened pull requests, for quick runs
   and demos.
 

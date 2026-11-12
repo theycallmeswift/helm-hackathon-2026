@@ -2,6 +2,7 @@ import { afterEach, expect, test } from 'vitest';
 
 import { loadConfig } from '../../../src/config/load.ts';
 import { buildQueue } from '../../../src/queue/build.ts';
+import { renderQueueHtml } from '../../../src/queue/html.ts';
 import { renderQueueMarkdown, renderQueueText } from '../../../src/queue/render.ts';
 import { type GithubReplay, startGithubReplay } from '../../support/github-replay.ts';
 import { FORK_REPO as REPO, recordedFork } from './recorded-fork.ts';
@@ -67,4 +68,17 @@ test('queue renders a section per bucket with counts in both formats', async () 
   expect(text).toMatch(/^Duplicate \(2\)\n {2}#14 .*duplicates earlier #13$/m);
   expect(markdown).toContain('## Stale (0)');
   expect(markdown).toMatch(/^\| PR \| Title \| Author \| Age \| Waiting since \| Reason \|$/m);
+});
+
+test('queue renders the recorded fork PRs as an HTML page with linked numbers', async () => {
+  const sections = await forkQueue();
+
+  const page = renderQueueHtml(sections, { repo: REPO, now: NOW });
+
+  expect(page).toContain('<h1>PR queue: theycallmeswift/helm</h1>');
+  expect(page).toContain('<h2>Duplicate (2)</h2>');
+  expect(page).toContain('<h2>Ready for review (7)</h2>');
+  expect(page).toContain('<a href="https://github.com/theycallmeswift/helm/pull/14">#14</a>');
+  expect(page.match(/<tr><td class="col-pr">/g)).toHaveLength(13);
+  expect(page).not.toMatch(/<script|<link|src=/);
 });

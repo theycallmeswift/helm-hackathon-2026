@@ -1,0 +1,56 @@
+# Installed on the test fork as .github/workflows/helm-triage-dashboard.yml.
+name: helm-triage-dashboard
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+# Reads only; the one write is the Pages deployment.
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+  checks: read
+  statuses: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: helm-triage-dashboard
+  cancel-in-progress: true
+
+jobs:
+  dashboard:
+    # The fork is the only repository this dashboard publishes for.
+    if: github.repository == 'theycallmeswift/helm'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: theycallmeswift/helm-hackathon-2026
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 26
+      # A new key each run saves the updated cache; the prefix restores the latest.
+      - uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/helm-triage-cache
+          key: helm-triage-ai-${{ github.run_id }}
+          restore-keys: helm-triage-ai-
+      - name: Render the queue
+        env:
+          HELM_TRIAGE_CACHE_DIR: ${{ runner.temp }}/helm-triage-cache
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          mkdir -p site
+          node src/index.ts queue --repo "$GITHUB_REPOSITORY" --format html --ai > site/index.html
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

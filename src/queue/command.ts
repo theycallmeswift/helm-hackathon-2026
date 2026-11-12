@@ -10,10 +10,11 @@ import { type Environment, loadConfig, parseRepoName } from '../config/load.ts';
 import type { RepoName } from '../pr/types.ts';
 import { aiFooterLines, fillAiFlags } from './ai-columns.ts';
 import { buildQueue } from './build.ts';
+import { renderQueueHtml } from './html.ts';
 import { QUEUE_AI_COLUMNS, QUEUE_COLUMNS, renderQueueMarkdown, renderQueueText } from './render.ts';
 
 /** The output formats `--format` accepts. */
-const FORMATS = ['text', 'md'] as const;
+const FORMATS = ['text', 'md', 'html'] as const;
 
 /** One output format. */
 type Format = (typeof FORMATS)[number];
@@ -43,13 +44,20 @@ export async function runQueueCommand(args: string[], env: Environment): Promise
   const config = loadConfig(env);
   const now = new Date();
 
+  const repo = request.repo ?? config.defaultRepo;
   const sections = await buildQueue(config, {
-    repo: request.repo ?? config.defaultRepo,
+    repo,
     now,
     ...(request.limit === undefined ? {} : { limit: request.limit }),
   });
   const footer = request.ai ? aiFooterLines(await fillAiFlags(sections, config)) : [];
   const columns = request.ai ? [...QUEUE_COLUMNS, ...QUEUE_AI_COLUMNS] : QUEUE_COLUMNS;
+  if (request.format === 'html') {
+    process.stdout.write(renderQueueHtml(sections, { repo, now, columns, notes: footer }));
+
+    return 0;
+  }
+
   const render = request.format === 'md' ? renderQueueMarkdown : renderQueueText;
   process.stdout.write(render(sections, now, columns));
   if (footer.length > 0) {
@@ -60,7 +68,7 @@ export async function runQueueCommand(args: string[], env: Environment): Promise
 }
 
 /**
- * Reads `[--repo owner/name] [--format text|md] [--limit N] [--ai]`.
+ * Reads `[--repo owner/name] [--format text|md|html] [--limit N] [--ai]`.
  *
  * @throws {QueueUsageError} when an argument is unknown or malformed.
  */
