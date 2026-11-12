@@ -8,6 +8,8 @@
 
 import { parseArgs } from 'node:util';
 
+import { runPrCommand } from './pr/command.ts';
+
 /** One subcommand. */
 interface Command {
   /** One line for the usage text. */
@@ -28,7 +30,7 @@ const EXIT_FAILURE = 1;
 const COMMANDS: Record<string, Command> = {
   pr: {
     summary: 'Print a readiness report for one pull request',
-    run: () => notImplemented('pr'),
+    run: (args) => runPrCommand(args, process.env),
   },
   queue: {
     summary: 'Sort every open pull request by who must act next',

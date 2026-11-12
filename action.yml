@@ -1,0 +1,56 @@
+name: helm-triage readiness
+description: >-
+  Runs helm-triage on a pull request and keeps one up-to-date readiness
+  comment on it. Needs permissions contents: read and pull-requests: write.
+  Never posts to helm/helm.
+author: helm-triage
+
+inputs:
+  pr-number:
+    description: Pull request to report on; defaults to the pull_request event's number.
+    required: false
+    default: ${{ github.event.pull_request.number }}
+  github-token:
+    description: Token that reads the pull request and writes its comment.
+    required: true
+  openrouter-api-key:
+    description: OpenRouter API key for the advisory AI flags; without it they are skipped.
+    required: false
+    default: ""
+  model:
+    description: OpenRouter model id for the AI flags; empty uses the tool's default.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Node
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version: "26"
+
+    - name: Render the readiness report
+      shell: bash
+      env:
+        PR_NUMBER: ${{ inputs.pr-number }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        OPENROUTER_API_KEY: ${{ inputs.openrouter-api-key }}
+        HELM_TRIAGE_MODEL: ${{ inputs.model }}
+        HELM_TRIAGE_GITHUB_API_URL: ${{ github.api_url }}
+        ACTION_PATH: ${{ github.action_path }}
+      run: |
+        if [ -z "$PR_NUMBER" ]; then
+          echo "helm-triage: pr-number is empty; set it when not running on a pull_request event" >&2
+          exit 1
+        fi
+        node "$ACTION_PATH/src/index.ts" pr "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --format md \
+          > "$RUNNER_TEMP/helm-triage-report.md"
+
+    - name: Post or update the readiness comment
+      shell: bash
+      env:
+        PR_NUMBER: ${{ inputs.pr-number }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        ACTION_PATH: ${{ github.action_path }}
+      run: node "$ACTION_PATH/src/action/post.ts" "$RUNNER_TEMP/helm-triage-report.md"

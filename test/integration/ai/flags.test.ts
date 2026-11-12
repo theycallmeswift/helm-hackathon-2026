@@ -72,7 +72,11 @@ describe('getAiFlags', () => {
         type: 'json_schema',
         json_schema: { strict: true, schema: AI_FLAGS_SCHEMA },
       },
+      provider: { require_parameters: true },
     });
+    // No endpoint for the default model accepts temperature, so with
+    // require_parameters it would leave OpenRouter no provider to route to.
+    expect(request?.body).not.toHaveProperty('temperature');
     const body = request?.body as { messages: { content: string }[] } | undefined;
     const userMessage = body?.messages[1]?.content;
     expect(userMessage).toContain('[patch truncated]');

@@ -10,20 +10,28 @@ whether a change is breaking and whether it needs a HIP. `helm-triage` does the
 mechanical checks, drafts the judgment calls with evidence, and leaves every
 decision to a maintainer.
 
-Status: in development. The commands below describe the planned interface.
+Status: MVP. `helm-triage pr` and the GitHub Action work; `queue` is not
+implemented yet.
 
 ## What it does
 
-`helm-triage pr <n>` prints a readiness report for one pull request:
+`helm-triage pr <n> [--repo owner/name] [--format text|md]` prints a readiness
+report for one pull request. `--repo` defaults to `GITHUB_REPOSITORY`, then
+`helm/helm`; `--format md` prints the comment the Action posts. It exits 0
+whenever a report prints, even when checks fail. This run is against a
+recorded fixture with no `OPENROUTER_API_KEY`:
 
 ```text
-$ helm-triage pr 32887
-  DCO ✓  CI ✓  conflicts ✓  linked issue #32880 ✓  tests ✓
-  🤖 kind: bug (high)
-  🤖 breaking change: possible, changes a pkg/action flag default
-  🤖 needs HIP: no
-  🤖 summary: fixes nil deref in lint when values file is empty
-  🤖 review focus: pkg/lint/rules/values.go
+$ helm-triage pr 14 --repo theycallmeswift/helm
+theycallmeswift/helm#14 urlutil: keep trailing slash when joining URLs (ff038f8)
+  DCO ❌  Conflicts ✅  CI ❌  Linked issue ✅  Duplicates ⚠️  Template ✅  Tests ✅  Size ℹ️  Staleness ✅
+  ❌ DCO: 1 of 1 commits lack a Signed-off-by trailer.
+    - ff038f8: no Signed-off-by trailer
+  ❌ CI: CI failed: build.
+    - build: failure
+  ⚠️ Duplicates: 1 other open pull requests reference the same issue.
+    - #13 by theycallmeswift, opened 2026-11-12, also references #10: https://github.com/theycallmeswift/helm/pull/13
+  🤖 AI flags skipped: AI flags skipped because OPENROUTER_API_KEY is not set; set it to an OpenRouter API key to enable them
 ```
 
 - **Deterministic checks:** DCO, merge conflicts, CI status, linked issue,
@@ -34,8 +42,8 @@ $ helm-triage pr 32887
   summary with where to look first. Every flag cites its evidence and is
   advisory.
 - **GitHub Action:** runs `helm-triage pr <n> --format md` on each pull request
-  and keeps one up-to-date readiness comment. It is demoed on a fork of
-  `helm/helm`.
+  and keeps one up-to-date readiness comment. See
+  [docs/github-action.md](docs/github-action.md).
 - **Queue (stretch goal):** `helm-triage queue` sorts every open PR into a
   bucket by who must act next: ready for review, needs 2nd approval, needs
   author, duplicate, stale, or draft.
@@ -58,6 +66,7 @@ It never posts to `helm/helm`, and it never labels, closes, or merges anything.
 npm ci
 npm test
 npm run lint
+GITHUB_TOKEN=$(gh auth token) node src/index.ts pr 14 --repo theycallmeswift/helm
 ```
 
 ## Docs
@@ -65,5 +74,9 @@ npm run lint
 - [AGENTS.md](AGENTS.md): agent context and conventions.
 - [docs/research/2026-11-12-helm-pr-triage.md](docs/research/2026-11-12-helm-pr-triage.md):
   PR backlog research, candidate projects, and why this one.
+- [docs/checks.md](docs/checks.md): the deterministic readiness checks.
+- [docs/ai-flags.md](docs/ai-flags.md): the advisory AI flags.
+- [docs/github-action.md](docs/github-action.md): running the readiness
+  comment Action.
 - [docs/style/](docs/style/): how code, tests, and docs are written.
 - [docs/cloud-agents.md](docs/cloud-agents.md): cloud agent setup.
