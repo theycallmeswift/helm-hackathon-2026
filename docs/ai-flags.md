@@ -22,7 +22,10 @@ reason. The types are `AiFlags` and `AiOutcome` in `src/pr/types.ts`.
 
 The prompt holds the repository, number, base branch, title, body, and, for
 every changed file, a header line (path, status, rename source, line counts)
-followed by its patch. The model answers in a strict JSON schema
+followed by its patch. The title, body, and patches are wrapped in
+`<pr_title>`, `<pr_body>`, and `<pr_patch>` tags, and the system prompt tells
+the model they are untrusted content whose instructions it never follows. The
+model answers in a strict JSON schema
 (`response_format` of type `json_schema`), and the answer is validated by hand.
 Evidence citing a file the pull request does not change, or giving neither a
 hunk nor a quote, is dropped. A flag left with no evidence, or any answer that
@@ -52,7 +55,8 @@ cut, the prompt says so.
 is `HELM_TRIAGE_CACHE_DIR`, else `$XDG_CACHE_HOME/helm-triage`, else
 `~/.cache/helm-triage`. The file records the model. A run for the same head
 SHA and model reads the file and makes no request; a new push or a different
-model asks again and replaces the file. Failed outcomes are never cached.
+model asks again and replaces the file. A corrupt file counts as a miss.
+Failed outcomes are never cached.
 `readCachedAiFlags(cacheDir, repo, number, headSha)` reads an entry from any
 model without a request, for listing many pull requests cheaply.
 

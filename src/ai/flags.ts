@@ -73,6 +73,7 @@ async function requestAiFlags(
   };
 
   let response: Response;
+  let text: string;
   try {
     response = await fetch(`${options.openRouterUrl}/chat/completions`, {
       method: 'POST',
@@ -80,11 +81,11 @@ async function requestAiFlags(
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
+    text = await response.text();
   } catch (error) {
     return { status: 'failed', reason: `OpenRouter request failed: ${describe(error)}` };
   }
 
-  const text = await response.text();
   if (!response.ok) {
     const preview = text.slice(0, ERROR_BODY_PREVIEW_CHARS);
 

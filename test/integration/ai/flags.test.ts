@@ -1,6 +1,6 @@
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
@@ -125,6 +125,28 @@ describe('getAiFlags', () => {
       status: 'failed',
       reason: 'OpenRouter returned HTTP 429: {"error":{"message":"rate limited"}}',
     });
+  });
+
+  test('fails instead of throwing when the connection drops after the headers', async () => {
+    fake.reply({ status: 200, body: '{"choices":[]}', dropAfterHeaders: true });
+
+    const outcome = await getAiFlags(makePrSnapshot(), options());
+
+    expect(outcome).toMatchObject({ status: 'failed' });
+    expect(outcome.status === 'failed' && outcome.reason).toMatch(/^OpenRouter request failed: /);
+  });
+
+  test('treats a corrupt cache file as a miss and asks again', async () => {
+    fake.reply(completionReply(validAnswer()));
+    const snapshot = makePrSnapshot();
+    const path = join(cacheDir, 'ai-flags', 'helm', 'helm', '42', `${snapshot.headSha}.json`);
+    await mkdir(dirname(path), { recursive: true });
+    await writeFile(path, '{"model":');
+
+    const outcome = await getAiFlags(snapshot, options());
+
+    expect(outcome).toMatchObject({ status: 'ok', model: MODEL });
+    expect(fake.requests).toHaveLength(1);
   });
 
   test('fails when a flag cites only a file outside the pull request', async () => {

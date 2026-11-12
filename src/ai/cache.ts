@@ -24,7 +24,8 @@ function cachePath(cacheDir: string, repo: RepoName, number: number, headSha: st
  * Reads cached flags for one head commit, from whichever model produced them.
  * Makes no request.
  *
- * @returns the cached `ok` outcome, or undefined when nothing is cached.
+ * @returns the cached `ok` outcome, or undefined when nothing is cached or
+ * the file is unreadable JSON, so a corrupt entry is simply asked for again.
  */
 export async function readCachedAiFlags(
   cacheDir: string,
@@ -42,9 +43,14 @@ export async function readCachedAiFlags(
     throw error;
   }
 
-  const { model, flags } = JSON.parse(text) as { model: string; flags: AiFlags };
+  let entry: { model: string; flags: AiFlags };
+  try {
+    entry = JSON.parse(text) as { model: string; flags: AiFlags };
+  } catch {
+    return undefined;
+  }
 
-  return { status: 'ok', model, flags };
+  return { status: 'ok', model: entry.model, flags: entry.flags };
 }
 
 /** Writes flags for one head commit, replacing any earlier entry. */

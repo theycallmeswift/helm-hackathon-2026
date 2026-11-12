@@ -20,6 +20,8 @@ export interface RecordedRequest {
 export interface ScriptedReply {
   status: number;
   body: string;
+  /** Send the status and headers, then drop the connection before the body. */
+  dropAfterHeaders?: boolean;
 }
 
 /** A running fake server. */
@@ -56,10 +58,11 @@ export async function startOpenRouterFake(): Promise<OpenRouterFake> {
 
   /** Records one request and sends the next scripted reply. */
   async function handle(request: IncomingMessage, response: ServerResponse): Promise<void> {
-    let text = '';
+    const chunks: Buffer[] = [];
     for await (const chunk of request) {
-      text += String(chunk);
+      chunks.push(chunk as Buffer);
     }
+    const text = Buffer.concat(chunks).toString('utf8');
     requests.push({
       method: request.method ?? '',
       path: request.url ?? '',
@@ -68,6 +71,17 @@ export async function startOpenRouterFake(): Promise<OpenRouterFake> {
     });
 
     const reply = queue.shift() ?? { status: 500, body: 'no reply scripted' };
+    if (reply.dropAfterHeaders) {
+      response.writeHead(reply.status, {
+        'content-type': 'application/json',
+        'content-length': String(reply.body.length),
+      });
+      response.flushHeaders();
+      response.socket?.destroy();
+
+      return;
+    }
+
     response.writeHead(reply.status, { 'content-type': 'application/json' });
     response.end(reply.body);
   }
