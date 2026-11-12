@@ -1,0 +1,321 @@
+{
+  "repo": "theycallmeswift/helm",
+  "description": "Answer key for helm-triage: synthetic and replayed PRs on the test fork, with the outcome each was built to trigger. null means not asserted.",
+  "created": "2026-11-12",
+  "issues": [
+    {
+      "id": "I1",
+      "number": 10,
+      "url": "https://github.com/theycallmeswift/helm/issues/10",
+      "title": "urlutil.URLJoin drops trailing slash on the last path element",
+      "kind": "bug"
+    },
+    {
+      "id": "I2",
+      "number": 11,
+      "url": "https://github.com/theycallmeswift/helm/issues/11",
+      "title": "urlutil.Equal is case-sensitive for scheme and host",
+      "kind": "bug"
+    },
+    {
+      "id": "I3",
+      "number": 12,
+      "url": "https://github.com/theycallmeswift/helm/issues/12",
+      "title": "Add --show-only to helm lint to scope linting to specific templates",
+      "kind": "feature"
+    }
+  ],
+  "prs": [
+    {
+      "id": "S9",
+      "pr_number": 1,
+      "url": "https://github.com/theycallmeswift/helm/pull/1",
+      "branch": "synthetic/docs-dry-run-comments",
+      "title": "docs(cmd): clarify dry-run flag helper doc comments",
+      "upstream_pr": null,
+      "files_changed": 1,
+      "expected": {
+        "dco_ok": true,
+        "conflict": false,
+        "ci": null,
+        "linked_issue": null,
+        "duplicate_of": null,
+        "template_untouched": false,
+        "tests_touched": false,
+        "draft": false,
+        "ai_kind": "docs",
+        "ai_breaking": false,
+        "ai_needs_hip": false
+      },
+      "notes": "Go doc comments only in pkg/cmd/helpers.go."
+    },
+    {
+      "id": "S10",
+      "pr_number": 2,
+      "url": "https://github.com/theycallmeswift/helm/pull/2",
+      "branch": "synthetic/draft-env-keys-prealloc",
+      "title": "fix(cmd): preallocate env var key slice",
+      "upstream_pr": null,
+      "files_changed": 1,
+      "expected": {
+        "dco_ok": true,
+        "conflict": false,
+        "ci": null,
+        "linked_issue": null,
+        "duplicate_of": null,
+        "template_untouched": false,
+        "tests_touched": false,
+        "draft": true,
+        "ai_kind": "bug",
+        "ai_breaking": false,
+        "ai_needs_hip": false
+      },
+      "notes": "Draft; one-line change in pkg/cmd/env.go. Not compiled locally (no Go)."
+    },
+    {
+      "id": "S5",
+      "pr_number": 3,
+      "url": "https://github.com/theycallmeswift/helm/pull/3",
+      "branch": "synthetic/create-httproute-default-path",
+      "title": "fix(create): use /healthz as default httpRoute path match",
+      "files_changed": ["pkg/chart/v2/util/create.go"],
+      "expected": {
+        "dco_ok": true,
+        "conflict": true,
+        "ci": null,
+        "linked_issue": null,
+        "duplicate_of": null,
+        "template_untouched": false,
+        "tests_touched": false,
+        "draft": false,
+        "ai_kind": "bug",
+        "ai_breaking": false,
+        "ai_needs_hip": false
+      },
+      "notes": "Branched from parent of bc232c53, edits same line that main changed to '/'."
+    },
+    {
+      "id": "S6",
+      "pr_number": 4,
+      "url": "https://github.com/theycallmeswift/helm/pull/4",
+      "branch": "synthetic/list-default-max-50",
+      "title": "feat(list): lower default --max to 50",
+      "files_changed": ["pkg/cmd/list.go"],
+      "expected": {
+        "dco_ok": true,
+        "conflict": false,
+        "ci": null,
+        "linked_issue": null,
+        "duplicate_of": null,
+        "template_untouched": false,
+        "tests_touched": false,
+        "draft": false,
+        "ai_kind": "feature",
+        "ai_breaking": true,
+        "ai_needs_hip": true
+      },
+      "notes": "Changes default of helm list --max 256 -> 50."
+    },
+    {
+      "id": "S7",
+      "pr_number": 5,
+      "url": "https://github.com/theycallmeswift/helm/pull/5",
+      "branch": "synthetic/lint-no-summary-flag",
+      "title": "feat(lint): add --no-summary flag",
+      "files_changed": ["pkg/cmd/lint.go"],
+      "expected": {
+        "dco_ok": true,
+        "conflict": false,
+        "ci": null,
+        "linked_issue": null,
+        "duplicate_of": null,
+        "template_untouched": true,
+        "tests_touched": false,
+        "draft": false,
+        "ai_kind": "feature",
+        "ai_breaking": false,
+        "ai_needs_hip": true
+      },
+      "notes": "Body is template verbatim plus one-line summary on top."
+    },
+    {
+      "id": "S8",
+      "pr_number": 6,
+      "url": "https://github.com/theycallmeswift/helm/pull/6",
+      "branch": "synthetic/history-max-nonpositive",
+      "title": "fix(history): treat non-positive --max as unlimited",
+      "files_changed": ["pkg/cmd/history.go"],
+      "expected": {
+        "dco_ok": true,
+        "conflict": false,
+        "ci": "failing",
+        "linked_issue": null,
+        "duplicate_of": null,
+        "template_untouched": false,
+        "tests_touched": false,
+        "draft": false,
+        "ai_kind": "bug",
+        "ai_breaking": false,
+        "ai_needs_hip": false
+      },
+      "notes": "Ineffectual assignment (limit := len(hist) overwritten) for ineffassign; errcheck not enabled in .golangci.yml. Not compiled locally."
+    },
+    {
+      "id": "R1",
+      "pr_number": 7,
+      "url": "https://github.com/theycallmeswift/helm/pull/7",
+      "branch": "synthetic/replay-32887",
+      "title": "fix(registry): accept OCI Image Index in plugin pull",
+      "upstream_pr": 32887,
+      "files_changed": 4,
+      "expected": {
+        "dco_ok": true,
+        "conflict": false,
+        "ci": null,
+        "linked_issue": null,
+        "duplicate_of": null,
+        "template_untouched": false,
+        "tests_touched": true,
+        "draft": false,
+        "ai_kind": "bug",
+        "ai_breaking": false,
+        "ai_needs_hip": false
+      },
+      "notes": "4 commits, all signed off; no conflict with fork main. Mentions/refs in body backticked. Upstream issue reference #32541 (backticked, not a real fork link) is backticked text, not a fork link."
+    },
+    {
+      "id": "R2",
+      "pr_number": 8,
+      "url": "https://github.com/theycallmeswift/helm/pull/8",
+      "branch": "synthetic/replay-32854",
+      "title": "chore(deps): migrate go-yaml usage to v4",
+      "upstream_pr": 32854,
+      "files_changed": 9,
+      "expected": {
+        "dco_ok": true,
+        "conflict": false,
+        "ci": null,
+        "linked_issue": null,
+        "duplicate_of": null,
+        "template_untouched": false,
+        "tests_touched": true,
+        "draft": false,
+        "ai_kind": "chore",
+        "ai_breaking": false,
+        "ai_needs_hip": false
+      },
+      "notes": "Includes a merge commit from upstream main; 2 non-merge commits signed off; no conflict. Possible output-format/dependency risk, AI fields best guess."
+    },
+    {
+      "id": "R3",
+      "pr_number": 9,
+      "url": "https://github.com/theycallmeswift/helm/pull/9",
+      "branch": "synthetic/replay-32745",
+      "title": "fix(engine): override htpasswd to support optional hash algorithm parameter",
+      "upstream_pr": 32745,
+      "files_changed": 1,
+      "expected": {
+        "dco_ok": true,
+        "conflict": false,
+        "ci": null,
+        "linked_issue": null,
+        "duplicate_of": null,
+        "template_untouched": true,
+        "tests_touched": false,
+        "draft": false,
+        "ai_kind": "bug",
+        "ai_breaking": false,
+        "ai_needs_hip": false
+      },
+      "notes": "Body uses custom format, not Helm template; no tests; base is older (dc56a44f) but no conflict. Other cluster PRs not replayed. Upstream issue reference 31924 (backticked) is backticked text, not a fork link. Upstream duplicate context: cluster of open PRs for #31924: 32767, 32647, 32033, 32619."
+    },
+    {
+      "id": "S1",
+      "pr_number": 13,
+      "url": "https://github.com/theycallmeswift/helm/pull/13",
+      "branch": "synthetic/urljoin-trailing-slash",
+      "title": "fix(urlutil): preserve trailing slash in URLJoin",
+      "files_changed": ["internal/urlutil/urlutil.go", "internal/urlutil/urlutil_test.go"],
+      "expected": {
+        "dco_ok": true,
+        "conflict": false,
+        "ci": null,
+        "linked_issue": 10,
+        "duplicate_of": null,
+        "template_untouched": false,
+        "tests_touched": true,
+        "draft": false,
+        "ai_kind": "bug",
+        "ai_breaking": false,
+        "ai_needs_hip": false
+      },
+      "notes": "Clean; older of the I1 pair. Go not compiled locally."
+    },
+    {
+      "id": "S2",
+      "pr_number": 14,
+      "url": "https://github.com/theycallmeswift/helm/pull/14",
+      "branch": "synthetic/urljoin-keep-slash",
+      "title": "urlutil: keep trailing slash when joining URLs",
+      "files_changed": ["internal/urlutil/urlutil.go", "internal/urlutil/urlutil_test.go"],
+      "expected": {
+        "dco_ok": false,
+        "conflict": false,
+        "ci": null,
+        "linked_issue": 10,
+        "duplicate_of": 13,
+        "template_untouched": false,
+        "tests_touched": true,
+        "draft": false,
+        "ai_kind": "bug",
+        "ai_breaking": false,
+        "ai_needs_hip": false
+      },
+      "notes": "No Signed-off-by (DCO fails). Duplicate of S1 (same Fixes #10); also covers base-only trailing slash."
+    },
+    {
+      "id": "S3",
+      "pr_number": 15,
+      "url": "https://github.com/theycallmeswift/helm/pull/15",
+      "branch": "synthetic/urlequal-case-insensitive-host",
+      "title": "fix(urlutil): compare scheme and host case-insensitively in Equal",
+      "files_changed": ["internal/urlutil/urlutil.go", "internal/urlutil/urlutil_test.go"],
+      "expected": {
+        "dco_ok": true,
+        "conflict": false,
+        "ci": null,
+        "linked_issue": 11,
+        "duplicate_of": null,
+        "template_untouched": false,
+        "tests_touched": true,
+        "draft": false,
+        "ai_kind": "bug",
+        "ai_breaking": false,
+        "ai_needs_hip": false
+      },
+      "notes": "Older of I2 pair."
+    },
+    {
+      "id": "S4",
+      "pr_number": 16,
+      "url": "https://github.com/theycallmeswift/helm/pull/16",
+      "branch": "synthetic/urlequal-fold-host",
+      "title": "urlutil: ignore case of scheme and host when comparing URLs",
+      "files_changed": ["internal/urlutil/urlutil.go"],
+      "expected": {
+        "dco_ok": true,
+        "conflict": false,
+        "ci": null,
+        "linked_issue": 11,
+        "duplicate_of": 15,
+        "template_untouched": false,
+        "tests_touched": false,
+        "draft": false,
+        "ai_kind": "bug",
+        "ai_breaking": false,
+        "ai_needs_hip": false
+      },
+      "notes": "Duplicate of S3; no tests."
+    }
+  ]
+}
