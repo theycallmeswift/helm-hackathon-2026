@@ -6,9 +6,10 @@
  */
 
 import { isoDate } from '../checks/context.ts';
+import type { Likelihood, PrKind } from '../pr/types.ts';
 import { escapeMarkdown, table } from '../report/markdown.ts';
 import { flatten } from '../report/text.ts';
-import { BUCKET_TITLES } from './buckets.ts';
+import { BUCKET_TITLES, type BucketReason } from './buckets.ts';
 import type { QueueEntry, QueueSection } from './build.ts';
 
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -20,7 +21,14 @@ export interface QueueColumn {
   cell: (entry: QueueEntry, now: Date) => string;
   /** Whether formats with links link this cell to the pull request. */
   linksToPr?: boolean;
+  /** The separate reasons the cell joins, for formats that draw each as a pill colored by kind. */
+  pills?: (entry: QueueEntry) => BucketReason[];
+  /** The typed value behind the cell, for formats that draw it as a colored badge. */
+  badge?: (entry: QueueEntry) => QueueBadge | undefined;
 }
+
+/** A value an AI column can show as a badge: a suggested kind or a likelihood. */
+export type QueueBadge = PrKind | Likelihood;
 
 /** The columns every queue row shows, in order. */
 export const QUEUE_COLUMNS: QueueColumn[] = [
@@ -29,7 +37,11 @@ export const QUEUE_COLUMNS: QueueColumn[] = [
   { header: 'Author', cell: (entry) => entry.snapshot.author.login },
   { header: 'Age', cell: (entry, now) => `${wholeDaysBetween(entry.snapshot.createdAt, now)}d` },
   { header: 'Waiting since', cell: (entry) => isoDate(entry.waitingSince) },
-  { header: 'Reason', cell: (entry) => entry.reason },
+  {
+    header: 'Reason',
+    cell: (entry) => entry.reasons.map((reason) => reason.text).join('; '),
+    pills: (entry) => entry.reasons,
+  },
 ];
 
 /** Shown in an AI column when a pull request has no usable AI flags. */
@@ -43,15 +55,19 @@ export const QUEUE_AI_COLUMNS: QueueColumn[] = [
       entry.ai?.status === 'ok'
         ? `${entry.ai.flags.kind.kind} (${entry.ai.flags.kind.confidence})`
         : NO_AI_DATA,
+    badge: (entry) => (entry.ai?.status === 'ok' ? entry.ai.flags.kind.kind : undefined),
   },
   {
     header: 'Breaking',
     cell: (entry) =>
       entry.ai?.status === 'ok' ? entry.ai.flags.breakingChange.verdict : NO_AI_DATA,
+    badge: (entry) =>
+      entry.ai?.status === 'ok' ? entry.ai.flags.breakingChange.verdict : undefined,
   },
   {
     header: 'Needs HIP',
     cell: (entry) => (entry.ai?.status === 'ok' ? entry.ai.flags.needsHip.verdict : NO_AI_DATA),
+    badge: (entry) => (entry.ai?.status === 'ok' ? entry.ai.flags.needsHip.verdict : undefined),
   },
 ];
 

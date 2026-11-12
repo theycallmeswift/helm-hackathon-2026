@@ -28,7 +28,7 @@ const LATER_DUPLICATE: Partial<PrSnapshot> = {
   relatedOpenPrs: [makeRelatedPr({ number: 41, createdAt: daysAgo(10) })],
 };
 
-/** The bucket and reason `snapshot` gets with the real checks run at `FACTORY_NOW`. */
+/** The bucket and reasons `snapshot` gets with the real checks run at `FACTORY_NOW`. */
 function bucketOf(overrides: Partial<PrSnapshot>) {
   const snapshot = makePrSnapshot(overrides);
 
@@ -36,54 +36,62 @@ function bucketOf(overrides: Partial<PrSnapshot>) {
 }
 
 test.each([
-  { name: 'a draft', overrides: DRAFT, bucket: 'draft', reason: 'marked as draft' },
+  {
+    name: 'a draft',
+    overrides: DRAFT,
+    bucket: 'draft',
+    reasons: [{ kind: 'draft', text: 'marked as draft' }],
+  },
   {
     name: 'a later PR sharing an issue',
     overrides: LATER_DUPLICATE,
     bucket: 'duplicate',
-    reason: 'duplicates earlier #41',
+    reasons: [{ kind: 'duplicate', text: 'duplicates earlier #41' }],
   },
   {
     name: 'a PR idle past the fail threshold',
     overrides: STALE,
     bucket: 'stale',
-    reason: '100 days since the last human activity.',
+    reasons: [{ kind: 'stale', text: '100 days since the last human activity.' }],
   },
   {
     name: 'a PR missing a sign-off',
     overrides: { commits: [makeCommit({ message: 'fix: no trailer' })] },
     bucket: 'needs-author',
-    reason: 'missing DCO sign-off',
+    reasons: [{ kind: 'dco', text: 'missing DCO sign-off' }],
   },
   {
     name: 'a PR with conflicts',
     overrides: CONFLICTS,
     bucket: 'needs-author',
-    reason: 'merge conflicts',
+    reasons: [{ kind: 'conflicts', text: 'merge conflicts' }],
   },
   {
     name: 'a PR with failing CI',
     overrides: FAILING_CI,
     bucket: 'needs-author',
-    reason: 'failing CI',
+    reasons: [{ kind: 'ci', text: 'failing CI' }],
   },
   {
     name: 'a PR with requested changes',
     overrides: { reviews: [makeReview({ reviewer: 'reviewer-a', state: 'changes_requested' })] },
     bucket: 'needs-author',
-    reason: 'changes requested by reviewer-a',
+    reasons: [{ kind: 'changes-requested', text: 'changes requested by reviewer-a' }],
   },
   {
     name: 'a PR with conflicts and failing CI',
     overrides: { ...CONFLICTS, ...FAILING_CI },
     bucket: 'needs-author',
-    reason: 'merge conflicts; failing CI',
+    reasons: [
+      { kind: 'conflicts', text: 'merge conflicts' },
+      { kind: 'ci', text: 'failing CI' },
+    ],
   },
   {
     name: 'a PR with one maintainer approval',
     overrides: { reviews: [makeReview({ reviewer: 'maintainer-a' })] },
     bucket: 'needs-second-approval',
-    reason: 'approved by maintainer-a',
+    reasons: [{ kind: 'approved', text: 'approved by maintainer-a' }],
   },
   {
     name: 'a PR approved by one maintainer and one contributor',
@@ -94,7 +102,7 @@ test.each([
       ],
     },
     bucket: 'needs-second-approval',
-    reason: 'approved by maintainer-a',
+    reasons: [{ kind: 'approved', text: 'approved by maintainer-a' }],
   },
   {
     name: 'a PR with two maintainer approvals',
@@ -102,7 +110,7 @@ test.each([
       reviews: [makeReview({ reviewer: 'maintainer-a' }), makeReview({ reviewer: 'maintainer-b' })],
     },
     bucket: 'ready',
-    reason: 'approved by maintainer-a, maintainer-b',
+    reasons: [{ kind: 'approved', text: 'approved by maintainer-a, maintainer-b' }],
   },
   {
     name: 'a PR whose requested changes were later approved',
@@ -118,7 +126,7 @@ test.each([
       ],
     },
     bucket: 'needs-second-approval',
-    reason: 'approved by maintainer-a',
+    reasons: [{ kind: 'approved', text: 'approved by maintainer-a' }],
   },
   {
     name: 'a PR whose only approval was dismissed',
@@ -129,18 +137,18 @@ test.each([
       ],
     },
     bucket: 'ready',
-    reason: 'no blockers found',
+    reasons: [{ kind: 'no-blockers', text: 'no blockers found' }],
   },
   {
     name: 'a PR with no reviews and no blockers',
     overrides: {},
     bucket: 'ready',
-    reason: 'no blockers found',
+    reasons: [{ kind: 'no-blockers', text: 'no blockers found' }],
   },
-])('$name lands in $bucket', ({ overrides, bucket, reason }) => {
+])('$name lands in $bucket', ({ overrides, bucket, reasons }) => {
   const assignment = bucketOf(overrides);
 
-  expect(assignment).toEqual({ bucket, reason });
+  expect(assignment).toEqual({ bucket, reasons });
 });
 
 test.each([

@@ -53,9 +53,9 @@ test('queue matches duplicates from the open PR listing without searching', asyn
   const sections = await forkQueue();
 
   const duplicates = sections.find((section) => section.bucket === 'duplicate')?.entries ?? [];
-  expect(duplicates.map((entry) => [entry.snapshot.number, entry.reason])).toEqual([
-    [14, 'duplicates earlier #13'],
-    [16, 'duplicates earlier #15'],
+  expect(duplicates.map((entry) => [entry.snapshot.number, entry.reasons])).toEqual([
+    [14, [{ kind: 'duplicate', text: 'duplicates earlier #13' }]],
+    [16, [{ kind: 'duplicate', text: 'duplicates earlier #15' }]],
   ]);
   expect(replay?.requests.filter((request) => request.includes('/search/'))).toEqual([]);
 });
@@ -87,8 +87,9 @@ test('queue renders the recorded fork PRs as an HTML page with linked numbers', 
   const page = renderQueueHtml(sections, { repo: REPO, now: NOW });
 
   expect(page).toContain('<h1>PR queue: theycallmeswift/helm</h1>');
-  expect(page).toContain('<h2>Duplicate (2)</h2>');
-  expect(page).toContain('<h2>Ready for review (7)</h2>');
+  expect(page).toContain('<h2>Duplicate <span class="count">2</span></h2>');
+  expect(page).toContain('<h2>Ready for review <span class="count">7</span></h2>');
+  expect(page).toContain('Showing 13 open pull requests');
   expect(page).toContain('<a href="https://github.com/theycallmeswift/helm/pull/14">#14</a>');
   expect(page.match(/<tr><td class="col-pr">/g)).toHaveLength(13);
   expect(page).not.toMatch(/<script|<link|src=/);
