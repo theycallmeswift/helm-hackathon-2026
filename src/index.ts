@@ -9,6 +9,7 @@
 import { parseArgs } from 'node:util';
 
 import { runPrCommand } from './pr/command.ts';
+import { runQueueCommand } from './queue/command.ts';
 
 /** One subcommand. */
 interface Command {
@@ -34,16 +35,9 @@ const COMMANDS: Record<string, Command> = {
   },
   queue: {
     summary: 'Sort every open pull request by who must act next',
-    run: () => notImplemented('queue'),
+    run: (args) => runQueueCommand(args, process.env),
   },
 };
-
-/** Reports that a command exists but does nothing yet. */
-async function notImplemented(commandName: string): Promise<number> {
-  process.stderr.write(`helm-triage ${commandName}: not implemented yet\n`);
-
-  return EXIT_FAILURE;
-}
 
 /** The usage text listing every command. */
 function usage(): string {

@@ -56,10 +56,17 @@ describe('helm-triage', () => {
     expect(run.stderr).toMatch(/^helm-triage: .*--frobnicate.*\n$/);
   });
 
-  test('queue says it is not implemented yet and fails', () => {
+  test('queue without a GitHub token fails with one line naming it', () => {
     const run = runCli(['queue']);
 
     expect(run.exitCode).not.toBe(0);
-    expect(run.stderr).toBe('helm-triage queue: not implemented yet\n');
+    expect(run.stderr).toMatch(/^helm-triage: GITHUB_TOKEN is not set.*\n$/);
+  });
+
+  test('queue rejects a limit that is not a positive whole number', () => {
+    const run = runCli(['queue', '--limit', '0']);
+
+    expect(run.exitCode).not.toBe(0);
+    expect(run.stderr).toBe('helm-triage: --limit must be a positive whole number, got "0"\n');
   });
 });

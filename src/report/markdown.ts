@@ -95,7 +95,7 @@ function evidenceCell(lines: string[]): string {
 }
 
 /** A GitHub-flavored markdown table. Cells must already be escaped. */
-function table(headers: string[], rows: string[][]): string {
+export function table(headers: string[], rows: string[][]): string {
   const line = (cells: string[]) => `| ${cells.join(' | ')} |`;
   return [line(headers), line(headers.map(() => '---')), ...rows.map(line)].join('\n');
 }
@@ -107,7 +107,7 @@ function table(headers: string[], rows: string[][]): string {
  * breaks `@` mentions and `owner/repo#N` cross-references, because GitHub
  * would notify the people and issues they name, which are often upstream.
  */
-function escapeMarkdown(value: string): string {
+export function escapeMarkdown(value: string): string {
   return value
     .replace(/\s*[\r\n]+\s*/g, ' ')
     .replace(/[\\`*_[\]|<>&]/g, '\\$&')
