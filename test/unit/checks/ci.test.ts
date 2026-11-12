@@ -34,6 +34,13 @@ describe('ci check', () => {
       evidence: ['build-test: failure', 'golangci-lint: timed_out'],
     },
     {
+      name: 'fails listing every check when none reports a failing conclusion',
+      ci: { state: 'failure', checks: [makeCiCheck()] },
+      status: 'fail',
+      summary: 'CI failed, but no check reports a failing conclusion.',
+      evidence: ['CI state failure on 1111111', 'build-test: success'],
+    },
+    {
       name: 'reads a DCO check awaiting approval as pending, not failing',
       ci: {
         state: 'pending',

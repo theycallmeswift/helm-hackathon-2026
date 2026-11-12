@@ -4,31 +4,60 @@ import type { CheckStatus } from '../../../src/pr/types.ts';
 import { makePrSnapshot } from '../../support/pr-snapshot.ts';
 import { runCheck } from './run-check.ts';
 
+const IF_APPLICABLE_UNCHECKED = [
+  '**If applicable**:',
+  '- [ ] this PR contains user facing changes (the `docs needed` label should be applied if so)',
+  '- [ ] this PR contains unit tests',
+  '- [ ] this PR has been tested for backwards compatibility',
+  '',
+].join('\n');
+
 describe('template check', () => {
   test.each<{ name: string; body: string; status: CheckStatus; evidence: string[] }>([
     {
-      name: 'passes when some checkboxes are checked',
-      body: 'Fixes it.\n\n- [x] this PR has tests\n- [ ] this PR changes docs',
+      name: 'passes a filled-in description with every if-applicable box unchecked',
+      body: `**What this PR does / why we need it**:\n\nImproves the dry-run doc comments.\n\n**Special notes for your reviewer**:\n\nComment-only change.\n\n${IF_APPLICABLE_UNCHECKED}`,
       status: 'pass',
-      evidence: ['1 of 2 checkboxes checked'],
+      evidence: [
+        '34 characters under **What this PR does / why we need it**:',
+        '0 of 3 checkboxes checked',
+      ],
     },
     {
-      name: 'counts an uppercase X as checked',
-      body: '* [X] this PR has tests',
+      name: 'passes a description written directly under the heading',
+      body: `**What this PR does / why we need it**:\nTreats a non-positive --max as unlimited.\n\n**Special notes for your reviewer**:\nLimited to getHistory.\n\n${IF_APPLICABLE_UNCHECKED}`,
       status: 'pass',
-      evidence: ['1 of 1 checkboxes checked'],
+      evidence: [
+        '41 characters under **What this PR does / why we need it**:',
+        '0 of 3 checkboxes checked',
+      ],
     },
     {
-      name: 'passes a description without checkboxes',
-      body: 'Handles an empty values file.',
+      name: 'passes a filled-in description that is the last section',
+      body: '**What this PR does / why we need it**:\n\nKeeps the trailing slash.\n\n- [x] this PR contains unit tests',
       status: 'pass',
-      evidence: ['0 checkboxes in a 29-character description'],
+      evidence: [
+        '60 characters under **What this PR does / why we need it**:',
+        '1 of 1 checkboxes checked',
+      ],
     },
     {
-      name: 'warns when no checkbox is checked',
-      body: '- [ ] this PR has tests\n- [ ] this PR has been signed off',
+      name: 'warns when the description section is left empty under a summary line',
+      body: `Adds a --no-summary flag.\n\n<!-- Thanks for sending a pull request! -->\n\n**What this PR does / why we need it**:\n\n**Special notes for your reviewer**:\n\n${IF_APPLICABLE_UNCHECKED}`,
       status: 'warn',
-      evidence: ['0 of 2 checkboxes checked'],
+      evidence: [
+        '#42 leaves **What this PR does / why we need it**: empty',
+        '0 of 3 checkboxes checked',
+      ],
+    },
+    {
+      name: 'warns on a custom format without the description section',
+      body: '## Summary\n\nOverride htpasswd to accept an algorithm.\n\n### Changes\n\n- New variadic htpasswd function',
+      status: 'warn',
+      evidence: [
+        '#42 has no **What this PR does / why we need it**: section',
+        '0 of 0 checkboxes checked',
+      ],
     },
     {
       name: 'warns on an empty description',

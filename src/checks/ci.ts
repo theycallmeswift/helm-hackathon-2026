@@ -37,6 +37,15 @@ export function checkCi(snapshot: PrSnapshot): CheckResult {
 
   if (state === 'failure') {
     const failing = checks.filter((check) => FAILING_CONCLUSIONS.includes(check.conclusion));
+    if (failing.length === 0) {
+      return {
+        ...result,
+        status: 'fail',
+        summary: 'CI failed, but no check reports a failing conclusion.',
+        evidence: [`CI state failure on ${commit}`, ...checks.map(describeCheck)],
+      };
+    }
+
     return {
       ...result,
       status: 'fail',

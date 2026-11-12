@@ -32,6 +32,12 @@ describe('dco check', () => {
       evidence: ['ddddddd: signed off by Ada@Example.com'],
     },
     {
+      name: 'reports info when every commit is a merge commit',
+      commits: [UNSIGNED_MERGE, UNSIGNED_MERGE],
+      status: 'info',
+      evidence: ['2 commits, all merge commits'],
+    },
+    {
       name: 'warns when the sign-off names a different email',
       commits: [SIGNED_BY_OTHER],
       status: 'warn',

@@ -28,7 +28,12 @@ export function checkDco(snapshot: PrSnapshot): CheckResult {
   const result = { id: 'dco', title: 'DCO' } as const;
 
   if (commits.length === 0) {
-    return { ...result, status: 'info', summary: 'No non-merge commits to check.', evidence: [] };
+    return {
+      ...result,
+      status: 'info',
+      summary: 'No non-merge commits to check.',
+      evidence: [`${snapshot.commits.length} commits, all merge commits`],
+    };
   }
 
   if (unsigned.length > 0) {
