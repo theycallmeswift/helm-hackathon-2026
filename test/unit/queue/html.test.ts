@@ -1,5 +1,6 @@
 import { expect, test } from 'vitest';
 import type { Likelihood, PrKind } from '../../../src/pr/types.ts';
+import type { BucketReasonKind } from '../../../src/queue/buckets.ts';
 import { groupIntoSections, toEntry } from '../../../src/queue/build.ts';
 import { escapeHtml, renderQueueHtml } from '../../../src/queue/html.ts';
 import { QUEUE_AI_COLUMNS, QUEUE_COLUMNS, type QueueBadge } from '../../../src/queue/render.ts';
@@ -216,18 +217,36 @@ test('the dashboard lists ready work first and drafts last, cards and sections a
   expect(cardOrder).toEqual(expected);
 });
 
-test('each reason is its own escaped pill', () => {
+test('each reason is its own escaped pill, colored by its kind', () => {
   const sections = sectionsOf(makePrSnapshot({ number: 1 }));
   const entry = sections.flatMap((section) => section.entries)[0];
   if (entry === undefined) {
     throw new Error('expected one queue entry');
   }
-  entry.reasons = ['merge conflicts', HOSTILE];
+  entry.reasons = [
+    { kind: 'conflicts', text: 'merge conflicts' },
+    { kind: 'ci', text: HOSTILE },
+  ];
 
   const page = renderQueueHtml(sections, { repo: REPO, now: FACTORY_NOW });
 
   expect(page).toContain(
-    `<td class="col-reason"><span class="pills"><span class="pill">merge conflicts</span><span class="pill">${HOSTILE_ESCAPED}</span></span></td>`,
+    `<td class="col-reason"><span class="pills"><span class="pill reason-conflicts">merge conflicts</span><span class="pill reason-ci">${HOSTILE_ESCAPED}</span></span></td>`,
   );
   expect(page).not.toContain('<script>');
+});
+
+test('a reason kind outside the fixed table gets the plain pill, never its own class', () => {
+  const sections = sectionsOf(makePrSnapshot({ number: 1 }));
+  const entry = sections.flatMap((section) => section.entries)[0];
+  if (entry === undefined) {
+    throw new Error('expected one queue entry');
+  }
+  const unexpected = JSON.parse('"x\\" onmouseover=\\"y"') as BucketReasonKind;
+  entry.reasons = [{ kind: unexpected, text: 'odd' }];
+
+  const page = renderQueueHtml(sections, { repo: REPO, now: FACTORY_NOW });
+
+  expect(page).toContain('<span class="pill">odd</span>');
+  expect(page).not.toContain('onmouseover');
 });

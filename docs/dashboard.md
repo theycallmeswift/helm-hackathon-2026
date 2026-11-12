@@ -15,7 +15,7 @@ the precedence order, since maintainers scan it for what they can act on now.
 | Cards    | One per bucket with its count and who acts next, linking to its section         |
 | Sections | One per bucket, ready first, with a one-line hint; empty says `None.`           |
 | Rows     | The `QUEUE_COLUMNS`, plus `QUEUE_AI_COLUMNS` with `--ai`                        |
-| Reasons  | One pill per reason, tinted with the bucket's color                             |
+| Reasons  | One pill per reason, colored by its kind: failing CI, conflicts, DCO, and so on |
 | Badges   | Kind, Breaking, and Needs HIP draw as colored badges; a row without flags `-`   |
 | Links    | Each pull request number links to `https://github.com/<repo>/pull/<n>`          |
 | Footer   | With `--ai`, the counts left without AI flags, then credit and a trademark note |
@@ -59,9 +59,9 @@ by anyone, so:
   page.
 - Links are built only from the repository and pull request number, never
   from pull request text.
-- Badge classes come from a fixed table keyed by the typed AI value; a value
-  outside it gets the plain badge, so model output never reaches an
-  attribute.
+- Badge and reason pill classes come from fixed tables keyed by typed
+  values; a value outside them gets the plain style, so model output and pull
+  request text never reach an attribute.
 - The workflow's token only reads (`contents`, `pull-requests`, `issues`,
   `checks`, `statuses`); its only writes are `pages` and `id-token`, which the
   Pages deployment needs. It never comments, labels, or touches `helm/helm`.

@@ -7,7 +7,12 @@
  */
 
 import type { RepoName } from '../pr/types.ts';
-import { BUCKET_TITLES, type BucketId } from './buckets.ts';
+import {
+  BUCKET_TITLES,
+  type BucketId,
+  type BucketReason,
+  type BucketReasonKind,
+} from './buckets.ts';
 import type { QueueEntry, QueueSection } from './build.ts';
 import { HELM_LOGO_SVG } from './helm-logo.ts';
 import { QUEUE_COLUMNS, type QueueBadge, type QueueColumn } from './render.ts';
@@ -70,6 +75,19 @@ const BADGE_CLASSES: Record<QueueBadge, string> = {
   no: 'badge-no',
 };
 
+/** The stylesheet class for each reason kind, so each kind of blocker keeps one color. */
+const REASON_CLASSES: Record<BucketReasonKind, string> = {
+  ci: 'reason-ci',
+  conflicts: 'reason-conflicts',
+  'changes-requested': 'reason-changes-requested',
+  dco: 'reason-dco',
+  stale: 'reason-stale',
+  duplicate: 'reason-duplicate',
+  draft: 'reason-draft',
+  approved: 'reason-approved',
+  'no-blockers': 'reason-no-blockers',
+};
+
 /**
  * Helm's brand palette from helm/community, light and dark from
  * `prefers-color-scheme`, a navy masthead, bucket cards, and readable tables.
@@ -82,11 +100,13 @@ const STYLE = `
   --helm-accent-blue: #3B82BF; --helm-accent-green: #2F84A7; --helm-accent-red: #95297C; --helm-accent-yellow: #D1AA9B;
   --fg: #1f2328; --bg: #f5f7fc; --surface: #ffffff; --muted: #59636e; --line: #dbe1f3; --link: #1B53C2; --row-hover: #f0f3fb;
   --tone-red: #95297C; --tone-tan: #87533f; --tone-blue: #1B53C2; --tone-green: #1d6a87; --tone-navy: #0F1689; --tone-gray: #59636e;
+  --tone-crimson: #b42318; --tone-orange: #b54708; --tone-sky: #2d6aa0;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --fg: #e8ebf7; --bg: #050843; --surface: #0b1052; --muted: #a7b0d8; --line: #232b78; --link: #9db8ff; --row-hover: #121a66;
     --tone-red: #e597d4; --tone-tan: #e6c4b6; --tone-blue: #9db8ff; --tone-green: #85cbe2; --tone-navy: #c3cdf0; --tone-gray: #a7b0d8;
+    --tone-crimson: #ff9a8f; --tone-orange: #f9b47c; --tone-sky: #8fc3ee;
   }
 }
 * { box-sizing: border-box; }
@@ -136,7 +156,17 @@ tbody tr:hover { background: var(--row-hover); }
 .badge-refactor { --tone: var(--tone-navy); }
 .badge-no { font-weight: 400; background: transparent; }
 .pills { display: flex; flex-wrap: wrap; gap: 0.25rem; }
-.pill { padding: 0 0.5rem; border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--accent) 16%, transparent); font-size: 0.8125rem; line-height: 1.5rem; white-space: nowrap; }
+.pill { --tone: var(--tone-gray); display: inline-flex; align-items: center; gap: 0.375rem; padding: 0 0.5rem; border: 1px solid color-mix(in srgb, var(--tone) 40%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--tone) 12%, transparent); color: var(--tone); font-size: 0.8125rem; font-weight: 500; line-height: 1.5rem; white-space: nowrap; }
+.pill::before { content: ""; width: 0.4375rem; height: 0.4375rem; border-radius: 50%; background: currentColor; }
+.reason-ci { --tone: var(--tone-crimson); }
+.reason-conflicts { --tone: var(--tone-red); }
+.reason-changes-requested { --tone: var(--tone-orange); }
+.reason-dco { --tone: var(--tone-tan); }
+.reason-stale { --tone: var(--tone-gray); }
+.reason-draft { --tone: var(--tone-navy); }
+.reason-duplicate { --tone: var(--tone-sky); }
+.reason-approved { --tone: var(--tone-blue); }
+.reason-no-blockers { --tone: var(--tone-green); }
 footer { padding: 1rem 0 2rem; border-top: 1px solid var(--line); font-size: 0.8125rem; }
 footer p { margin: 0.25rem 0; }
 `;
@@ -260,7 +290,7 @@ function cellHtml(column: QueueColumn, entry: QueueEntry, options: QueueHtmlOpti
 
   const pills = column.pills?.(entry);
   if (pills !== undefined) {
-    return `<span class="pills">${pills.map((pill) => `<span class="pill">${escapeHtml(pill)}</span>`).join('')}</span>`;
+    return `<span class="pills">${pills.map(reasonPillHtml).join('')}</span>`;
   }
 
   const badge = column.badge?.(entry);
@@ -269,6 +299,15 @@ function cellHtml(column: QueueColumn, entry: QueueEntry, options: QueueHtmlOpti
   }
 
   return `<span class="${badgeClass(badge)}">${text}</span>`;
+}
+
+/** One reason as a pill colored by its kind, the class taken from the fixed table only. */
+function reasonPillHtml(reason: BucketReason): string {
+  const kindClass = Object.hasOwn(REASON_CLASSES, reason.kind)
+    ? ` ${REASON_CLASSES[reason.kind]}`
+    : '';
+
+  return `<span class="pill${kindClass}">${escapeHtml(reason.text)}</span>`;
 }
 
 /** The badge's classes, from the fixed table only, so model output never reaches an attribute. */

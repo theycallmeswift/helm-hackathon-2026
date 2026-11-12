@@ -44,11 +44,30 @@ const MAINTAINER_ASSOCIATIONS: ReadonlySet<AuthorAssociation> = new Set([
   'COLLABORATOR',
 ]);
 
+/** What kind of fact a bucket reason states, so formats can tell blockers apart at a glance. */
+export type BucketReasonKind =
+  | 'draft'
+  | 'duplicate'
+  | 'stale'
+  | 'dco'
+  | 'conflicts'
+  | 'ci'
+  | 'changes-requested'
+  | 'approved'
+  | 'no-blockers';
+
+/** One reason a pull request is in its bucket. */
+export interface BucketReason {
+  kind: BucketReasonKind;
+  /** One short line, such as `failing CI`. */
+  text: string;
+}
+
 /** Which bucket a pull request belongs in, and why. */
 export interface BucketAssignment {
   bucket: BucketId;
   /** One short line per blocker or fact that put it there, most often just one. */
-  reasons: string[];
+  reasons: BucketReason[];
 }
 
 /**
@@ -60,16 +79,22 @@ export function assignBucket(snapshot: PrSnapshot, checks: CheckResult[]): Bucke
   const status = (id: CheckId) => findCheck(checks, id).status;
 
   if (snapshot.isDraft) {
-    return { bucket: 'draft', reasons: ['marked as draft'] };
+    return { bucket: 'draft', reasons: [{ kind: 'draft', text: 'marked as draft' }] };
   }
 
   const earlier = earliestEarlierDuplicate(snapshot);
   if (status('duplicates') === 'warn' && earlier !== undefined) {
-    return { bucket: 'duplicate', reasons: [`duplicates earlier #${earlier.number}`] };
+    return {
+      bucket: 'duplicate',
+      reasons: [{ kind: 'duplicate', text: `duplicates earlier #${earlier.number}` }],
+    };
   }
 
   if (status('staleness') === 'fail') {
-    return { bucket: 'stale', reasons: [findCheck(checks, 'staleness').summary] };
+    return {
+      bucket: 'stale',
+      reasons: [{ kind: 'stale', text: findCheck(checks, 'staleness').summary }],
+    };
   }
 
   const authorBlockers = authorBlockerReasons(snapshot, status);
@@ -79,10 +104,16 @@ export function assignBucket(snapshot: PrSnapshot, checks: CheckResult[]): Bucke
 
   const approvers = maintainerApprovers(snapshot.reviews);
   if (approvers.length === 1) {
-    return { bucket: 'needs-second-approval', reasons: [`approved by ${approvers.join('')}`] };
+    return {
+      bucket: 'needs-second-approval',
+      reasons: [{ kind: 'approved', text: `approved by ${approvers.join('')}` }],
+    };
   }
 
-  const reason = approvers.length > 1 ? `approved by ${approvers.join(', ')}` : 'no blockers found';
+  const reason: BucketReason =
+    approvers.length > 1
+      ? { kind: 'approved', text: `approved by ${approvers.join(', ')}` }
+      : { kind: 'no-blockers', text: 'no blockers found' };
   return { bucket: 'ready', reasons: [reason] };
 }
 
@@ -119,20 +150,23 @@ function earliestEarlierDuplicate(snapshot: PrSnapshot): RelatedPr | undefined {
 function authorBlockerReasons(
   snapshot: PrSnapshot,
   status: (id: CheckId) => CheckResult['status'],
-): string[] {
-  const reasons: string[] = [];
+): BucketReason[] {
+  const reasons: BucketReason[] = [];
   if (status('dco') === 'fail') {
-    reasons.push('missing DCO sign-off');
+    reasons.push({ kind: 'dco', text: 'missing DCO sign-off' });
   }
   if (status('conflicts') === 'fail') {
-    reasons.push('merge conflicts');
+    reasons.push({ kind: 'conflicts', text: 'merge conflicts' });
   }
   if (status('ci') === 'fail') {
-    reasons.push('failing CI');
+    reasons.push({ kind: 'ci', text: 'failing CI' });
   }
   const requesters = reviewersWhoseLatestVerdictIs(snapshot.reviews, 'changes_requested');
   if (requesters.length > 0) {
-    reasons.push(`changes requested by ${requesters.join(', ')}`);
+    reasons.push({
+      kind: 'changes-requested',
+      text: `changes requested by ${requesters.join(', ')}`,
+    });
   }
 
   return reasons;

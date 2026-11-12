@@ -11,7 +11,7 @@ import type { Fetch } from '../github/client.ts';
 import { listOpenPrs } from '../github/open-prs.ts';
 import { fetchPrSnapshot } from '../github/snapshot.ts';
 import type { AiOutcome, CheckResult, PrSnapshot, RepoName } from '../pr/types.ts';
-import { assignBucket, BUCKET_IDS, type BucketId } from './buckets.ts';
+import { assignBucket, BUCKET_IDS, type BucketId, type BucketReason } from './buckets.ts';
 import { mapWithConcurrency } from './pool.ts';
 
 /** Most snapshots fetched at once, since each costs several REST requests. */
@@ -23,7 +23,7 @@ export interface QueueEntry {
   checks: CheckResult[];
   bucket: BucketId;
   /** Why it is in `bucket`, one short line each; see `BucketAssignment`. */
-  reasons: string[];
+  reasons: BucketReason[];
   /** The later of the pull request's creation and its head commit date. */
   waitingSince: Date;
   /** The AI flags, set only with `--ai`; never read by bucketing. */
