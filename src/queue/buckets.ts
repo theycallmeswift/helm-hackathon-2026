@@ -47,8 +47,8 @@ const MAINTAINER_ASSOCIATIONS: ReadonlySet<AuthorAssociation> = new Set([
 /** Which bucket a pull request belongs in, and why. */
 export interface BucketAssignment {
   bucket: BucketId;
-  /** One line naming the rule that matched. */
-  reason: string;
+  /** One short line per blocker or fact that put it there, most often just one. */
+  reasons: string[];
 }
 
 /**
@@ -60,30 +60,30 @@ export function assignBucket(snapshot: PrSnapshot, checks: CheckResult[]): Bucke
   const status = (id: CheckId) => findCheck(checks, id).status;
 
   if (snapshot.isDraft) {
-    return { bucket: 'draft', reason: 'marked as draft' };
+    return { bucket: 'draft', reasons: ['marked as draft'] };
   }
 
   const earlier = earliestEarlierDuplicate(snapshot);
   if (status('duplicates') === 'warn' && earlier !== undefined) {
-    return { bucket: 'duplicate', reason: `duplicates earlier #${earlier.number}` };
+    return { bucket: 'duplicate', reasons: [`duplicates earlier #${earlier.number}`] };
   }
 
   if (status('staleness') === 'fail') {
-    return { bucket: 'stale', reason: findCheck(checks, 'staleness').summary };
+    return { bucket: 'stale', reasons: [findCheck(checks, 'staleness').summary] };
   }
 
   const authorBlockers = authorBlockerReasons(snapshot, status);
   if (authorBlockers.length > 0) {
-    return { bucket: 'needs-author', reason: authorBlockers.join('; ') };
+    return { bucket: 'needs-author', reasons: authorBlockers };
   }
 
   const approvers = maintainerApprovers(snapshot.reviews);
   if (approvers.length === 1) {
-    return { bucket: 'needs-second-approval', reason: `approved by ${approvers.join('')}` };
+    return { bucket: 'needs-second-approval', reasons: [`approved by ${approvers.join('')}`] };
   }
 
   const reason = approvers.length > 1 ? `approved by ${approvers.join(', ')}` : 'no blockers found';
-  return { bucket: 'ready', reason };
+  return { bucket: 'ready', reasons: [reason] };
 }
 
 /** The result for check `id`; the bucket rules cannot run without it. */

@@ -191,3 +191,43 @@ test('a badge value outside the fixed table gets the plain badge, never its own 
   expect(page).toContain('<td class="col-odd"><span class="badge">odd</span></td>');
   expect(page).not.toContain('onmouseover');
 });
+
+test('the dashboard lists ready work first and drafts last, cards and sections alike', () => {
+  const sections = sectionsOf(
+    makePrSnapshot({ number: 1, isDraft: true }),
+    makePrSnapshot({ number: 2 }),
+  );
+
+  const page = renderQueueHtml(sections, { repo: REPO, now: FACTORY_NOW });
+
+  const sectionOrder = [...page.matchAll(/<section id="([a-z-]+)"/g)].map((match) => match[1]);
+  const cardOrder = [...page.matchAll(/class="bucket-card bucket-([a-z-]+)[ "]/g)].map(
+    (match) => match[1],
+  );
+  const expected = [
+    'ready',
+    'needs-second-approval',
+    'needs-author',
+    'stale',
+    'duplicate',
+    'draft',
+  ];
+  expect(sectionOrder).toEqual(expected);
+  expect(cardOrder).toEqual(expected);
+});
+
+test('each reason is its own escaped pill', () => {
+  const sections = sectionsOf(makePrSnapshot({ number: 1 }));
+  const entry = sections.flatMap((section) => section.entries)[0];
+  if (entry === undefined) {
+    throw new Error('expected one queue entry');
+  }
+  entry.reasons = ['merge conflicts', HOSTILE];
+
+  const page = renderQueueHtml(sections, { repo: REPO, now: FACTORY_NOW });
+
+  expect(page).toContain(
+    `<td class="col-reason"><span class="pills"><span class="pill">merge conflicts</span><span class="pill">${HOSTILE_ESCAPED}</span></span></td>`,
+  );
+  expect(page).not.toContain('<script>');
+});

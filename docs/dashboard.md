@@ -3,8 +3,9 @@
 `helm-triage queue --format html` prints the [queue](queue.md) as one
 self-contained HTML page, and a scheduled workflow publishes it to GitHub
 Pages so maintainers can share a link instead of running the command. It adds
-no data source: the page shows the same buckets, order, and columns as the
-text and markdown formats.
+no data source: the page shows the same buckets and columns as the text and
+markdown formats, but lists ready work first and drafts last, the reverse of
+the precedence order, since maintainers scan it for what they can act on now.
 
 ## The page
 
@@ -12,8 +13,9 @@ text and markdown formats.
 | -------- | ------------------------------------------------------------------------------- |
 | Masthead | The Helm logo, the repository, how many open pull requests it shows, and when   |
 | Cards    | One per bucket with its count and who acts next, linking to its section         |
-| Sections | One per bucket, in precedence order, with a one-line hint; empty says `None.`   |
+| Sections | One per bucket, ready first, with a one-line hint; empty says `None.`           |
 | Rows     | The `QUEUE_COLUMNS`, plus `QUEUE_AI_COLUMNS` with `--ai`                        |
+| Reasons  | One pill per reason, tinted with the bucket's color                             |
 | Badges   | Kind, Breaking, and Needs HIP draw as colored badges; a row without flags `-`   |
 | Links    | Each pull request number links to `https://github.com/<repo>/pull/<n>`          |
 | Footer   | With `--ai`, the counts left without AI flags, then credit and a trademark note |

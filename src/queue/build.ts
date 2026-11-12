@@ -22,7 +22,8 @@ export interface QueueEntry {
   snapshot: PrSnapshot;
   checks: CheckResult[];
   bucket: BucketId;
-  reason: string;
+  /** Why it is in `bucket`, one short line each; see `BucketAssignment`. */
+  reasons: string[];
   /** The later of the pull request's creation and its head commit date. */
   waitingSince: Date;
   /** The AI flags, set only with `--ai`; never read by bucketing. */

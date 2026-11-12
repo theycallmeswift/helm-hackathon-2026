@@ -21,6 +21,8 @@ export interface QueueColumn {
   cell: (entry: QueueEntry, now: Date) => string;
   /** Whether formats with links link this cell to the pull request. */
   linksToPr?: boolean;
+  /** The separate values the cell joins, for formats that draw each as a pill. */
+  pills?: (entry: QueueEntry) => string[];
   /** The typed value behind the cell, for formats that draw it as a colored badge. */
   badge?: (entry: QueueEntry) => QueueBadge | undefined;
 }
@@ -35,7 +37,11 @@ export const QUEUE_COLUMNS: QueueColumn[] = [
   { header: 'Author', cell: (entry) => entry.snapshot.author.login },
   { header: 'Age', cell: (entry, now) => `${wholeDaysBetween(entry.snapshot.createdAt, now)}d` },
   { header: 'Waiting since', cell: (entry) => isoDate(entry.waitingSince) },
-  { header: 'Reason', cell: (entry) => entry.reason },
+  {
+    header: 'Reason',
+    cell: (entry) => entry.reasons.join('; '),
+    pills: (entry) => entry.reasons,
+  },
 ];
 
 /** Shown in an AI column when a pull request has no usable AI flags. */
