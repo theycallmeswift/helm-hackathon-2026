@@ -56,10 +56,10 @@ describe('helm-triage', () => {
     expect(run.stderr).toMatch(/^helm-triage: .*--frobnicate.*\n$/);
   });
 
-  test.each(['pr', 'queue'])('%s says it is not implemented yet and fails', (command) => {
-    const run = runCli([command]);
+  test('queue says it is not implemented yet and fails', () => {
+    const run = runCli(['queue']);
 
     expect(run.exitCode).not.toBe(0);
-    expect(run.stderr).toBe(`helm-triage ${command}: not implemented yet\n`);
+    expect(run.stderr).toBe('helm-triage queue: not implemented yet\n');
   });
 });
