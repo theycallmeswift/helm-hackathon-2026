@@ -1,0 +1,900 @@
+{
+  "GET /repos/theycallmeswift/helm/pulls/7": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4774",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": {
+        "url": "https://api.github.com/repos/theycallmeswift/helm/pulls/7",
+        "id": 5285454940,
+        "node_id": "PR_kwDOVsZmas8AAAABOwmkXA",
+        "html_url": "https://github.com/theycallmeswift/helm/pull/7",
+        "diff_url": "https://github.com/theycallmeswift/helm/pull/7.diff",
+        "patch_url": "https://github.com/theycallmeswift/helm/pull/7.patch",
+        "issue_url": "https://api.github.com/repos/theycallmeswift/helm/issues/7",
+        "commits_url": "https://api.github.com/repos/theycallmeswift/helm/pulls/7/commits",
+        "review_comments_url": "https://api.github.com/repos/theycallmeswift/helm/pulls/7/comments",
+        "review_comment_url": "https://api.github.com/repos/theycallmeswift/helm/pulls/comments{/number}",
+        "comments_url": "https://api.github.com/repos/theycallmeswift/helm/issues/7/comments",
+        "statuses_url": "https://api.github.com/repos/theycallmeswift/helm/statuses/5aa1994b8d057034668fee06939359839130631d",
+        "number": 7,
+        "state": "open",
+        "locked": false,
+        "title": "fix(registry): accept OCI Image Index in plugin pull",
+        "user": {
+          "login": "theycallmeswift",
+          "id": 434373,
+          "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+          "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/theycallmeswift",
+          "html_url": "https://github.com/theycallmeswift",
+          "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+          "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+          "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+          "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+          "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+          "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "body": "Replay of `https://github.com/helm/helm/pull/32887` for triage testing.\n\n**What this PR does / why we need it**:\n\nCloses `#32541`. Supersedes `#32548`, carries over `@waterWang`'s commit (kept as is, with them as author) and adds the test `@TerryHowe` asked for there.\n\nWriting that test showed the one-line change is not enough. Once `ocispec.MediaTypeImageIndex` is allowed, the index is pulled, but `processPluginPull` unmarshals the index itself as an `ocispec.Manifest`. It has no `artifactType` and no config, so the pull fails with:\n\n```\nexpected config media type application/vnd.helm.plugin.v1+json for legacy compatibility, got\n```\n\nThis adds `pluginManifestFromIndex`: when the pulled root is an image index, it walks `index.Manifests` and uses the first image manifest whose `artifactType` is `application/vnd.helm.plugin.v1+json` (or, for legacy manifests, whose config media type is). The rest of the plugin processing is unchanged. If no entry is a plugin, the error says so instead of the confusing \"not found\".\n\n**Special notes for your reviewer**:\n\nTests:\n- `TestProcessPluginPull`: plain manifest, index with an unrelated manifest before the plugin one, index without a plugin manifest.\n- `HTTPRegistryClientTestSuite/Test_6_PluginImageIndex`: pushes the plugin manifest and an index to the suite registry with oras and runs `PullPlugin` on the index tag. On `main` it fails with `unable to retrieve manifest: sha256:...: application/vnd.oci.image.index.v1+json: not found` (the error from the issue); with `#32548` alone, both index cases fail with the artifact type error above.\n\n`go test ./pkg/registry/ ./pkg/getter/` and `golangci-lint run ./pkg/registry/...` pass.\n\nAI disclosure: written with the help of Claude Code, reviewed and tested by me.\n\n**If applicable**:\n- [ ] this PR contains user facing changes (the `docs needed` label should be applied if so)\n- [x] this PR contains unit tests\n- [x] this PR has been tested for backwards compatibility\n",
+        "labels": [],
+        "milestone": null,
+        "active_lock_reason": null,
+        "created_at": "2026-11-12T21:24:16Z",
+        "updated_at": "2026-11-12T21:24:16Z",
+        "closed_at": null,
+        "merged_at": null,
+        "merge_commit_sha": "aede38440f01a086bf4aa8ba47b524161157f0a5",
+        "assignee": null,
+        "assignees": [],
+        "requested_reviewers": [],
+        "requested_teams": [],
+        "head": {
+          "label": "theycallmeswift:synthetic/replay-32887",
+          "ref": "synthetic/replay-32887",
+          "repo": {
+            "id": 1455842922,
+            "node_id": "R_kgDOVsZmag",
+            "name": "helm",
+            "full_name": "theycallmeswift/helm",
+            "owner": {
+              "login": "theycallmeswift",
+              "id": 434373,
+              "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+              "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/theycallmeswift",
+              "html_url": "https://github.com/theycallmeswift",
+              "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+              "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+              "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+              "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+              "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+              "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+              "type": "User",
+              "user_view_type": "public",
+              "site_admin": false
+            },
+            "private": false,
+            "fork": true,
+            "archived": false,
+            "disabled": false,
+            "description": "The Kubernetes Package Manager",
+            "homepage": "https://helm.sh",
+            "language": null,
+            "visibility": "public",
+            "is_template": false,
+            "topics": [],
+            "forks_count": 0,
+            "forks": 0,
+            "stargazers_count": 0,
+            "watchers_count": 0,
+            "watchers": 0,
+            "open_issues_count": 16,
+            "open_issues": 16,
+            "size": 30261,
+            "default_branch": "main",
+            "has_issues": true,
+            "has_projects": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "has_downloads": false,
+            "has_discussions": false,
+            "has_pull_requests": true,
+            "pushed_at": "2026-11-12T21:26:40Z",
+            "created_at": "2026-11-12T21:20:34Z",
+            "updated_at": "2026-11-12T21:21:31Z",
+            "allow_forking": true,
+            "web_commit_signoff_required": true,
+            "pull_request_creation_policy": "all",
+            "license": {
+              "key": "apache-2.0",
+              "name": "Apache License 2.0",
+              "url": "https://api.github.com/licenses/apache-2.0",
+              "spdx_id": "Apache-2.0",
+              "node_id": "MDc6TGljZW5zZTI="
+            },
+            "url": "https://api.github.com/repos/theycallmeswift/helm",
+            "html_url": "https://github.com/theycallmeswift/helm",
+            "archive_url": "https://api.github.com/repos/theycallmeswift/helm/{archive_format}{/ref}",
+            "assignees_url": "https://api.github.com/repos/theycallmeswift/helm/assignees{/user}",
+            "blobs_url": "https://api.github.com/repos/theycallmeswift/helm/git/blobs{/sha}",
+            "branches_url": "https://api.github.com/repos/theycallmeswift/helm/branches{/branch}",
+            "collaborators_url": "https://api.github.com/repos/theycallmeswift/helm/collaborators{/collaborator}",
+            "comments_url": "https://api.github.com/repos/theycallmeswift/helm/comments{/number}",
+            "commits_url": "https://api.github.com/repos/theycallmeswift/helm/commits{/sha}",
+            "compare_url": "https://api.github.com/repos/theycallmeswift/helm/compare/{base}...{head}",
+            "contents_url": "https://api.github.com/repos/theycallmeswift/helm/contents/{+path}",
+            "contributors_url": "https://api.github.com/repos/theycallmeswift/helm/contributors",
+            "deployments_url": "https://api.github.com/repos/theycallmeswift/helm/deployments",
+            "downloads_url": "https://api.github.com/repos/theycallmeswift/helm/downloads",
+            "events_url": "https://api.github.com/repos/theycallmeswift/helm/events",
+            "forks_url": "https://api.github.com/repos/theycallmeswift/helm/forks",
+            "git_commits_url": "https://api.github.com/repos/theycallmeswift/helm/git/commits{/sha}",
+            "git_refs_url": "https://api.github.com/repos/theycallmeswift/helm/git/refs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/theycallmeswift/helm/git/tags{/sha}",
+            "git_url": "git://github.com/theycallmeswift/helm.git",
+            "issue_comment_url": "https://api.github.com/repos/theycallmeswift/helm/issues/comments{/number}",
+            "issue_events_url": "https://api.github.com/repos/theycallmeswift/helm/issues/events{/number}",
+            "issues_url": "https://api.github.com/repos/theycallmeswift/helm/issues{/number}",
+            "keys_url": "https://api.github.com/repos/theycallmeswift/helm/keys{/key_id}",
+            "labels_url": "https://api.github.com/repos/theycallmeswift/helm/labels{/name}",
+            "languages_url": "https://api.github.com/repos/theycallmeswift/helm/languages",
+            "merges_url": "https://api.github.com/repos/theycallmeswift/helm/merges",
+            "milestones_url": "https://api.github.com/repos/theycallmeswift/helm/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/theycallmeswift/helm/notifications{?since,all,participating}",
+            "pulls_url": "https://api.github.com/repos/theycallmeswift/helm/pulls{/number}",
+            "releases_url": "https://api.github.com/repos/theycallmeswift/helm/releases{/id}",
+            "ssh_url": "git@github.com:theycallmeswift/helm.git",
+            "stargazers_url": "https://api.github.com/repos/theycallmeswift/helm/stargazers",
+            "statuses_url": "https://api.github.com/repos/theycallmeswift/helm/statuses/{sha}",
+            "subscribers_url": "https://api.github.com/repos/theycallmeswift/helm/subscribers",
+            "subscription_url": "https://api.github.com/repos/theycallmeswift/helm/subscription",
+            "tags_url": "https://api.github.com/repos/theycallmeswift/helm/tags",
+            "teams_url": "https://api.github.com/repos/theycallmeswift/helm/teams",
+            "trees_url": "https://api.github.com/repos/theycallmeswift/helm/git/trees{/sha}",
+            "clone_url": "https://github.com/theycallmeswift/helm.git",
+            "mirror_url": null,
+            "hooks_url": "https://api.github.com/repos/theycallmeswift/helm/hooks",
+            "svn_url": "https://github.com/theycallmeswift/helm"
+          },
+          "sha": "5aa1994b8d057034668fee06939359839130631d",
+          "user": {
+            "login": "theycallmeswift",
+            "id": 434373,
+            "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+            "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/theycallmeswift",
+            "html_url": "https://github.com/theycallmeswift",
+            "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+            "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+            "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+            "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+            "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+            "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        },
+        "base": {
+          "label": "theycallmeswift:main",
+          "ref": "main",
+          "repo": {
+            "id": 1455842922,
+            "node_id": "R_kgDOVsZmag",
+            "name": "helm",
+            "full_name": "theycallmeswift/helm",
+            "owner": {
+              "login": "theycallmeswift",
+              "id": 434373,
+              "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+              "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/theycallmeswift",
+              "html_url": "https://github.com/theycallmeswift",
+              "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+              "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+              "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+              "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+              "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+              "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+              "type": "User",
+              "user_view_type": "public",
+              "site_admin": false
+            },
+            "private": false,
+            "fork": true,
+            "archived": false,
+            "disabled": false,
+            "description": "The Kubernetes Package Manager",
+            "homepage": "https://helm.sh",
+            "language": null,
+            "visibility": "public",
+            "is_template": false,
+            "topics": [],
+            "forks_count": 0,
+            "forks": 0,
+            "stargazers_count": 0,
+            "watchers_count": 0,
+            "watchers": 0,
+            "open_issues_count": 16,
+            "open_issues": 16,
+            "size": 30261,
+            "default_branch": "main",
+            "has_issues": true,
+            "has_projects": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "has_downloads": false,
+            "has_discussions": false,
+            "has_pull_requests": true,
+            "pushed_at": "2026-11-12T21:26:40Z",
+            "created_at": "2026-11-12T21:20:34Z",
+            "updated_at": "2026-11-12T21:21:31Z",
+            "allow_forking": true,
+            "web_commit_signoff_required": true,
+            "pull_request_creation_policy": "all",
+            "license": {
+              "key": "apache-2.0",
+              "name": "Apache License 2.0",
+              "url": "https://api.github.com/licenses/apache-2.0",
+              "spdx_id": "Apache-2.0",
+              "node_id": "MDc6TGljZW5zZTI="
+            },
+            "url": "https://api.github.com/repos/theycallmeswift/helm",
+            "html_url": "https://github.com/theycallmeswift/helm",
+            "archive_url": "https://api.github.com/repos/theycallmeswift/helm/{archive_format}{/ref}",
+            "assignees_url": "https://api.github.com/repos/theycallmeswift/helm/assignees{/user}",
+            "blobs_url": "https://api.github.com/repos/theycallmeswift/helm/git/blobs{/sha}",
+            "branches_url": "https://api.github.com/repos/theycallmeswift/helm/branches{/branch}",
+            "collaborators_url": "https://api.github.com/repos/theycallmeswift/helm/collaborators{/collaborator}",
+            "comments_url": "https://api.github.com/repos/theycallmeswift/helm/comments{/number}",
+            "commits_url": "https://api.github.com/repos/theycallmeswift/helm/commits{/sha}",
+            "compare_url": "https://api.github.com/repos/theycallmeswift/helm/compare/{base}...{head}",
+            "contents_url": "https://api.github.com/repos/theycallmeswift/helm/contents/{+path}",
+            "contributors_url": "https://api.github.com/repos/theycallmeswift/helm/contributors",
+            "deployments_url": "https://api.github.com/repos/theycallmeswift/helm/deployments",
+            "downloads_url": "https://api.github.com/repos/theycallmeswift/helm/downloads",
+            "events_url": "https://api.github.com/repos/theycallmeswift/helm/events",
+            "forks_url": "https://api.github.com/repos/theycallmeswift/helm/forks",
+            "git_commits_url": "https://api.github.com/repos/theycallmeswift/helm/git/commits{/sha}",
+            "git_refs_url": "https://api.github.com/repos/theycallmeswift/helm/git/refs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/theycallmeswift/helm/git/tags{/sha}",
+            "git_url": "git://github.com/theycallmeswift/helm.git",
+            "issue_comment_url": "https://api.github.com/repos/theycallmeswift/helm/issues/comments{/number}",
+            "issue_events_url": "https://api.github.com/repos/theycallmeswift/helm/issues/events{/number}",
+            "issues_url": "https://api.github.com/repos/theycallmeswift/helm/issues{/number}",
+            "keys_url": "https://api.github.com/repos/theycallmeswift/helm/keys{/key_id}",
+            "labels_url": "https://api.github.com/repos/theycallmeswift/helm/labels{/name}",
+            "languages_url": "https://api.github.com/repos/theycallmeswift/helm/languages",
+            "merges_url": "https://api.github.com/repos/theycallmeswift/helm/merges",
+            "milestones_url": "https://api.github.com/repos/theycallmeswift/helm/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/theycallmeswift/helm/notifications{?since,all,participating}",
+            "pulls_url": "https://api.github.com/repos/theycallmeswift/helm/pulls{/number}",
+            "releases_url": "https://api.github.com/repos/theycallmeswift/helm/releases{/id}",
+            "ssh_url": "git@github.com:theycallmeswift/helm.git",
+            "stargazers_url": "https://api.github.com/repos/theycallmeswift/helm/stargazers",
+            "statuses_url": "https://api.github.com/repos/theycallmeswift/helm/statuses/{sha}",
+            "subscribers_url": "https://api.github.com/repos/theycallmeswift/helm/subscribers",
+            "subscription_url": "https://api.github.com/repos/theycallmeswift/helm/subscription",
+            "tags_url": "https://api.github.com/repos/theycallmeswift/helm/tags",
+            "teams_url": "https://api.github.com/repos/theycallmeswift/helm/teams",
+            "trees_url": "https://api.github.com/repos/theycallmeswift/helm/git/trees{/sha}",
+            "clone_url": "https://github.com/theycallmeswift/helm.git",
+            "mirror_url": null,
+            "hooks_url": "https://api.github.com/repos/theycallmeswift/helm/hooks",
+            "svn_url": "https://github.com/theycallmeswift/helm"
+          },
+          "sha": "7964586dca1b4dc5a2989306231f83b18356d76f",
+          "user": {
+            "login": "theycallmeswift",
+            "id": 434373,
+            "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+            "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/theycallmeswift",
+            "html_url": "https://github.com/theycallmeswift",
+            "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+            "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+            "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+            "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+            "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+            "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        },
+        "_links": {
+          "comments": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/issues/7/comments"
+          },
+          "commits": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/pulls/7/commits"
+          },
+          "statuses": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/statuses/5aa1994b8d057034668fee06939359839130631d"
+          },
+          "html": {
+            "href": "https://github.com/theycallmeswift/helm/pull/7"
+          },
+          "issue": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/issues/7"
+          },
+          "review_comments": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/pulls/7/comments"
+          },
+          "review_comment": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/pulls/comments{/number}"
+          },
+          "self": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/pulls/7"
+          }
+        },
+        "author_association": "OWNER",
+        "auto_merge": null,
+        "draft": false,
+        "merged": false,
+        "mergeable": true,
+        "rebaseable": true,
+        "mergeable_state": "clean",
+        "merged_by": null,
+        "comments": 0,
+        "review_comments": 0,
+        "maintainer_can_modify": false,
+        "commits": 4,
+        "additions": 242,
+        "deletions": 13,
+        "changed_files": 4
+      }
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/commits/5aa1994b8d057034668fee06939359839130631d/status?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4772",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": {
+        "state": "pending",
+        "statuses": [],
+        "sha": "5aa1994b8d057034668fee06939359839130631d",
+        "total_count": 0,
+        "repository": {
+          "id": 1455842922,
+          "node_id": "R_kgDOVsZmag",
+          "name": "helm",
+          "full_name": "theycallmeswift/helm",
+          "private": false,
+          "owner": {
+            "login": "theycallmeswift",
+            "id": 434373,
+            "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+            "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/theycallmeswift",
+            "html_url": "https://github.com/theycallmeswift",
+            "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+            "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+            "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+            "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+            "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+            "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/theycallmeswift/helm",
+          "description": "The Kubernetes Package Manager",
+          "fork": true,
+          "url": "https://api.github.com/repos/theycallmeswift/helm",
+          "forks_url": "https://api.github.com/repos/theycallmeswift/helm/forks",
+          "keys_url": "https://api.github.com/repos/theycallmeswift/helm/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/theycallmeswift/helm/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/theycallmeswift/helm/teams",
+          "hooks_url": "https://api.github.com/repos/theycallmeswift/helm/hooks",
+          "issue_events_url": "https://api.github.com/repos/theycallmeswift/helm/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/theycallmeswift/helm/events",
+          "assignees_url": "https://api.github.com/repos/theycallmeswift/helm/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/theycallmeswift/helm/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/theycallmeswift/helm/tags",
+          "blobs_url": "https://api.github.com/repos/theycallmeswift/helm/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/theycallmeswift/helm/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/theycallmeswift/helm/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/theycallmeswift/helm/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/theycallmeswift/helm/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/theycallmeswift/helm/languages",
+          "stargazers_url": "https://api.github.com/repos/theycallmeswift/helm/stargazers",
+          "contributors_url": "https://api.github.com/repos/theycallmeswift/helm/contributors",
+          "subscribers_url": "https://api.github.com/repos/theycallmeswift/helm/subscribers",
+          "subscription_url": "https://api.github.com/repos/theycallmeswift/helm/subscription",
+          "commits_url": "https://api.github.com/repos/theycallmeswift/helm/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/theycallmeswift/helm/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/theycallmeswift/helm/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/theycallmeswift/helm/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/theycallmeswift/helm/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/theycallmeswift/helm/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/theycallmeswift/helm/merges",
+          "archive_url": "https://api.github.com/repos/theycallmeswift/helm/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/theycallmeswift/helm/downloads",
+          "issues_url": "https://api.github.com/repos/theycallmeswift/helm/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/theycallmeswift/helm/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/theycallmeswift/helm/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/theycallmeswift/helm/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/theycallmeswift/helm/labels{/name}",
+          "releases_url": "https://api.github.com/repos/theycallmeswift/helm/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/theycallmeswift/helm/deployments"
+        },
+        "commit_url": "https://api.github.com/repos/theycallmeswift/helm/commits/5aa1994b8d057034668fee06939359839130631d",
+        "url": "https://api.github.com/repos/theycallmeswift/helm/commits/5aa1994b8d057034668fee06939359839130631d/status"
+      }
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/issues/7/comments?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4767",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": []
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/pulls/7/comments?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4768",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": []
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/commits/5aa1994b8d057034668fee06939359839130631d/check-runs?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4769",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": {
+        "total_count": 0,
+        "check_runs": []
+      }
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/pulls/7/reviews?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4773",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": []
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/pulls/7/commits?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4771",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": [
+        {
+          "sha": "42d7e82a5aed1d102d8d9f8932c400d6fc3db762",
+          "node_id": "C_kwDOVsZmatoAKDQyZDdlODJhNWFlZDFkMTAyZDhkOWY4OTMyYzQwMGQ2ZmMzZGI3NjI",
+          "commit": {
+            "author": {
+              "name": "water",
+              "email": "672684719@qq.com",
+              "date": "2026-08-17T03:45:00Z"
+            },
+            "committer": {
+              "name": "George Jenkins",
+              "email": "gvjenkins@gmail.com",
+              "date": "2026-11-12T05:14:44Z"
+            },
+            "message": "fix(registry): accept OCI Image Index in plugin pull\n\nAllow plugin pull to resolve tags that point to an OCI Image Index,\nmatching the fix already applied to chart pull in PR #31776.\n\nCloses #32541\n\nSigned-off-by: water <672684719@qq.com>",
+            "tree": {
+              "sha": "25c1fc314f74441020a5dc59b3fc7a50202bb1d5",
+              "url": "https://api.github.com/repos/theycallmeswift/helm/git/trees/25c1fc314f74441020a5dc59b3fc7a50202bb1d5"
+            },
+            "url": "https://api.github.com/repos/theycallmeswift/helm/git/commits/42d7e82a5aed1d102d8d9f8932c400d6fc3db762",
+            "comment_count": 0,
+            "verification": {
+              "verified": false,
+              "reason": "unsigned",
+              "signature": null,
+              "payload": null,
+              "verified_at": null
+            }
+          },
+          "url": "https://api.github.com/repos/theycallmeswift/helm/commits/42d7e82a5aed1d102d8d9f8932c400d6fc3db762",
+          "html_url": "https://github.com/theycallmeswift/helm/commit/42d7e82a5aed1d102d8d9f8932c400d6fc3db762",
+          "comments_url": "https://api.github.com/repos/theycallmeswift/helm/commits/42d7e82a5aed1d102d8d9f8932c400d6fc3db762/comments",
+          "author": {
+            "login": "waterWang",
+            "id": 6082925,
+            "node_id": "MDQ6VXNlcjYwODI5MjU=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/6082925?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/waterWang",
+            "html_url": "https://github.com/waterWang",
+            "followers_url": "https://api.github.com/users/waterWang/followers",
+            "following_url": "https://api.github.com/users/waterWang/following{/other_user}",
+            "gists_url": "https://api.github.com/users/waterWang/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/waterWang/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/waterWang/subscriptions",
+            "organizations_url": "https://api.github.com/users/waterWang/orgs",
+            "repos_url": "https://api.github.com/users/waterWang/repos",
+            "events_url": "https://api.github.com/users/waterWang/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/waterWang/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "committer": {
+            "login": "gjenkins8",
+            "id": 2787248,
+            "node_id": "MDQ6VXNlcjI3ODcyNDg=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/2787248?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/gjenkins8",
+            "html_url": "https://github.com/gjenkins8",
+            "followers_url": "https://api.github.com/users/gjenkins8/followers",
+            "following_url": "https://api.github.com/users/gjenkins8/following{/other_user}",
+            "gists_url": "https://api.github.com/users/gjenkins8/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/gjenkins8/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/gjenkins8/subscriptions",
+            "organizations_url": "https://api.github.com/users/gjenkins8/orgs",
+            "repos_url": "https://api.github.com/users/gjenkins8/repos",
+            "events_url": "https://api.github.com/users/gjenkins8/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/gjenkins8/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "parents": [
+            {
+              "sha": "6234f6228f3134e087739e5c2eb79650b2c0b99d",
+              "url": "https://api.github.com/repos/theycallmeswift/helm/commits/6234f6228f3134e087739e5c2eb79650b2c0b99d",
+              "html_url": "https://github.com/theycallmeswift/helm/commit/6234f6228f3134e087739e5c2eb79650b2c0b99d"
+            }
+          ]
+        },
+        {
+          "sha": "a3e65fc1cd547d913b272f5d82e12c260e7bbfe5",
+          "node_id": "C_kwDOVsZmatoAKGEzZTY1ZmMxY2Q1NDdkOTEzYjI3MmY1ZDgyZTEyYzI2MGU3YmJmZTU",
+          "commit": {
+            "author": {
+              "name": "Lucas Barros",
+              "email": "lucasbarros.kam@gmail.com",
+              "date": "2026-11-09T23:15:33Z"
+            },
+            "committer": {
+              "name": "George Jenkins",
+              "email": "gvjenkins@gmail.com",
+              "date": "2026-11-12T05:14:44Z"
+            },
+            "message": "fix(registry): read the plugin manifest from an image index\n\nWith the index allowed in the pull, processPluginPull parsed the index\nitself as the plugin manifest and failed the artifact type check. Pick\nthe index entry whose artifact type (or legacy config media type) is the\nplugin type, and test the pull against the test registry.\n\nCloses #32541\n\nSigned-off-by: Lucas Barros <lucasbarros.kam@gmail.com>",
+            "tree": {
+              "sha": "db2049d148c655d3a784d6b22f86a09d3f43a0fe",
+              "url": "https://api.github.com/repos/theycallmeswift/helm/git/trees/db2049d148c655d3a784d6b22f86a09d3f43a0fe"
+            },
+            "url": "https://api.github.com/repos/theycallmeswift/helm/git/commits/a3e65fc1cd547d913b272f5d82e12c260e7bbfe5",
+            "comment_count": 0,
+            "verification": {
+              "verified": false,
+              "reason": "unsigned",
+              "signature": null,
+              "payload": null,
+              "verified_at": null
+            }
+          },
+          "url": "https://api.github.com/repos/theycallmeswift/helm/commits/a3e65fc1cd547d913b272f5d82e12c260e7bbfe5",
+          "html_url": "https://github.com/theycallmeswift/helm/commit/a3e65fc1cd547d913b272f5d82e12c260e7bbfe5",
+          "comments_url": "https://api.github.com/repos/theycallmeswift/helm/commits/a3e65fc1cd547d913b272f5d82e12c260e7bbfe5/comments",
+          "author": {
+            "login": "lbarrosby",
+            "id": 70347936,
+            "node_id": "MDQ6VXNlcjcwMzQ3OTM2",
+            "avatar_url": "https://avatars.githubusercontent.com/u/70347936?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/lbarrosby",
+            "html_url": "https://github.com/lbarrosby",
+            "followers_url": "https://api.github.com/users/lbarrosby/followers",
+            "following_url": "https://api.github.com/users/lbarrosby/following{/other_user}",
+            "gists_url": "https://api.github.com/users/lbarrosby/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/lbarrosby/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/lbarrosby/subscriptions",
+            "organizations_url": "https://api.github.com/users/lbarrosby/orgs",
+            "repos_url": "https://api.github.com/users/lbarrosby/repos",
+            "events_url": "https://api.github.com/users/lbarrosby/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/lbarrosby/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "committer": {
+            "login": "gjenkins8",
+            "id": 2787248,
+            "node_id": "MDQ6VXNlcjI3ODcyNDg=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/2787248?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/gjenkins8",
+            "html_url": "https://github.com/gjenkins8",
+            "followers_url": "https://api.github.com/users/gjenkins8/followers",
+            "following_url": "https://api.github.com/users/gjenkins8/following{/other_user}",
+            "gists_url": "https://api.github.com/users/gjenkins8/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/gjenkins8/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/gjenkins8/subscriptions",
+            "organizations_url": "https://api.github.com/users/gjenkins8/orgs",
+            "repos_url": "https://api.github.com/users/gjenkins8/repos",
+            "events_url": "https://api.github.com/users/gjenkins8/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/gjenkins8/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "parents": [
+            {
+              "sha": "42d7e82a5aed1d102d8d9f8932c400d6fc3db762",
+              "url": "https://api.github.com/repos/theycallmeswift/helm/commits/42d7e82a5aed1d102d8d9f8932c400d6fc3db762",
+              "html_url": "https://github.com/theycallmeswift/helm/commit/42d7e82a5aed1d102d8d9f8932c400d6fc3db762"
+            }
+          ]
+        },
+        {
+          "sha": "91a70b8b3f6409278775acf5ce718945a2c89cd4",
+          "node_id": "C_kwDOVsZmatoAKDkxYTcwYjhiM2Y2NDA5Mjc4Nzc1YWNmNWNlNzE4OTQ1YTJjODljZDQ",
+          "commit": {
+            "author": {
+              "name": "Lucas Barros",
+              "email": "lucasbarros.kam@gmail.com",
+              "date": "2026-11-10T03:33:58Z"
+            },
+            "committer": {
+              "name": "George Jenkins",
+              "email": "gvjenkins@gmail.com",
+              "date": "2026-11-12T05:14:44Z"
+            },
+            "message": "refactor(registry): reuse one generic client when scanning the index\n\nCo-authored-by: Terry Howe <terrylhowe@gmail.com>\nSigned-off-by: Lucas Barros <lucasbarros.kam@gmail.com>",
+            "tree": {
+              "sha": "e3b5066081846ff103bf64109c3936e1fcadce75",
+              "url": "https://api.github.com/repos/theycallmeswift/helm/git/trees/e3b5066081846ff103bf64109c3936e1fcadce75"
+            },
+            "url": "https://api.github.com/repos/theycallmeswift/helm/git/commits/91a70b8b3f6409278775acf5ce718945a2c89cd4",
+            "comment_count": 0,
+            "verification": {
+              "verified": false,
+              "reason": "unsigned",
+              "signature": null,
+              "payload": null,
+              "verified_at": null
+            }
+          },
+          "url": "https://api.github.com/repos/theycallmeswift/helm/commits/91a70b8b3f6409278775acf5ce718945a2c89cd4",
+          "html_url": "https://github.com/theycallmeswift/helm/commit/91a70b8b3f6409278775acf5ce718945a2c89cd4",
+          "comments_url": "https://api.github.com/repos/theycallmeswift/helm/commits/91a70b8b3f6409278775acf5ce718945a2c89cd4/comments",
+          "author": {
+            "login": "lbarrosby",
+            "id": 70347936,
+            "node_id": "MDQ6VXNlcjcwMzQ3OTM2",
+            "avatar_url": "https://avatars.githubusercontent.com/u/70347936?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/lbarrosby",
+            "html_url": "https://github.com/lbarrosby",
+            "followers_url": "https://api.github.com/users/lbarrosby/followers",
+            "following_url": "https://api.github.com/users/lbarrosby/following{/other_user}",
+            "gists_url": "https://api.github.com/users/lbarrosby/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/lbarrosby/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/lbarrosby/subscriptions",
+            "organizations_url": "https://api.github.com/users/lbarrosby/orgs",
+            "repos_url": "https://api.github.com/users/lbarrosby/repos",
+            "events_url": "https://api.github.com/users/lbarrosby/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/lbarrosby/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "committer": {
+            "login": "gjenkins8",
+            "id": 2787248,
+            "node_id": "MDQ6VXNlcjI3ODcyNDg=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/2787248?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/gjenkins8",
+            "html_url": "https://github.com/gjenkins8",
+            "followers_url": "https://api.github.com/users/gjenkins8/followers",
+            "following_url": "https://api.github.com/users/gjenkins8/following{/other_user}",
+            "gists_url": "https://api.github.com/users/gjenkins8/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/gjenkins8/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/gjenkins8/subscriptions",
+            "organizations_url": "https://api.github.com/users/gjenkins8/orgs",
+            "repos_url": "https://api.github.com/users/gjenkins8/repos",
+            "events_url": "https://api.github.com/users/gjenkins8/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/gjenkins8/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "parents": [
+            {
+              "sha": "a3e65fc1cd547d913b272f5d82e12c260e7bbfe5",
+              "url": "https://api.github.com/repos/theycallmeswift/helm/commits/a3e65fc1cd547d913b272f5d82e12c260e7bbfe5",
+              "html_url": "https://github.com/theycallmeswift/helm/commit/a3e65fc1cd547d913b272f5d82e12c260e7bbfe5"
+            }
+          ]
+        },
+        {
+          "sha": "5aa1994b8d057034668fee06939359839130631d",
+          "node_id": "C_kwDOVsZmatoAKDVhYTE5OTRiOGQwNTcwMzQ2NjhmZWUwNjkzOTM1OTgzOTEzMDYzMWQ",
+          "commit": {
+            "author": {
+              "name": "Lucas Barros",
+              "email": "lucasbarros.kam@gmail.com",
+              "date": "2026-11-10T03:37:07Z"
+            },
+            "committer": {
+              "name": "George Jenkins",
+              "email": "gvjenkins@gmail.com",
+              "date": "2026-11-12T05:14:44Z"
+            },
+            "message": "fix(registry): select the plugin manifest before copying an image index\n\nCopying the whole index pulled the tar+gzip layers of every platform\nbefore the plugin manifest was picked. Map the index to the plugin\nmanifest through oras MapRoot, so only that manifest and its layers are\ncopied, and keep reporting the digest the reference resolved to.\n\nSigned-off-by: Lucas Barros <lucasbarros.kam@gmail.com>",
+            "tree": {
+              "sha": "ce213ec6e30618c7cc1667c2dd0b2791668262b3",
+              "url": "https://api.github.com/repos/theycallmeswift/helm/git/trees/ce213ec6e30618c7cc1667c2dd0b2791668262b3"
+            },
+            "url": "https://api.github.com/repos/theycallmeswift/helm/git/commits/5aa1994b8d057034668fee06939359839130631d",
+            "comment_count": 0,
+            "verification": {
+              "verified": false,
+              "reason": "unsigned",
+              "signature": null,
+              "payload": null,
+              "verified_at": null
+            }
+          },
+          "url": "https://api.github.com/repos/theycallmeswift/helm/commits/5aa1994b8d057034668fee06939359839130631d",
+          "html_url": "https://github.com/theycallmeswift/helm/commit/5aa1994b8d057034668fee06939359839130631d",
+          "comments_url": "https://api.github.com/repos/theycallmeswift/helm/commits/5aa1994b8d057034668fee06939359839130631d/comments",
+          "author": {
+            "login": "lbarrosby",
+            "id": 70347936,
+            "node_id": "MDQ6VXNlcjcwMzQ3OTM2",
+            "avatar_url": "https://avatars.githubusercontent.com/u/70347936?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/lbarrosby",
+            "html_url": "https://github.com/lbarrosby",
+            "followers_url": "https://api.github.com/users/lbarrosby/followers",
+            "following_url": "https://api.github.com/users/lbarrosby/following{/other_user}",
+            "gists_url": "https://api.github.com/users/lbarrosby/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/lbarrosby/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/lbarrosby/subscriptions",
+            "organizations_url": "https://api.github.com/users/lbarrosby/orgs",
+            "repos_url": "https://api.github.com/users/lbarrosby/repos",
+            "events_url": "https://api.github.com/users/lbarrosby/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/lbarrosby/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "committer": {
+            "login": "gjenkins8",
+            "id": 2787248,
+            "node_id": "MDQ6VXNlcjI3ODcyNDg=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/2787248?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/gjenkins8",
+            "html_url": "https://github.com/gjenkins8",
+            "followers_url": "https://api.github.com/users/gjenkins8/followers",
+            "following_url": "https://api.github.com/users/gjenkins8/following{/other_user}",
+            "gists_url": "https://api.github.com/users/gjenkins8/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/gjenkins8/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/gjenkins8/subscriptions",
+            "organizations_url": "https://api.github.com/users/gjenkins8/orgs",
+            "repos_url": "https://api.github.com/users/gjenkins8/repos",
+            "events_url": "https://api.github.com/users/gjenkins8/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/gjenkins8/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "parents": [
+            {
+              "sha": "91a70b8b3f6409278775acf5ce718945a2c89cd4",
+              "url": "https://api.github.com/repos/theycallmeswift/helm/commits/91a70b8b3f6409278775acf5ce718945a2c89cd4",
+              "html_url": "https://github.com/theycallmeswift/helm/commit/91a70b8b3f6409278775acf5ce718945a2c89cd4"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/pulls/7/files?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4770",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": [
+        {
+          "sha": "9ba66fb4e507fbf8d9fc4986b68d5b1a79688fbf",
+          "filename": "pkg/registry/client_http_test.go",
+          "status": "modified",
+          "additions": 37,
+          "deletions": 0,
+          "changes": 37,
+          "blob_url": "https://github.com/theycallmeswift/helm/blob/5aa1994b8d057034668fee06939359839130631d/pkg%2Fregistry%2Fclient_http_test.go",
+          "raw_url": "https://github.com/theycallmeswift/helm/raw/5aa1994b8d057034668fee06939359839130631d/pkg%2Fregistry%2Fclient_http_test.go",
+          "contents_url": "https://api.github.com/repos/theycallmeswift/helm/contents/pkg%2Fregistry%2Fclient_http_test.go?ref=5aa1994b8d057034668fee06939359839130631d",
+          "patch": "@@ -20,8 +20,12 @@ import (\n \t\"os\"\n \t\"testing\"\n \n+\tocispec \"github.com/opencontainers/image-spec/specs-go/v1\"\n \t\"github.com/stretchr/testify/suite\"\n+\t\"oras.land/oras-go/v2\"\n \t\"oras.land/oras-go/v2/content\"\n+\t\"oras.land/oras-go/v2/registry/remote\"\n+\t\"oras.land/oras-go/v2/registry/remote/auth\"\n )\n \n type HTTPRegistryClientTestSuite struct {\n@@ -76,6 +80,39 @@ func (suite *HTTPRegistryClientTestSuite) Test_5_ImageIndex() {\n \tsuite.Require().NoError(err)\n }\n \n+func (suite *HTTPRegistryClientTestSuite) Test_6_PluginImageIndex() {\n+\tpluginData := []byte(\"plugin tarball\")\n+\tf := newPluginFixture(suite.T(), pluginData)\n+\tindex := pushJSON(suite.T(), f.store, ocispec.MediaTypeImageIndex, newImageIndex(f.otherManifest, f.pluginManifest))\n+\tsuite.Require().NoError(f.store.Tag(suite.T().Context(), index, \"idx\"))\n+\n+\trepo, err := remote.NewRepository(suite.DockerRegistryHost + \"/testrepo/demo\")\n+\tsuite.Require().NoError(err)\n+\trepo.PlainHTTP = true\n+\trepo.Client = &auth.Client{Credential: auth.StaticCredential(suite.DockerRegistryHost, auth.Credential{\n+\t\tUsername: testUsername,\n+\t\tPassword: testPassword,\n+\t})}\n+\t_, err = oras.Copy(suite.T().Context(), f.store, \"idx\", repo, \"idx\", oras.DefaultCopyOptions)\n+\tsuite.Require().NoError(err)\n+\n+\tref := suite.DockerRegistryHost + \"/testrepo/demo:idx\"\n+\tvar root ocispec.Descriptor\n+\tpulled, err := suite.RegistryClient.Generic().PullGeneric(ref, pluginPullOptions(&root))\n+\tsuite.Require().NoError(err)\n+\tsuite.Equal(index.Digest, root.Digest)\n+\tvar digests []string\n+\tfor _, desc := range pulled.Descriptors {\n+\t\tdigests = append(digests, desc.Digest.String())\n+\t}\n+\tsuite.ElementsMatch([]string{f.pluginManifest.Digest.String(), f.pluginLayer.Digest.String()}, digests)\n+\n+\tresult, err := suite.RegistryClient.PullPlugin(ref, \"demo\")\n+\tsuite.Require().NoError(err)\n+\tsuite.Equal(pluginData, result.PluginData)\n+\tsuite.Equal(index.Digest, result.Manifest.Digest)\n+}\n+\n func TestHTTPRegistryClientTestSuite(t *testing.T) {\n \tsuite.Run(t, new(HTTPRegistryClientTestSuite))\n }"
+        },
+        {
+          "sha": "2098b55cd7f27643352b6b0d7b34a64b5c1e8e6d",
+          "filename": "pkg/registry/generic.go",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 0,
+          "changes": 4,
+          "blob_url": "https://github.com/theycallmeswift/helm/blob/5aa1994b8d057034668fee06939359839130631d/pkg%2Fregistry%2Fgeneric.go",
+          "raw_url": "https://github.com/theycallmeswift/helm/raw/5aa1994b8d057034668fee06939359839130631d/pkg%2Fregistry%2Fgeneric.go",
+          "contents_url": "https://api.github.com/repos/theycallmeswift/helm/contents/pkg%2Fregistry%2Fgeneric.go?ref=5aa1994b8d057034668fee06939359839130631d",
+          "patch": "@@ -56,6 +56,9 @@ type GenericPullOptions struct {\n \tSkipMediaTypes []string\n \t// Custom PreCopy function for filtering\n \tPreCopy func(context.Context, ocispec.Descriptor) error\n+\t// MapRoot maps the descriptor the reference resolves to onto the root node\n+\t// to copy, e.g. to select one manifest of an image index\n+\tMapRoot func(ctx context.Context, src content.ReadOnlyStorage, root ocispec.Descriptor) (ocispec.Descriptor, error)\n }\n \n // GenericPullResult contains the result of a generic pull operation\n@@ -113,6 +116,7 @@ func (c *GenericClient) PullGeneric(ref string, options GenericPullOptions) (*Ge\n \n \tvar mu sync.Mutex\n \tmanifest, err := oras.Copy(ctx, repository, parsedRef.String(), memoryStore, \"\", oras.CopyOptions{\n+\t\tMapRoot: options.MapRoot,\n \t\tPreCopy: func(ctx context.Context, desc ocispec.Descriptor) error {\n \t\t\t// Apply a custom PreCopy function if provided\n \t\t\tif options.PreCopy != nil {"
+        },
+        {
+          "sha": "016f33566807abfc2a5b81412b1489817900fe6f",
+          "filename": "pkg/registry/plugin.go",
+          "status": "modified",
+          "additions": 63,
+          "deletions": 13,
+          "changes": 76,
+          "blob_url": "https://github.com/theycallmeswift/helm/blob/5aa1994b8d057034668fee06939359839130631d/pkg%2Fregistry%2Fplugin.go",
+          "raw_url": "https://github.com/theycallmeswift/helm/raw/5aa1994b8d057034668fee06939359839130631d/pkg%2Fregistry%2Fplugin.go",
+          "contents_url": "https://api.github.com/repos/theycallmeswift/helm/contents/pkg%2Fregistry%2Fplugin.go?ref=5aa1994b8d057034668fee06939359839130631d",
+          "patch": "@@ -17,12 +17,14 @@ limitations under the License.\n package registry\n \n import (\n+\t\"context\"\n \t\"encoding/json\"\n \t\"errors\"\n \t\"fmt\"\n \t\"strings\"\n \n \tocispec \"github.com/opencontainers/image-spec/specs-go/v1\"\n+\t\"oras.land/oras-go/v2/content\"\n )\n \n // Plugin-specific constants\n@@ -57,26 +59,41 @@ func (c *Client) PullPlugin(ref, pluginName string, options ...PluginPullOption)\n \t\toption(operation)\n \t}\n \n-\t// Use generic client for the pull operation with artifact type filtering\n-\tgenericClient := c.Generic()\n-\tgenericResult, err := genericClient.PullGeneric(ref, GenericPullOptions{\n-\t\t// Allow manifests and all layer types - we'll validate artifact type after download\n+\tvar root ocispec.Descriptor\n+\tgenericResult, err := c.Generic().PullGeneric(ref, pluginPullOptions(&root))\n+\tif err != nil {\n+\t\treturn nil, err\n+\t}\n+\n+\t// Process the result with plugin-specific logic\n+\treturn c.processPluginPull(genericResult, root, operation.pluginName)\n+}\n+\n+// pluginPullOptions returns the generic pull options for a plugin. When the\n+// reference resolves to an image index, the plugin manifest is selected before\n+// the copy, so only that manifest and its layers are pulled. root receives the\n+// descriptor the reference resolved to.\n+func pluginPullOptions(root *ocispec.Descriptor) GenericPullOptions {\n+\treturn GenericPullOptions{\n+\t\t// Allow the manifest and all layer types - we'll validate artifact type after download\n \t\tAllowedMediaTypes: []string{\n \t\t\tocispec.MediaTypeImageManifest,\n \t\t\t\"application/vnd.oci.image.layer.v1.tar\",\n \t\t\t\"application/vnd.oci.image.layer.v1.tar+gzip\",\n \t\t},\n-\t})\n-\tif err != nil {\n-\t\treturn nil, err\n+\t\tMapRoot: func(ctx context.Context, src content.ReadOnlyStorage, desc ocispec.Descriptor) (ocispec.Descriptor, error) {\n+\t\t\t*root = desc\n+\t\t\tif desc.MediaType != ocispec.MediaTypeImageIndex {\n+\t\t\t\treturn desc, nil\n+\t\t\t}\n+\t\t\treturn pluginManifestFromIndex(ctx, src, desc)\n+\t\t},\n \t}\n-\n-\t// Process the result with plugin-specific logic\n-\treturn c.processPluginPull(genericResult, operation.pluginName)\n }\n \n-// processPluginPull handles plugin-specific processing of a generic pull result using artifact type\n-func (c *Client) processPluginPull(genericResult *GenericPullResult, pluginName string) (*PluginPullResult, error) {\n+// processPluginPull handles plugin-specific processing of a generic pull result using artifact type.\n+// root is the descriptor the reference resolved to, which is reported as the pulled manifest.\n+func (c *Client) processPluginPull(genericResult *GenericPullResult, root ocispec.Descriptor, pluginName string) (*PluginPullResult, error) {\n \t// First validate that this is actually a plugin artifact\n \tmanifestData, err := c.Generic().GetDescriptorData(genericResult.MemoryStore, genericResult.Manifest)\n \tif err != nil {\n@@ -128,7 +145,7 @@ func (c *Client) processPluginPull(genericResult *GenericPullResult, pluginName\n \n \t// Build plugin-specific result\n \tresult := &PluginPullResult{\n-\t\tManifest:   genericResult.Manifest,\n+\t\tManifest:   root,\n \t\tRef:        genericResult.Ref,\n \t\tPluginName: pluginName,\n \t}\n@@ -211,3 +228,36 @@ func PullPluginOptWithProv(withProv bool) PluginPullOption {\n \t\toperation.withProv = withProv\n \t}\n }\n+\n+// pluginManifestFromIndex returns the descriptor of the first manifest of an\n+// image index whose artifact type, or config media type for legacy manifests,\n+// is the plugin type\n+func pluginManifestFromIndex(ctx context.Context, fetcher content.Fetcher, indexDesc ocispec.Descriptor) (ocispec.Descriptor, error) {\n+\tindexData, err := content.FetchAll(ctx, fetcher, indexDesc)\n+\tif err != nil {\n+\t\treturn ocispec.Descriptor{}, fmt.Errorf(\"unable to retrieve image index: %w\", err)\n+\t}\n+\tvar index ocispec.Index\n+\tif err := json.Unmarshal(indexData, &index); err != nil {\n+\t\treturn ocispec.Descriptor{}, fmt.Errorf(\"unable to parse image index: %w\", err)\n+\t}\n+\n+\tfor _, desc := range index.Manifests {\n+\t\tif desc.MediaType != ocispec.MediaTypeImageManifest {\n+\t\t\tcontinue\n+\t\t}\n+\t\tdata, err := content.FetchAll(ctx, fetcher, desc)\n+\t\tif err != nil {\n+\t\t\treturn ocispec.Descriptor{}, fmt.Errorf(\"unable to retrieve manifest %s from image index: %w\", desc.Digest, err)\n+\t\t}\n+\t\tvar manifest ocispec.Manifest\n+\t\tif err := json.Unmarshal(data, &manifest); err != nil {\n+\t\t\treturn ocispec.Descriptor{}, fmt.Errorf(\"unable to parse manifest %s from image index: %w\", desc.Digest, err)\n+\t\t}\n+\t\tif manifest.ArtifactType == PluginArtifactType || (manifest.ArtifactType == \"\" && manifest.Config.MediaType == PluginArtifactType) {\n+\t\t\treturn desc, nil\n+\t\t}\n+\t}\n+\n+\treturn ocispec.Descriptor{}, fmt.Errorf(\"image index does not contain a manifest with artifact type %s\", PluginArtifactType)\n+}"
+        },
+        {
+          "sha": "f4e6b81e2f6c51712eef56414674ef0b21c2ab66",
+          "filename": "pkg/registry/plugin_test.go",
+          "status": "modified",
+          "additions": 138,
+          "deletions": 0,
+          "changes": 138,
+          "blob_url": "https://github.com/theycallmeswift/helm/blob/5aa1994b8d057034668fee06939359839130631d/pkg%2Fregistry%2Fplugin_test.go",
+          "raw_url": "https://github.com/theycallmeswift/helm/raw/5aa1994b8d057034668fee06939359839130631d/pkg%2Fregistry%2Fplugin_test.go",
+          "contents_url": "https://api.github.com/repos/theycallmeswift/helm/contents/pkg%2Fregistry%2Fplugin_test.go?ref=5aa1994b8d057034668fee06939359839130631d",
+          "patch": "@@ -17,10 +17,17 @@ limitations under the License.\n package registry\n \n import (\n+\t\"bytes\"\n+\t\"encoding/json\"\n+\t\"io\"\n \t\"testing\"\n \n+\tocispec \"github.com/opencontainers/image-spec/specs-go/v1\"\n \t\"github.com/stretchr/testify/assert\"\n \t\"github.com/stretchr/testify/require\"\n+\t\"oras.land/oras-go/v2\"\n+\t\"oras.land/oras-go/v2/content\"\n+\t\"oras.land/oras-go/v2/content/memory\"\n )\n \n func TestGetPluginName(t *testing.T) {\n@@ -85,3 +92,134 @@ func TestGetPluginName(t *testing.T) {\n \t\t})\n \t}\n }\n+\n+func pushJSON(t *testing.T, store *memory.Store, mediaType string, v any) ocispec.Descriptor {\n+\tt.Helper()\n+\tdata, err := json.Marshal(v)\n+\trequire.NoError(t, err)\n+\treturn pushBlob(t, store, mediaType, data)\n+}\n+\n+func pushBlob(t *testing.T, store *memory.Store, mediaType string, data []byte) ocispec.Descriptor {\n+\tt.Helper()\n+\tdesc := content.NewDescriptorFromBytes(mediaType, data)\n+\trequire.NoError(t, store.Push(t.Context(), desc, bytes.NewReader(data)))\n+\treturn desc\n+}\n+\n+func newImageIndex(manifests ...ocispec.Descriptor) ocispec.Index {\n+\treturn ocispec.Index{\n+\t\tSchemaVersion: 2,\n+\t\tMediaType:     ocispec.MediaTypeImageIndex,\n+\t\tManifests:     manifests,\n+\t}\n+}\n+\n+// pluginFixture is a store holding a plugin manifest for \"demo\" and the\n+// manifest of an unrelated artifact type, each with one tar+gzip layer\n+type pluginFixture struct {\n+\tstore          *memory.Store\n+\tpluginManifest ocispec.Descriptor\n+\tpluginLayer    ocispec.Descriptor\n+\totherManifest  ocispec.Descriptor\n+\totherLayer     ocispec.Descriptor\n+}\n+\n+func newPluginFixture(t *testing.T, pluginData []byte) pluginFixture {\n+\tt.Helper()\n+\tf := pluginFixture{store: memory.New()}\n+\tf.pluginLayer = pushBlob(t, f.store, \"application/vnd.oci.image.layer.v1.tar+gzip\", pluginData)\n+\tf.pluginLayer.Annotations = map[string]string{ocispec.AnnotationTitle: \"demo-1.0.0.tgz\"}\n+\tf.otherLayer = pushBlob(t, f.store, \"application/vnd.oci.image.layer.v1.tar+gzip\", []byte(\"other platform layer\"))\n+\tconfig := pushBlob(t, f.store, ocispec.MediaTypeEmptyJSON, []byte(\"{}\"))\n+\tf.pluginManifest = pushJSON(t, f.store, ocispec.MediaTypeImageManifest, ocispec.Manifest{\n+\t\tSchemaVersion: 2,\n+\t\tMediaType:     ocispec.MediaTypeImageManifest,\n+\t\tArtifactType:  PluginArtifactType,\n+\t\tConfig:        config,\n+\t\tLayers:        []ocispec.Descriptor{f.pluginLayer},\n+\t})\n+\tf.otherManifest = pushJSON(t, f.store, ocispec.MediaTypeImageManifest, ocispec.Manifest{\n+\t\tSchemaVersion: 2,\n+\t\tMediaType:     ocispec.MediaTypeImageManifest,\n+\t\tArtifactType:  \"application/vnd.example.other\",\n+\t\tConfig:        config,\n+\t\tLayers:        []ocispec.Descriptor{f.otherLayer},\n+\t})\n+\treturn f\n+}\n+\n+func TestProcessPluginPull(t *testing.T) {\n+\tpluginData := []byte(\"plugin tarball\")\n+\n+\tclient, err := NewClient(ClientOptWriter(io.Discard))\n+\trequire.NoError(t, err)\n+\n+\tt.Run(\"manifest\", func(t *testing.T) {\n+\t\tf := newPluginFixture(t, pluginData)\n+\t\tresult, err := client.processPluginPull(&GenericPullResult{\n+\t\t\tManifest:    f.pluginManifest,\n+\t\t\tMemoryStore: f.store,\n+\t\t\tRef:         \"localhost:5000/plugins/demo:1.0.0\",\n+\t\t}, f.pluginManifest, \"demo\")\n+\t\trequire.NoError(t, err)\n+\t\tassert.Equal(t, pluginData, result.PluginData)\n+\t\tassert.Equal(t, f.pluginManifest.Digest, result.Manifest.Digest)\n+\t})\n+\n+\tt.Run(\"manifest selected from an image index\", func(t *testing.T) {\n+\t\tf := newPluginFixture(t, pluginData)\n+\t\tindex := pushJSON(t, f.store, ocispec.MediaTypeImageIndex, newImageIndex(f.otherManifest, f.pluginManifest))\n+\t\tresult, err := client.processPluginPull(&GenericPullResult{\n+\t\t\tManifest:    f.pluginManifest,\n+\t\t\tMemoryStore: f.store,\n+\t\t\tRef:         \"localhost:5000/plugins/demo:idx\",\n+\t\t}, index, \"demo\")\n+\t\trequire.NoError(t, err)\n+\t\tassert.Equal(t, pluginData, result.PluginData)\n+\t\tassert.Equal(t, index.Digest, result.Manifest.Digest)\n+\t})\n+}\n+\n+func TestPluginManifestFromIndex(t *testing.T) {\n+\tt.Run(\"plugin manifest\", func(t *testing.T) {\n+\t\tf := newPluginFixture(t, []byte(\"plugin tarball\"))\n+\t\tindex := pushJSON(t, f.store, ocispec.MediaTypeImageIndex, newImageIndex(f.otherManifest, f.pluginManifest))\n+\t\tdesc, err := pluginManifestFromIndex(t.Context(), f.store, index)\n+\t\trequire.NoError(t, err)\n+\t\tassert.Equal(t, f.pluginManifest.Digest, desc.Digest)\n+\t})\n+\n+\tt.Run(\"no plugin manifest\", func(t *testing.T) {\n+\t\tf := newPluginFixture(t, []byte(\"plugin tarball\"))\n+\t\tindex := pushJSON(t, f.store, ocispec.MediaTypeImageIndex, newImageIndex(f.otherManifest))\n+\t\t_, err := pluginManifestFromIndex(t.Context(), f.store, index)\n+\t\trequire.ErrorContains(t, err, \"image index does not contain a manifest with artifact type \"+PluginArtifactType)\n+\t})\n+}\n+\n+func TestPluginPullOptionsCopiesOnlyThePluginManifest(t *testing.T) {\n+\tctx := t.Context()\n+\tf := newPluginFixture(t, []byte(\"plugin tarball\"))\n+\tindex := pushJSON(t, f.store, ocispec.MediaTypeImageIndex, newImageIndex(f.otherManifest, f.pluginManifest))\n+\trequire.NoError(t, f.store.Tag(ctx, index, \"idx\"))\n+\n+\tvar root ocispec.Descriptor\n+\topts := pluginPullOptions(&root)\n+\tdst := memory.New()\n+\tcopied, err := oras.Copy(ctx, f.store, \"idx\", dst, \"\", oras.CopyOptions{MapRoot: opts.MapRoot})\n+\trequire.NoError(t, err)\n+\n+\tassert.Equal(t, index.Digest, root.Digest)\n+\tassert.Equal(t, f.pluginManifest.Digest, copied.Digest)\n+\tfor _, desc := range []ocispec.Descriptor{f.pluginManifest, f.pluginLayer} {\n+\t\tok, err := dst.Exists(ctx, desc)\n+\t\trequire.NoError(t, err)\n+\t\tassert.True(t, ok, \"expected %s to be copied\", desc.Digest)\n+\t}\n+\tfor _, desc := range []ocispec.Descriptor{index, f.otherManifest, f.otherLayer} {\n+\t\tok, err := dst.Exists(ctx, desc)\n+\t\trequire.NoError(t, err)\n+\t\tassert.False(t, ok, \"expected %s not to be copied\", desc.Digest)\n+\t}\n+}"
+        }
+      ]
+    }
+  ]
+}
