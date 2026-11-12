@@ -27,7 +27,7 @@ describe('renderText', () => {
 
     const output = renderText(report);
 
-    expect(output.split('\n')[1]).toBe('  DCO ✓  conflicts ✗  CI ⚠  size ℹ');
+    expect(output.split('\n')[1]).toBe('  DCO ✅  conflicts ❌  CI ⚠\uFE0F  size ℹ\uFE0F');
   });
 
   test.each<{ status: CheckStatus; listsEvidence: boolean }>([

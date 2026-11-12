@@ -44,10 +44,10 @@ describe('renderMarkdown', () => {
   });
 
   test.each<{ status: CheckStatus; expected: string }>([
-    { status: 'pass', expected: '| CI | ✓ pass | ci looks good | ci evidence |' },
-    { status: 'warn', expected: '| CI | ⚠ warn | ci looks good | ci evidence |' },
-    { status: 'fail', expected: '| CI | ✗ fail | ci looks good | ci evidence |' },
-    { status: 'info', expected: '| CI | ℹ info | ci looks good | ci evidence |' },
+    { status: 'pass', expected: '| CI | ✅ pass | ci looks good | ci evidence |' },
+    { status: 'warn', expected: '| CI | ⚠\uFE0F warn | ci looks good | ci evidence |' },
+    { status: 'fail', expected: '| CI | ❌ fail | ci looks good | ci evidence |' },
+    { status: 'info', expected: '| CI | ℹ\uFE0F info | ci looks good | ci evidence |' },
   ])('renders a $status check as a table row', ({ status, expected }) => {
     const report = makeReport({ checks: [makeCheck({ id: 'ci', title: 'CI', status })] });
 

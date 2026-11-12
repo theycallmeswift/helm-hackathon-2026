@@ -6,12 +6,15 @@
 
 import type { AiEvidence, AiFlags, CheckStatus } from '../pr/types.ts';
 
-/** The mark each check status renders as, in both formats. */
+/**
+ * The emoji each check status renders as, in both formats. The warn and info
+ * marks carry U+FE0F so terminals and GitHub draw them as emoji, not text.
+ */
 export const STATUS_MARKS: Record<CheckStatus, string> = {
-  pass: '✓',
-  warn: '⚠',
-  fail: '✗',
-  info: 'ℹ',
+  pass: '✅',
+  warn: '⚠\uFE0F',
+  fail: '❌',
+  info: 'ℹ\uFE0F',
 };
 
 /** How many evidence lines a check or flag shows before the "and N more" tail. */
