@@ -49,6 +49,17 @@ test('queue sorts the recorded fork PRs into buckets, oldest waiting first', asy
   });
 });
 
+test('queue matches duplicates from the open PR listing without searching', async () => {
+  const sections = await forkQueue();
+
+  const duplicates = sections.find((section) => section.bucket === 'duplicate')?.entries ?? [];
+  expect(duplicates.map((entry) => [entry.snapshot.number, entry.reason])).toEqual([
+    [14, 'duplicates earlier #13'],
+    [16, 'duplicates earlier #15'],
+  ]);
+  expect(replay?.requests.filter((request) => request.includes('/search/'))).toEqual([]);
+});
+
 test('queue --limit fetches only the oldest opened PRs', async () => {
   const sections = await forkQueue(3);
 
