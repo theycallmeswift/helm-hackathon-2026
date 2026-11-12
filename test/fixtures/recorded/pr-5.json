@@ -1,0 +1,1417 @@
+{
+  "GET /repos/theycallmeswift/helm/pulls/5": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4790",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": {
+        "url": "https://api.github.com/repos/theycallmeswift/helm/pulls/5",
+        "id": 5285453436,
+        "node_id": "PR_kwDOVsZmas8AAAABOwmefA",
+        "html_url": "https://github.com/theycallmeswift/helm/pull/5",
+        "diff_url": "https://github.com/theycallmeswift/helm/pull/5.diff",
+        "patch_url": "https://github.com/theycallmeswift/helm/pull/5.patch",
+        "issue_url": "https://api.github.com/repos/theycallmeswift/helm/issues/5",
+        "commits_url": "https://api.github.com/repos/theycallmeswift/helm/pulls/5/commits",
+        "review_comments_url": "https://api.github.com/repos/theycallmeswift/helm/pulls/5/comments",
+        "review_comment_url": "https://api.github.com/repos/theycallmeswift/helm/pulls/comments{/number}",
+        "comments_url": "https://api.github.com/repos/theycallmeswift/helm/issues/5/comments",
+        "statuses_url": "https://api.github.com/repos/theycallmeswift/helm/statuses/99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+        "number": 5,
+        "state": "open",
+        "locked": false,
+        "title": "feat(lint): add --no-summary flag",
+        "user": {
+          "login": "theycallmeswift",
+          "id": 434373,
+          "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+          "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/theycallmeswift",
+          "html_url": "https://github.com/theycallmeswift",
+          "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+          "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+          "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+          "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+          "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+          "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "body": "Adds a `--no-summary` flag to `helm lint`.\n\n<!--  Thanks for sending a pull request!  Here are some tips for you:\n1. Make sure to read the Contributing Guide before submitting your PR: https://github.com/helm/helm/blob/main/CONTRIBUTING.md\n2. If this PR closes another issue, add 'closes #<issue number>' somewhere in the PR summary. GitHub will automatically close that issue when this PR gets merged. Alternatively, adding 'refs #<issue number>' will not close the issue, but help provide the reviewer more context.-->\n\n**What this PR does / why we need it**:\n\n**Special notes for your reviewer**:\n\n**If applicable**:\n- [ ] this PR contains user facing changes (the `docs needed` label should be applied if so)\n- [ ] this PR contains unit tests\n- [ ] this PR has been tested for backwards compatibility\n",
+        "labels": [
+          {
+            "id": 13059825986,
+            "node_id": "LA_kwDOVsZmas8AAAADCm0hQg",
+            "url": "https://api.github.com/repos/theycallmeswift/helm/labels/v4.x",
+            "name": "v4.x",
+            "description": null,
+            "color": "ededed",
+            "default": false,
+            "archived_at": null,
+            "archived_by": null
+          }
+        ],
+        "milestone": null,
+        "active_lock_reason": null,
+        "created_at": "2026-11-12T21:24:09Z",
+        "updated_at": "2026-11-12T21:33:52Z",
+        "closed_at": null,
+        "merged_at": null,
+        "merge_commit_sha": "bc9ece9bebe8381aa6992e29f0d6b81fc04931cf",
+        "assignee": null,
+        "assignees": [],
+        "requested_reviewers": [],
+        "requested_teams": [],
+        "head": {
+          "label": "theycallmeswift:synthetic/lint-no-summary-flag",
+          "ref": "synthetic/lint-no-summary-flag",
+          "repo": {
+            "id": 1455842922,
+            "node_id": "R_kgDOVsZmag",
+            "name": "helm",
+            "full_name": "theycallmeswift/helm",
+            "owner": {
+              "login": "theycallmeswift",
+              "id": 434373,
+              "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+              "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/theycallmeswift",
+              "html_url": "https://github.com/theycallmeswift",
+              "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+              "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+              "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+              "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+              "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+              "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+              "type": "User",
+              "user_view_type": "public",
+              "site_admin": false
+            },
+            "private": false,
+            "fork": true,
+            "archived": false,
+            "disabled": false,
+            "description": "The Kubernetes Package Manager",
+            "homepage": "https://helm.sh",
+            "language": null,
+            "visibility": "public",
+            "is_template": false,
+            "topics": [],
+            "forks_count": 0,
+            "forks": 0,
+            "stargazers_count": 0,
+            "watchers_count": 0,
+            "watchers": 0,
+            "open_issues_count": 16,
+            "open_issues": 16,
+            "size": 30261,
+            "default_branch": "main",
+            "has_issues": true,
+            "has_projects": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "has_downloads": false,
+            "has_discussions": false,
+            "has_pull_requests": true,
+            "pushed_at": "2026-11-12T21:26:40Z",
+            "created_at": "2026-11-12T21:20:34Z",
+            "updated_at": "2026-11-12T21:21:31Z",
+            "allow_forking": true,
+            "web_commit_signoff_required": true,
+            "pull_request_creation_policy": "all",
+            "license": {
+              "key": "apache-2.0",
+              "name": "Apache License 2.0",
+              "url": "https://api.github.com/licenses/apache-2.0",
+              "spdx_id": "Apache-2.0",
+              "node_id": "MDc6TGljZW5zZTI="
+            },
+            "url": "https://api.github.com/repos/theycallmeswift/helm",
+            "html_url": "https://github.com/theycallmeswift/helm",
+            "archive_url": "https://api.github.com/repos/theycallmeswift/helm/{archive_format}{/ref}",
+            "assignees_url": "https://api.github.com/repos/theycallmeswift/helm/assignees{/user}",
+            "blobs_url": "https://api.github.com/repos/theycallmeswift/helm/git/blobs{/sha}",
+            "branches_url": "https://api.github.com/repos/theycallmeswift/helm/branches{/branch}",
+            "collaborators_url": "https://api.github.com/repos/theycallmeswift/helm/collaborators{/collaborator}",
+            "comments_url": "https://api.github.com/repos/theycallmeswift/helm/comments{/number}",
+            "commits_url": "https://api.github.com/repos/theycallmeswift/helm/commits{/sha}",
+            "compare_url": "https://api.github.com/repos/theycallmeswift/helm/compare/{base}...{head}",
+            "contents_url": "https://api.github.com/repos/theycallmeswift/helm/contents/{+path}",
+            "contributors_url": "https://api.github.com/repos/theycallmeswift/helm/contributors",
+            "deployments_url": "https://api.github.com/repos/theycallmeswift/helm/deployments",
+            "downloads_url": "https://api.github.com/repos/theycallmeswift/helm/downloads",
+            "events_url": "https://api.github.com/repos/theycallmeswift/helm/events",
+            "forks_url": "https://api.github.com/repos/theycallmeswift/helm/forks",
+            "git_commits_url": "https://api.github.com/repos/theycallmeswift/helm/git/commits{/sha}",
+            "git_refs_url": "https://api.github.com/repos/theycallmeswift/helm/git/refs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/theycallmeswift/helm/git/tags{/sha}",
+            "git_url": "git://github.com/theycallmeswift/helm.git",
+            "issue_comment_url": "https://api.github.com/repos/theycallmeswift/helm/issues/comments{/number}",
+            "issue_events_url": "https://api.github.com/repos/theycallmeswift/helm/issues/events{/number}",
+            "issues_url": "https://api.github.com/repos/theycallmeswift/helm/issues{/number}",
+            "keys_url": "https://api.github.com/repos/theycallmeswift/helm/keys{/key_id}",
+            "labels_url": "https://api.github.com/repos/theycallmeswift/helm/labels{/name}",
+            "languages_url": "https://api.github.com/repos/theycallmeswift/helm/languages",
+            "merges_url": "https://api.github.com/repos/theycallmeswift/helm/merges",
+            "milestones_url": "https://api.github.com/repos/theycallmeswift/helm/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/theycallmeswift/helm/notifications{?since,all,participating}",
+            "pulls_url": "https://api.github.com/repos/theycallmeswift/helm/pulls{/number}",
+            "releases_url": "https://api.github.com/repos/theycallmeswift/helm/releases{/id}",
+            "ssh_url": "git@github.com:theycallmeswift/helm.git",
+            "stargazers_url": "https://api.github.com/repos/theycallmeswift/helm/stargazers",
+            "statuses_url": "https://api.github.com/repos/theycallmeswift/helm/statuses/{sha}",
+            "subscribers_url": "https://api.github.com/repos/theycallmeswift/helm/subscribers",
+            "subscription_url": "https://api.github.com/repos/theycallmeswift/helm/subscription",
+            "tags_url": "https://api.github.com/repos/theycallmeswift/helm/tags",
+            "teams_url": "https://api.github.com/repos/theycallmeswift/helm/teams",
+            "trees_url": "https://api.github.com/repos/theycallmeswift/helm/git/trees{/sha}",
+            "clone_url": "https://github.com/theycallmeswift/helm.git",
+            "mirror_url": null,
+            "hooks_url": "https://api.github.com/repos/theycallmeswift/helm/hooks",
+            "svn_url": "https://github.com/theycallmeswift/helm"
+          },
+          "sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+          "user": {
+            "login": "theycallmeswift",
+            "id": 434373,
+            "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+            "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/theycallmeswift",
+            "html_url": "https://github.com/theycallmeswift",
+            "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+            "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+            "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+            "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+            "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+            "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        },
+        "base": {
+          "label": "theycallmeswift:main",
+          "ref": "main",
+          "repo": {
+            "id": 1455842922,
+            "node_id": "R_kgDOVsZmag",
+            "name": "helm",
+            "full_name": "theycallmeswift/helm",
+            "owner": {
+              "login": "theycallmeswift",
+              "id": 434373,
+              "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+              "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/theycallmeswift",
+              "html_url": "https://github.com/theycallmeswift",
+              "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+              "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+              "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+              "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+              "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+              "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+              "type": "User",
+              "user_view_type": "public",
+              "site_admin": false
+            },
+            "private": false,
+            "fork": true,
+            "archived": false,
+            "disabled": false,
+            "description": "The Kubernetes Package Manager",
+            "homepage": "https://helm.sh",
+            "language": null,
+            "visibility": "public",
+            "is_template": false,
+            "topics": [],
+            "forks_count": 0,
+            "forks": 0,
+            "stargazers_count": 0,
+            "watchers_count": 0,
+            "watchers": 0,
+            "open_issues_count": 16,
+            "open_issues": 16,
+            "size": 30261,
+            "default_branch": "main",
+            "has_issues": true,
+            "has_projects": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "has_downloads": false,
+            "has_discussions": false,
+            "has_pull_requests": true,
+            "pushed_at": "2026-11-12T21:26:40Z",
+            "created_at": "2026-11-12T21:20:34Z",
+            "updated_at": "2026-11-12T21:21:31Z",
+            "allow_forking": true,
+            "web_commit_signoff_required": true,
+            "pull_request_creation_policy": "all",
+            "license": {
+              "key": "apache-2.0",
+              "name": "Apache License 2.0",
+              "url": "https://api.github.com/licenses/apache-2.0",
+              "spdx_id": "Apache-2.0",
+              "node_id": "MDc6TGljZW5zZTI="
+            },
+            "url": "https://api.github.com/repos/theycallmeswift/helm",
+            "html_url": "https://github.com/theycallmeswift/helm",
+            "archive_url": "https://api.github.com/repos/theycallmeswift/helm/{archive_format}{/ref}",
+            "assignees_url": "https://api.github.com/repos/theycallmeswift/helm/assignees{/user}",
+            "blobs_url": "https://api.github.com/repos/theycallmeswift/helm/git/blobs{/sha}",
+            "branches_url": "https://api.github.com/repos/theycallmeswift/helm/branches{/branch}",
+            "collaborators_url": "https://api.github.com/repos/theycallmeswift/helm/collaborators{/collaborator}",
+            "comments_url": "https://api.github.com/repos/theycallmeswift/helm/comments{/number}",
+            "commits_url": "https://api.github.com/repos/theycallmeswift/helm/commits{/sha}",
+            "compare_url": "https://api.github.com/repos/theycallmeswift/helm/compare/{base}...{head}",
+            "contents_url": "https://api.github.com/repos/theycallmeswift/helm/contents/{+path}",
+            "contributors_url": "https://api.github.com/repos/theycallmeswift/helm/contributors",
+            "deployments_url": "https://api.github.com/repos/theycallmeswift/helm/deployments",
+            "downloads_url": "https://api.github.com/repos/theycallmeswift/helm/downloads",
+            "events_url": "https://api.github.com/repos/theycallmeswift/helm/events",
+            "forks_url": "https://api.github.com/repos/theycallmeswift/helm/forks",
+            "git_commits_url": "https://api.github.com/repos/theycallmeswift/helm/git/commits{/sha}",
+            "git_refs_url": "https://api.github.com/repos/theycallmeswift/helm/git/refs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/theycallmeswift/helm/git/tags{/sha}",
+            "git_url": "git://github.com/theycallmeswift/helm.git",
+            "issue_comment_url": "https://api.github.com/repos/theycallmeswift/helm/issues/comments{/number}",
+            "issue_events_url": "https://api.github.com/repos/theycallmeswift/helm/issues/events{/number}",
+            "issues_url": "https://api.github.com/repos/theycallmeswift/helm/issues{/number}",
+            "keys_url": "https://api.github.com/repos/theycallmeswift/helm/keys{/key_id}",
+            "labels_url": "https://api.github.com/repos/theycallmeswift/helm/labels{/name}",
+            "languages_url": "https://api.github.com/repos/theycallmeswift/helm/languages",
+            "merges_url": "https://api.github.com/repos/theycallmeswift/helm/merges",
+            "milestones_url": "https://api.github.com/repos/theycallmeswift/helm/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/theycallmeswift/helm/notifications{?since,all,participating}",
+            "pulls_url": "https://api.github.com/repos/theycallmeswift/helm/pulls{/number}",
+            "releases_url": "https://api.github.com/repos/theycallmeswift/helm/releases{/id}",
+            "ssh_url": "git@github.com:theycallmeswift/helm.git",
+            "stargazers_url": "https://api.github.com/repos/theycallmeswift/helm/stargazers",
+            "statuses_url": "https://api.github.com/repos/theycallmeswift/helm/statuses/{sha}",
+            "subscribers_url": "https://api.github.com/repos/theycallmeswift/helm/subscribers",
+            "subscription_url": "https://api.github.com/repos/theycallmeswift/helm/subscription",
+            "tags_url": "https://api.github.com/repos/theycallmeswift/helm/tags",
+            "teams_url": "https://api.github.com/repos/theycallmeswift/helm/teams",
+            "trees_url": "https://api.github.com/repos/theycallmeswift/helm/git/trees{/sha}",
+            "clone_url": "https://github.com/theycallmeswift/helm.git",
+            "mirror_url": null,
+            "hooks_url": "https://api.github.com/repos/theycallmeswift/helm/hooks",
+            "svn_url": "https://github.com/theycallmeswift/helm"
+          },
+          "sha": "7964586dca1b4dc5a2989306231f83b18356d76f",
+          "user": {
+            "login": "theycallmeswift",
+            "id": 434373,
+            "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+            "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/theycallmeswift",
+            "html_url": "https://github.com/theycallmeswift",
+            "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+            "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+            "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+            "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+            "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+            "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        },
+        "_links": {
+          "comments": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/issues/5/comments"
+          },
+          "commits": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/pulls/5/commits"
+          },
+          "statuses": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/statuses/99c7675cf676f4a4dc7e491f9270e521fbdd9782"
+          },
+          "html": {
+            "href": "https://github.com/theycallmeswift/helm/pull/5"
+          },
+          "issue": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/issues/5"
+          },
+          "review_comments": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/pulls/5/comments"
+          },
+          "review_comment": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/pulls/comments{/number}"
+          },
+          "self": {
+            "href": "https://api.github.com/repos/theycallmeswift/helm/pulls/5"
+          }
+        },
+        "author_association": "OWNER",
+        "auto_merge": null,
+        "draft": false,
+        "merged": false,
+        "mergeable": true,
+        "rebaseable": true,
+        "mergeable_state": "clean",
+        "merged_by": null,
+        "comments": 0,
+        "review_comments": 0,
+        "maintainer_can_modify": false,
+        "commits": 1,
+        "additions": 3,
+        "deletions": 1,
+        "changed_files": 1
+      }
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/issues/5/comments?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4783",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": []
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/pulls/5/comments?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4786",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": []
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/commits/99c7675cf676f4a4dc7e491f9270e521fbdd9782/status?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4784",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": {
+        "state": "pending",
+        "statuses": [],
+        "sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+        "total_count": 0,
+        "repository": {
+          "id": 1455842922,
+          "node_id": "R_kgDOVsZmag",
+          "name": "helm",
+          "full_name": "theycallmeswift/helm",
+          "private": false,
+          "owner": {
+            "login": "theycallmeswift",
+            "id": 434373,
+            "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+            "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/theycallmeswift",
+            "html_url": "https://github.com/theycallmeswift",
+            "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+            "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+            "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+            "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+            "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+            "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/theycallmeswift/helm",
+          "description": "The Kubernetes Package Manager",
+          "fork": true,
+          "url": "https://api.github.com/repos/theycallmeswift/helm",
+          "forks_url": "https://api.github.com/repos/theycallmeswift/helm/forks",
+          "keys_url": "https://api.github.com/repos/theycallmeswift/helm/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/theycallmeswift/helm/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/theycallmeswift/helm/teams",
+          "hooks_url": "https://api.github.com/repos/theycallmeswift/helm/hooks",
+          "issue_events_url": "https://api.github.com/repos/theycallmeswift/helm/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/theycallmeswift/helm/events",
+          "assignees_url": "https://api.github.com/repos/theycallmeswift/helm/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/theycallmeswift/helm/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/theycallmeswift/helm/tags",
+          "blobs_url": "https://api.github.com/repos/theycallmeswift/helm/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/theycallmeswift/helm/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/theycallmeswift/helm/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/theycallmeswift/helm/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/theycallmeswift/helm/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/theycallmeswift/helm/languages",
+          "stargazers_url": "https://api.github.com/repos/theycallmeswift/helm/stargazers",
+          "contributors_url": "https://api.github.com/repos/theycallmeswift/helm/contributors",
+          "subscribers_url": "https://api.github.com/repos/theycallmeswift/helm/subscribers",
+          "subscription_url": "https://api.github.com/repos/theycallmeswift/helm/subscription",
+          "commits_url": "https://api.github.com/repos/theycallmeswift/helm/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/theycallmeswift/helm/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/theycallmeswift/helm/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/theycallmeswift/helm/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/theycallmeswift/helm/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/theycallmeswift/helm/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/theycallmeswift/helm/merges",
+          "archive_url": "https://api.github.com/repos/theycallmeswift/helm/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/theycallmeswift/helm/downloads",
+          "issues_url": "https://api.github.com/repos/theycallmeswift/helm/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/theycallmeswift/helm/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/theycallmeswift/helm/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/theycallmeswift/helm/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/theycallmeswift/helm/labels{/name}",
+          "releases_url": "https://api.github.com/repos/theycallmeswift/helm/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/theycallmeswift/helm/deployments"
+        },
+        "commit_url": "https://api.github.com/repos/theycallmeswift/helm/commits/99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+        "url": "https://api.github.com/repos/theycallmeswift/helm/commits/99c7675cf676f4a4dc7e491f9270e521fbdd9782/status"
+      }
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/pulls/5/commits?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4785",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": [
+        {
+          "sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+          "node_id": "C_kwDOVsZmatoAKDk5Yzc2NzVjZjY3NmY0YTRkYzdlNDkxZjkyNzBlNTIxZmJkZDk3ODI",
+          "commit": {
+            "author": {
+              "name": "Swift",
+              "email": "theycallmeswift@gmail.com",
+              "date": "2026-11-12T21:23:44Z"
+            },
+            "committer": {
+              "name": "Swift",
+              "email": "theycallmeswift@gmail.com",
+              "date": "2026-11-12T21:23:44Z"
+            },
+            "message": "feat(lint): add --no-summary flag\n\nSigned-off-by: Swift <theycallmeswift@gmail.com>",
+            "tree": {
+              "sha": "79dc449ab355c57fc5b0ce70b4dd3a184f3c8879",
+              "url": "https://api.github.com/repos/theycallmeswift/helm/git/trees/79dc449ab355c57fc5b0ce70b4dd3a184f3c8879"
+            },
+            "url": "https://api.github.com/repos/theycallmeswift/helm/git/commits/99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+            "comment_count": 0,
+            "verification": {
+              "verified": false,
+              "reason": "unsigned",
+              "signature": null,
+              "payload": null,
+              "verified_at": null
+            }
+          },
+          "url": "https://api.github.com/repos/theycallmeswift/helm/commits/99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+          "html_url": "https://github.com/theycallmeswift/helm/commit/99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+          "comments_url": "https://api.github.com/repos/theycallmeswift/helm/commits/99c7675cf676f4a4dc7e491f9270e521fbdd9782/comments",
+          "author": {
+            "login": "theycallmeswift",
+            "id": 434373,
+            "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+            "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/theycallmeswift",
+            "html_url": "https://github.com/theycallmeswift",
+            "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+            "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+            "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+            "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+            "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+            "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "committer": {
+            "login": "theycallmeswift",
+            "id": 434373,
+            "node_id": "MDQ6VXNlcjQzNDM3Mw==",
+            "avatar_url": "https://avatars.githubusercontent.com/u/434373?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/theycallmeswift",
+            "html_url": "https://github.com/theycallmeswift",
+            "followers_url": "https://api.github.com/users/theycallmeswift/followers",
+            "following_url": "https://api.github.com/users/theycallmeswift/following{/other_user}",
+            "gists_url": "https://api.github.com/users/theycallmeswift/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/theycallmeswift/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/theycallmeswift/subscriptions",
+            "organizations_url": "https://api.github.com/users/theycallmeswift/orgs",
+            "repos_url": "https://api.github.com/users/theycallmeswift/repos",
+            "events_url": "https://api.github.com/users/theycallmeswift/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/theycallmeswift/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "parents": [
+            {
+              "sha": "7964586dca1b4dc5a2989306231f83b18356d76f",
+              "url": "https://api.github.com/repos/theycallmeswift/helm/commits/7964586dca1b4dc5a2989306231f83b18356d76f",
+              "html_url": "https://github.com/theycallmeswift/helm/commit/7964586dca1b4dc5a2989306231f83b18356d76f"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/pulls/5/reviews?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4787",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": []
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/pulls/5/files?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4789",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": [
+        {
+          "sha": "b88ea3a139d6590be6f06b0421a69eb1e1002e20",
+          "filename": "pkg/cmd/lint.go",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 1,
+          "changes": 4,
+          "blob_url": "https://github.com/theycallmeswift/helm/blob/99c7675cf676f4a4dc7e491f9270e521fbdd9782/pkg%2Fcmd%2Flint.go",
+          "raw_url": "https://github.com/theycallmeswift/helm/raw/99c7675cf676f4a4dc7e491f9270e521fbdd9782/pkg%2Fcmd%2Flint.go",
+          "contents_url": "https://api.github.com/repos/theycallmeswift/helm/contents/pkg%2Fcmd%2Flint.go?ref=99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+          "patch": "@@ -47,6 +47,7 @@ func newLintCmd(out io.Writer) *cobra.Command {\n \tclient := action.NewLint()\n \tvalueOpts := &values.Options{}\n \tvar kubeVersion string\n+\tvar noSummary bool\n \n \tcmd := &cobra.Command{\n \t\tUse:   \"lint PATH\",\n@@ -136,7 +137,7 @@ func newLintCmd(out io.Writer) *cobra.Command {\n \t\t\tif failed > 0 {\n \t\t\t\treturn errors.New(summary)\n \t\t\t}\n-\t\t\tif !client.Quiet || errorsOrWarnings > 0 {\n+\t\t\tif !noSummary && (!client.Quiet || errorsOrWarnings > 0) {\n \t\t\t\tfmt.Fprintln(out, summary)\n \t\t\t}\n \t\t\treturn nil\n@@ -148,6 +149,7 @@ func newLintCmd(out io.Writer) *cobra.Command {\n \tf.BoolVar(&client.WithSubcharts, \"with-subcharts\", false, \"lint dependent charts\")\n \tf.BoolVar(&client.Quiet, \"quiet\", false, \"print only warnings and errors\")\n \tf.BoolVar(&client.SkipSchemaValidation, \"skip-schema-validation\", false, \"if set, disables JSON schema validation\")\n+\tf.BoolVar(&noSummary, \"no-summary\", false, \"do not print the final summary line\")\n \tf.StringVar(&kubeVersion, \"kube-version\", \"\", \"Kubernetes version used for capabilities and deprecation checks\")\n \taddValueOptionsFlags(f, valueOpts)\n "
+        }
+      ]
+    }
+  ],
+  "GET /repos/theycallmeswift/helm/commits/99c7675cf676f4a4dc7e491f9270e521fbdd9782/check-runs?per_page=100": [
+    {
+      "status": 200,
+      "headers": {
+        "x-ratelimit-remaining": "4788",
+        "x-ratelimit-reset": "1794523230"
+      },
+      "body": {
+        "total_count": 6,
+        "check_runs": [
+          {
+            "id": 131510467442,
+            "name": "CodeQL",
+            "node_id": "CR_kwDOVsZmas8AAAAenqJ7cg",
+            "head_sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+            "external_id": "",
+            "url": "https://api.github.com/repos/theycallmeswift/helm/check-runs/131510467442",
+            "html_url": "https://github.com/theycallmeswift/helm/runs/131510467442",
+            "details_url": "https://github.com/theycallmeswift/helm/runs/131510467442",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-12T21:37:29Z",
+            "completed_at": "2026-11-12T21:37:32Z",
+            "output": {
+              "title": "No new alerts in code changed by this pull request",
+              "summary": "[View all branch alerts](/theycallmeswift/helm/security/code-scanning?query=pr%3A5+tool%3ACodeQL+is%3Aopen).",
+              "text": null,
+              "annotations_count": 0,
+              "annotations_url": "https://api.github.com/repos/theycallmeswift/helm/check-runs/131510467442/annotations"
+            },
+            "check_suite": {
+              "id": 117289655791
+            },
+            "app": {
+              "id": 57789,
+              "client_id": "Iv1.4643383dd86f00de",
+              "slug": "github-advanced-security",
+              "node_id": "MDM6QXBwNTc3ODk=",
+              "owner": {
+                "login": "github",
+                "id": 9919,
+                "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+                "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/github",
+                "html_url": "https://github.com/github",
+                "followers_url": "https://api.github.com/users/github/followers",
+                "following_url": "https://api.github.com/users/github/following{/other_user}",
+                "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+                "organizations_url": "https://api.github.com/users/github/orgs",
+                "repos_url": "https://api.github.com/users/github/repos",
+                "events_url": "https://api.github.com/users/github/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/github/received_events",
+                "type": "Organization",
+                "user_view_type": "public",
+                "site_admin": false
+              },
+              "name": "GitHub Advanced Security",
+              "description": "",
+              "external_url": "https://github.com/features/security",
+              "html_url": "https://github.com/apps/github-advanced-security",
+              "created_at": "2020-03-17T21:25:09Z",
+              "updated_at": "2026-09-14T08:13:48Z",
+              "permissions": {
+                "actions": "read",
+                "checks": "write",
+                "contents": "read",
+                "copilot_requests": "write",
+                "metadata": "read",
+                "pull_requests": "read"
+              },
+              "events": []
+            },
+            "pull_requests": [
+              {
+                "url": "https://api.github.com/repos/theycallmeswift/helm/pulls/5",
+                "id": 5285453436,
+                "number": 5,
+                "head": {
+                  "ref": "synthetic/lint-no-summary-flag",
+                  "sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+                  "repo": {
+                    "id": 1455842922,
+                    "url": "https://api.github.com/repos/theycallmeswift/helm",
+                    "name": "helm"
+                  }
+                },
+                "base": {
+                  "ref": "main",
+                  "sha": "7964586dca1b4dc5a2989306231f83b18356d76f",
+                  "repo": {
+                    "id": 1455842922,
+                    "url": "https://api.github.com/repos/theycallmeswift/helm",
+                    "name": "helm"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": 131508330684,
+            "name": "label",
+            "node_id": "CR_kwDOVsZmas8AAAAenoHgvA",
+            "head_sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+            "external_id": "92edf4bb-3d69-5fbc-9d15-b5d9ec65e1c5",
+            "url": "https://api.github.com/repos/theycallmeswift/helm/check-runs/131508330684",
+            "html_url": "https://github.com/theycallmeswift/helm/actions/runs/43311459859/job/131508330684",
+            "details_url": "https://github.com/theycallmeswift/helm/actions/runs/43311459859/job/131508330684",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-12T21:33:49Z",
+            "completed_at": "2026-11-12T21:33:54Z",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 1,
+              "annotations_url": "https://api.github.com/repos/theycallmeswift/helm/check-runs/131508330684/annotations"
+            },
+            "check_suite": {
+              "id": 117287982905
+            },
+            "app": {
+              "id": 15368,
+              "client_id": "Iv1.05c79e9ad1f6bdfa",
+              "slug": "github-actions",
+              "node_id": "MDM6QXBwMTUzNjg=",
+              "owner": {
+                "login": "github",
+                "id": 9919,
+                "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+                "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/github",
+                "html_url": "https://github.com/github",
+                "followers_url": "https://api.github.com/users/github/followers",
+                "following_url": "https://api.github.com/users/github/following{/other_user}",
+                "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+                "organizations_url": "https://api.github.com/users/github/orgs",
+                "repos_url": "https://api.github.com/users/github/repos",
+                "events_url": "https://api.github.com/users/github/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/github/received_events",
+                "type": "Organization",
+                "user_view_type": "public",
+                "site_admin": false
+              },
+              "name": "GitHub Actions",
+              "description": "Automate your workflow from idea to production",
+              "external_url": "https://help.github.com/en/actions",
+              "html_url": "https://github.com/apps/github-actions",
+              "created_at": "2018-07-30T09:30:17Z",
+              "updated_at": "2026-06-18T16:17:48Z",
+              "permissions": {
+                "actions": "write",
+                "administration": "read",
+                "artifact_metadata": "write",
+                "attestations": "write",
+                "checks": "write",
+                "code_quality": "write",
+                "contents": "write",
+                "copilot_requests": "write",
+                "deployments": "write",
+                "discussions": "write",
+                "drives": "write",
+                "issues": "write",
+                "merge_queues": "write",
+                "metadata": "read",
+                "models": "read",
+                "packages": "write",
+                "pages": "write",
+                "pull_requests": "write",
+                "repository_hooks": "write",
+                "repository_projects": "write",
+                "security_events": "write",
+                "statuses": "write",
+                "vulnerability_alerts": "read"
+              },
+              "events": [
+                "branch_protection_rule",
+                "check_run",
+                "check_suite",
+                "create",
+                "delete",
+                "deployment",
+                "deployment_status",
+                "discussion",
+                "discussion_comment",
+                "fork",
+                "gollum",
+                "issues",
+                "issue_comment",
+                "label",
+                "merge_group",
+                "milestone",
+                "page_build",
+                "public",
+                "pull_request",
+                "pull_request_review",
+                "pull_request_review_comment",
+                "push",
+                "registry_package",
+                "release",
+                "repository",
+                "repository_dispatch",
+                "status",
+                "watch",
+                "workflow_dispatch",
+                "workflow_run"
+              ]
+            },
+            "pull_requests": [
+              {
+                "url": "https://api.github.com/repos/theycallmeswift/helm/pulls/5",
+                "id": 5285453436,
+                "number": 5,
+                "head": {
+                  "ref": "synthetic/lint-no-summary-flag",
+                  "sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+                  "repo": {
+                    "id": 1455842922,
+                    "url": "https://api.github.com/repos/theycallmeswift/helm",
+                    "name": "helm"
+                  }
+                },
+                "base": {
+                  "ref": "main",
+                  "sha": "7964586dca1b4dc5a2989306231f83b18356d76f",
+                  "repo": {
+                    "id": 1455842922,
+                    "url": "https://api.github.com/repos/theycallmeswift/helm",
+                    "name": "helm"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": 131508319760,
+            "name": "golangci-lint",
+            "node_id": "CR_kwDOVsZmas8AAAAenoG2EA",
+            "head_sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+            "external_id": "c8699ff9-4ba1-51df-8eaf-91601fae818e",
+            "url": "https://api.github.com/repos/theycallmeswift/helm/check-runs/131508319760",
+            "html_url": "https://github.com/theycallmeswift/helm/actions/runs/43311458936/job/131508319760",
+            "details_url": "https://github.com/theycallmeswift/helm/actions/runs/43311458936/job/131508319760",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-12T21:33:48Z",
+            "completed_at": "2026-11-12T21:36:03Z",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 1,
+              "annotations_url": "https://api.github.com/repos/theycallmeswift/helm/check-runs/131508319760/annotations"
+            },
+            "check_suite": {
+              "id": 117287980349
+            },
+            "app": {
+              "id": 15368,
+              "client_id": "Iv1.05c79e9ad1f6bdfa",
+              "slug": "github-actions",
+              "node_id": "MDM6QXBwMTUzNjg=",
+              "owner": {
+                "login": "github",
+                "id": 9919,
+                "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+                "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/github",
+                "html_url": "https://github.com/github",
+                "followers_url": "https://api.github.com/users/github/followers",
+                "following_url": "https://api.github.com/users/github/following{/other_user}",
+                "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+                "organizations_url": "https://api.github.com/users/github/orgs",
+                "repos_url": "https://api.github.com/users/github/repos",
+                "events_url": "https://api.github.com/users/github/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/github/received_events",
+                "type": "Organization",
+                "user_view_type": "public",
+                "site_admin": false
+              },
+              "name": "GitHub Actions",
+              "description": "Automate your workflow from idea to production",
+              "external_url": "https://help.github.com/en/actions",
+              "html_url": "https://github.com/apps/github-actions",
+              "created_at": "2018-07-30T09:30:17Z",
+              "updated_at": "2026-06-18T16:17:48Z",
+              "permissions": {
+                "actions": "write",
+                "administration": "read",
+                "artifact_metadata": "write",
+                "attestations": "write",
+                "checks": "write",
+                "code_quality": "write",
+                "contents": "write",
+                "copilot_requests": "write",
+                "deployments": "write",
+                "discussions": "write",
+                "drives": "write",
+                "issues": "write",
+                "merge_queues": "write",
+                "metadata": "read",
+                "models": "read",
+                "packages": "write",
+                "pages": "write",
+                "pull_requests": "write",
+                "repository_hooks": "write",
+                "repository_projects": "write",
+                "security_events": "write",
+                "statuses": "write",
+                "vulnerability_alerts": "read"
+              },
+              "events": [
+                "branch_protection_rule",
+                "check_run",
+                "check_suite",
+                "create",
+                "delete",
+                "deployment",
+                "deployment_status",
+                "discussion",
+                "discussion_comment",
+                "fork",
+                "gollum",
+                "issues",
+                "issue_comment",
+                "label",
+                "merge_group",
+                "milestone",
+                "page_build",
+                "public",
+                "pull_request",
+                "pull_request_review",
+                "pull_request_review_comment",
+                "push",
+                "registry_package",
+                "release",
+                "repository",
+                "repository_dispatch",
+                "status",
+                "watch",
+                "workflow_dispatch",
+                "workflow_run"
+              ]
+            },
+            "pull_requests": [
+              {
+                "url": "https://api.github.com/repos/theycallmeswift/helm/pulls/5",
+                "id": 5285453436,
+                "number": 5,
+                "head": {
+                  "ref": "synthetic/lint-no-summary-flag",
+                  "sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+                  "repo": {
+                    "id": 1455842922,
+                    "url": "https://api.github.com/repos/theycallmeswift/helm",
+                    "name": "helm"
+                  }
+                },
+                "base": {
+                  "ref": "main",
+                  "sha": "7964586dca1b4dc5a2989306231f83b18356d76f",
+                  "repo": {
+                    "id": 1455842922,
+                    "url": "https://api.github.com/repos/theycallmeswift/helm",
+                    "name": "helm"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": 131508319603,
+            "name": "Analyze (go)",
+            "node_id": "CR_kwDOVsZmas8AAAAenoG1cw",
+            "head_sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+            "external_id": "a1d2b055-cbbd-57d7-8def-28b34c75e039",
+            "url": "https://api.github.com/repos/theycallmeswift/helm/check-runs/131508319603",
+            "html_url": "https://github.com/theycallmeswift/helm/actions/runs/43311459047/job/131508319603",
+            "details_url": "https://github.com/theycallmeswift/helm/actions/runs/43311459047/job/131508319603",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-12T21:33:48Z",
+            "completed_at": "2026-11-12T21:37:39Z",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 1,
+              "annotations_url": "https://api.github.com/repos/theycallmeswift/helm/check-runs/131508319603/annotations"
+            },
+            "check_suite": {
+              "id": 117287980563
+            },
+            "app": {
+              "id": 15368,
+              "client_id": "Iv1.05c79e9ad1f6bdfa",
+              "slug": "github-actions",
+              "node_id": "MDM6QXBwMTUzNjg=",
+              "owner": {
+                "login": "github",
+                "id": 9919,
+                "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+                "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/github",
+                "html_url": "https://github.com/github",
+                "followers_url": "https://api.github.com/users/github/followers",
+                "following_url": "https://api.github.com/users/github/following{/other_user}",
+                "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+                "organizations_url": "https://api.github.com/users/github/orgs",
+                "repos_url": "https://api.github.com/users/github/repos",
+                "events_url": "https://api.github.com/users/github/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/github/received_events",
+                "type": "Organization",
+                "user_view_type": "public",
+                "site_admin": false
+              },
+              "name": "GitHub Actions",
+              "description": "Automate your workflow from idea to production",
+              "external_url": "https://help.github.com/en/actions",
+              "html_url": "https://github.com/apps/github-actions",
+              "created_at": "2018-07-30T09:30:17Z",
+              "updated_at": "2026-06-18T16:17:48Z",
+              "permissions": {
+                "actions": "write",
+                "administration": "read",
+                "artifact_metadata": "write",
+                "attestations": "write",
+                "checks": "write",
+                "code_quality": "write",
+                "contents": "write",
+                "copilot_requests": "write",
+                "deployments": "write",
+                "discussions": "write",
+                "drives": "write",
+                "issues": "write",
+                "merge_queues": "write",
+                "metadata": "read",
+                "models": "read",
+                "packages": "write",
+                "pages": "write",
+                "pull_requests": "write",
+                "repository_hooks": "write",
+                "repository_projects": "write",
+                "security_events": "write",
+                "statuses": "write",
+                "vulnerability_alerts": "read"
+              },
+              "events": [
+                "branch_protection_rule",
+                "check_run",
+                "check_suite",
+                "create",
+                "delete",
+                "deployment",
+                "deployment_status",
+                "discussion",
+                "discussion_comment",
+                "fork",
+                "gollum",
+                "issues",
+                "issue_comment",
+                "label",
+                "merge_group",
+                "milestone",
+                "page_build",
+                "public",
+                "pull_request",
+                "pull_request_review",
+                "pull_request_review_comment",
+                "push",
+                "registry_package",
+                "release",
+                "repository",
+                "repository_dispatch",
+                "status",
+                "watch",
+                "workflow_dispatch",
+                "workflow_run"
+              ]
+            },
+            "pull_requests": [
+              {
+                "url": "https://api.github.com/repos/theycallmeswift/helm/pulls/5",
+                "id": 5285453436,
+                "number": 5,
+                "head": {
+                  "ref": "synthetic/lint-no-summary-flag",
+                  "sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+                  "repo": {
+                    "id": 1455842922,
+                    "url": "https://api.github.com/repos/theycallmeswift/helm",
+                    "name": "helm"
+                  }
+                },
+                "base": {
+                  "ref": "main",
+                  "sha": "7964586dca1b4dc5a2989306231f83b18356d76f",
+                  "repo": {
+                    "id": 1455842922,
+                    "url": "https://api.github.com/repos/theycallmeswift/helm",
+                    "name": "helm"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": 131508319266,
+            "name": "build",
+            "node_id": "CR_kwDOVsZmas8AAAAenoG0Ig",
+            "head_sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+            "external_id": "e012c209-5eca-5fd8-95d1-24b36e90e802",
+            "url": "https://api.github.com/repos/theycallmeswift/helm/check-runs/131508319266",
+            "html_url": "https://github.com/theycallmeswift/helm/actions/runs/43311458920/job/131508319266",
+            "details_url": "https://github.com/theycallmeswift/helm/actions/runs/43311458920/job/131508319266",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-12T21:33:47Z",
+            "completed_at": "2026-11-12T21:41:32Z",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 1,
+              "annotations_url": "https://api.github.com/repos/theycallmeswift/helm/check-runs/131508319266/annotations"
+            },
+            "check_suite": {
+              "id": 117287980300
+            },
+            "app": {
+              "id": 15368,
+              "client_id": "Iv1.05c79e9ad1f6bdfa",
+              "slug": "github-actions",
+              "node_id": "MDM6QXBwMTUzNjg=",
+              "owner": {
+                "login": "github",
+                "id": 9919,
+                "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+                "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/github",
+                "html_url": "https://github.com/github",
+                "followers_url": "https://api.github.com/users/github/followers",
+                "following_url": "https://api.github.com/users/github/following{/other_user}",
+                "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+                "organizations_url": "https://api.github.com/users/github/orgs",
+                "repos_url": "https://api.github.com/users/github/repos",
+                "events_url": "https://api.github.com/users/github/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/github/received_events",
+                "type": "Organization",
+                "user_view_type": "public",
+                "site_admin": false
+              },
+              "name": "GitHub Actions",
+              "description": "Automate your workflow from idea to production",
+              "external_url": "https://help.github.com/en/actions",
+              "html_url": "https://github.com/apps/github-actions",
+              "created_at": "2018-07-30T09:30:17Z",
+              "updated_at": "2026-06-18T16:17:48Z",
+              "permissions": {
+                "actions": "write",
+                "administration": "read",
+                "artifact_metadata": "write",
+                "attestations": "write",
+                "checks": "write",
+                "code_quality": "write",
+                "contents": "write",
+                "copilot_requests": "write",
+                "deployments": "write",
+                "discussions": "write",
+                "drives": "write",
+                "issues": "write",
+                "merge_queues": "write",
+                "metadata": "read",
+                "models": "read",
+                "packages": "write",
+                "pages": "write",
+                "pull_requests": "write",
+                "repository_hooks": "write",
+                "repository_projects": "write",
+                "security_events": "write",
+                "statuses": "write",
+                "vulnerability_alerts": "read"
+              },
+              "events": [
+                "branch_protection_rule",
+                "check_run",
+                "check_suite",
+                "create",
+                "delete",
+                "deployment",
+                "deployment_status",
+                "discussion",
+                "discussion_comment",
+                "fork",
+                "gollum",
+                "issues",
+                "issue_comment",
+                "label",
+                "merge_group",
+                "milestone",
+                "page_build",
+                "public",
+                "pull_request",
+                "pull_request_review",
+                "pull_request_review_comment",
+                "push",
+                "registry_package",
+                "release",
+                "repository",
+                "repository_dispatch",
+                "status",
+                "watch",
+                "workflow_dispatch",
+                "workflow_run"
+              ]
+            },
+            "pull_requests": [
+              {
+                "url": "https://api.github.com/repos/theycallmeswift/helm/pulls/5",
+                "id": 5285453436,
+                "number": 5,
+                "head": {
+                  "ref": "synthetic/lint-no-summary-flag",
+                  "sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+                  "repo": {
+                    "id": 1455842922,
+                    "url": "https://api.github.com/repos/theycallmeswift/helm",
+                    "name": "helm"
+                  }
+                },
+                "base": {
+                  "ref": "main",
+                  "sha": "7964586dca1b4dc5a2989306231f83b18356d76f",
+                  "repo": {
+                    "id": 1455842922,
+                    "url": "https://api.github.com/repos/theycallmeswift/helm",
+                    "name": "helm"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": 131508318531,
+            "name": "local-registry",
+            "node_id": "CR_kwDOVsZmas8AAAAenoGxQw",
+            "head_sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+            "external_id": "f066752e-1f20-51b4-bdc9-f38ebc3ee7ee",
+            "url": "https://api.github.com/repos/theycallmeswift/helm/check-runs/131508318531",
+            "html_url": "https://github.com/theycallmeswift/helm/actions/runs/43311458703/job/131508318531",
+            "details_url": "https://github.com/theycallmeswift/helm/actions/runs/43311458703/job/131508318531",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-12T21:33:47Z",
+            "completed_at": "2026-11-12T21:36:38Z",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 1,
+              "annotations_url": "https://api.github.com/repos/theycallmeswift/helm/check-runs/131508318531/annotations"
+            },
+            "check_suite": {
+              "id": 117287979770
+            },
+            "app": {
+              "id": 15368,
+              "client_id": "Iv1.05c79e9ad1f6bdfa",
+              "slug": "github-actions",
+              "node_id": "MDM6QXBwMTUzNjg=",
+              "owner": {
+                "login": "github",
+                "id": 9919,
+                "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+                "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/github",
+                "html_url": "https://github.com/github",
+                "followers_url": "https://api.github.com/users/github/followers",
+                "following_url": "https://api.github.com/users/github/following{/other_user}",
+                "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+                "organizations_url": "https://api.github.com/users/github/orgs",
+                "repos_url": "https://api.github.com/users/github/repos",
+                "events_url": "https://api.github.com/users/github/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/github/received_events",
+                "type": "Organization",
+                "user_view_type": "public",
+                "site_admin": false
+              },
+              "name": "GitHub Actions",
+              "description": "Automate your workflow from idea to production",
+              "external_url": "https://help.github.com/en/actions",
+              "html_url": "https://github.com/apps/github-actions",
+              "created_at": "2018-07-30T09:30:17Z",
+              "updated_at": "2026-06-18T16:17:48Z",
+              "permissions": {
+                "actions": "write",
+                "administration": "read",
+                "artifact_metadata": "write",
+                "attestations": "write",
+                "checks": "write",
+                "code_quality": "write",
+                "contents": "write",
+                "copilot_requests": "write",
+                "deployments": "write",
+                "discussions": "write",
+                "drives": "write",
+                "issues": "write",
+                "merge_queues": "write",
+                "metadata": "read",
+                "models": "read",
+                "packages": "write",
+                "pages": "write",
+                "pull_requests": "write",
+                "repository_hooks": "write",
+                "repository_projects": "write",
+                "security_events": "write",
+                "statuses": "write",
+                "vulnerability_alerts": "read"
+              },
+              "events": [
+                "branch_protection_rule",
+                "check_run",
+                "check_suite",
+                "create",
+                "delete",
+                "deployment",
+                "deployment_status",
+                "discussion",
+                "discussion_comment",
+                "fork",
+                "gollum",
+                "issues",
+                "issue_comment",
+                "label",
+                "merge_group",
+                "milestone",
+                "page_build",
+                "public",
+                "pull_request",
+                "pull_request_review",
+                "pull_request_review_comment",
+                "push",
+                "registry_package",
+                "release",
+                "repository",
+                "repository_dispatch",
+                "status",
+                "watch",
+                "workflow_dispatch",
+                "workflow_run"
+              ]
+            },
+            "pull_requests": [
+              {
+                "url": "https://api.github.com/repos/theycallmeswift/helm/pulls/5",
+                "id": 5285453436,
+                "number": 5,
+                "head": {
+                  "ref": "synthetic/lint-no-summary-flag",
+                  "sha": "99c7675cf676f4a4dc7e491f9270e521fbdd9782",
+                  "repo": {
+                    "id": 1455842922,
+                    "url": "https://api.github.com/repos/theycallmeswift/helm",
+                    "name": "helm"
+                  }
+                },
+                "base": {
+                  "ref": "main",
+                  "sha": "7964586dca1b4dc5a2989306231f83b18356d76f",
+                  "repo": {
+                    "id": 1455842922,
+                    "url": "https://api.github.com/repos/theycallmeswift/helm",
+                    "name": "helm"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
