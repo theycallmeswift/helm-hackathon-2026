@@ -53,9 +53,9 @@ test('queue matches duplicates from the open PR listing without searching', asyn
   const sections = await forkQueue();
 
   const duplicates = sections.find((section) => section.bucket === 'duplicate')?.entries ?? [];
-  expect(duplicates.map((entry) => [entry.snapshot.number, entry.reason])).toEqual([
-    [14, 'duplicates earlier #13'],
-    [16, 'duplicates earlier #15'],
+  expect(duplicates.map((entry) => [entry.snapshot.number, entry.reasons])).toEqual([
+    [14, [{ kind: 'duplicate', text: 'duplicates earlier #13' }]],
+    [16, [{ kind: 'duplicate', text: 'duplicates earlier #15' }]],
   ]);
   expect(replay?.requests.filter((request) => request.includes('/search/'))).toEqual([]);
 });
