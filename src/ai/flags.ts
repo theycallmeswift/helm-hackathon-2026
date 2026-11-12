@@ -69,7 +69,6 @@ async function requestAiFlags(
     },
     // Route only to providers that honor the strict schema.
     provider: { require_parameters: true },
-    temperature: 0,
   };
 
   let response: Response;
