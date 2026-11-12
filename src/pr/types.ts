@@ -79,7 +79,11 @@ export interface PrFile {
   patch?: string;
 }
 
-/** A submitted review's verdict. Pending reviews are invisible to others and never appear. */
+/**
+ * A submitted review's verdict. The fetcher lowercases GitHub's `APPROVED`,
+ * `CHANGES_REQUESTED`, `COMMENTED`, and `DISMISSED`. Pending reviews are
+ * invisible to others and never appear.
+ */
 export type ReviewState = 'approved' | 'changes_requested' | 'commented' | 'dismissed';
 
 /** One submitted review. */
@@ -128,8 +132,11 @@ export interface CiCheck {
 }
 
 /**
- * The head commit's overall CI state: `failure` when any check failed,
- * `pending` when any is still running, `none` when there are no checks.
+ * The head commit's overall CI state, decided in this order: `failure` when
+ * any check's conclusion is `failure`, `timed_out`, or `cancelled`; else
+ * `pending` when any is `pending`, `action_required`, or `stale`; else
+ * `success`, with `neutral` and `skipped` counting as success; `none` when
+ * there are no checks.
  */
 export type CiState = 'success' | 'failure' | 'pending' | 'none';
 
@@ -168,6 +175,8 @@ export interface PrSnapshot {
   headSha: string;
   /** Label names. */
   labels: string[];
+  /** Issue numbers the title or body references, through closing keywords or `#N`. */
+  linkedIssues: number[];
   mergeableState: MergeableState;
   /** Oldest first. */
   commits: PrCommit[];
@@ -220,7 +229,10 @@ export type Confidence = 'low' | 'medium' | 'high';
 /** A yes-or-no judgment with room for doubt. */
 export type Likelihood = 'yes' | 'possible' | 'no';
 
-/** Where in the diff an AI flag is grounded. The file must be one the pull request changes. */
+/**
+ * Where in the diff an AI flag is grounded. The file must be one the pull
+ * request changes, and at least one of `hunk` or `quote` is present.
+ */
 export interface AiEvidence {
   /** Repository-relative path of a changed file. */
   file: string;

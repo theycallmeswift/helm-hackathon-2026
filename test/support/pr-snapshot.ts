@@ -109,6 +109,7 @@ export function makePrSnapshot(overrides: Partial<PrSnapshot> = {}): PrSnapshot 
     baseRef: 'main',
     headSha: '1111111111111111111111111111111111111111',
     labels: [],
+    linkedIssues: [10],
     mergeableState: 'clean',
     commits: [makeCommit()],
     files: [
