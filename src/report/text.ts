@@ -59,7 +59,7 @@ function aiLines(ai: AiOutcome): string[] {
  * Collapses line breaks and strips other control characters, so one field can
  * never spill into a line of its own or send escape sequences to the terminal.
  */
-function flatten(value: string): string {
+export function flatten(value: string): string {
   return value
     .replace(/\s*[\r\n]+\s*/g, ' ')
     .replaceAll('\t', ' ')

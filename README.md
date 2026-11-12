@@ -10,8 +10,8 @@ whether a change is breaking and whether it needs a HIP. `helm-triage` does the
 mechanical checks, drafts the judgment calls with evidence, and leaves every
 decision to a maintainer.
 
-Status: MVP. `helm-triage pr` and the GitHub Action work; `queue` is not
-implemented yet.
+Status: MVP. `helm-triage pr`, `helm-triage queue`, and the GitHub Action
+work.
 
 ## What it does
 
@@ -44,9 +44,9 @@ theycallmeswift/helm#14 urlutil: keep trailing slash when joining URLs (ff038f8)
 - **GitHub Action:** runs `helm-triage pr <n> --format md` on each pull request
   and keeps one up-to-date readiness comment. See
   [docs/github-action.md](docs/github-action.md).
-- **Queue (stretch goal):** `helm-triage queue` sorts every open PR into a
-  bucket by who must act next: ready for review, needs 2nd approval, needs
-  author, duplicate, stale, or draft.
+- **Queue:** `helm-triage queue` sorts every open PR into a bucket by who
+  must act next: ready for review, needs 2nd approval, needs author,
+  duplicate, stale, or draft. See [docs/queue.md](docs/queue.md).
 
 It never posts to `helm/helm`, and it never labels, closes, or merges anything.
 
@@ -76,6 +76,7 @@ GITHUB_TOKEN=$(gh auth token) node src/index.ts pr 14 --repo theycallmeswift/hel
   PR backlog research, candidate projects, and why this one.
 - [docs/checks.md](docs/checks.md): the deterministic readiness checks.
 - [docs/ai-flags.md](docs/ai-flags.md): the advisory AI flags.
+- [docs/queue.md](docs/queue.md): the open pull request queue and its buckets.
 - [docs/github-action.md](docs/github-action.md): running the readiness
   comment Action.
 - [docs/style/](docs/style/): how code, tests, and docs are written.
