@@ -1,14 +1,16 @@
 /**
  * Renders the queue as one self-contained HTML page for the public
- * dashboard: inline CSS, no JavaScript, no external assets. Pull request
- * text is untrusted, so every value is escaped, and links are built only from
- * the repository and pull request number.
+ * dashboard, in Helm's brand colors: inline CSS and an inline logo, no
+ * JavaScript, no external assets. Pull request text is untrusted, so every
+ * value is escaped, links are built only from the repository and pull request
+ * number, and badge classes come from a fixed table, never from cell text.
  */
 
 import type { RepoName } from '../pr/types.ts';
-import { BUCKET_TITLES } from './buckets.ts';
+import { BUCKET_TITLES, type BucketId } from './buckets.ts';
 import type { QueueEntry, QueueSection } from './build.ts';
-import { QUEUE_COLUMNS, type QueueColumn } from './render.ts';
+import { HELM_LOGO_SVG } from './helm-logo.ts';
+import { QUEUE_COLUMNS, type QueueBadge, type QueueColumn } from './render.ts';
 
 /** What the page shows besides the sections. */
 export interface QueueHtmlOptions {
@@ -20,6 +22,9 @@ export interface QueueHtmlOptions {
   notes?: string[];
 }
 
+/** Where the footer credits the tool that built the page. */
+const TOOL_URL = 'https://github.com/theycallmeswift/helm-hackathon-2026';
+
 /** Characters with meaning in HTML text or attribute values, and their entities. */
 const HTML_ENTITIES: Record<string, string> = {
   '&': '&amp;',
@@ -29,21 +34,95 @@ const HTML_ENTITIES: Record<string, string> = {
   "'": '&#39;',
 };
 
-/** Light and dark colors from `prefers-color-scheme`, and readable tables. */
+/** What each bucket means for whoever acts next, shown on its card and under its heading. */
+const BUCKET_HINTS: Record<BucketId, string> = {
+  draft: 'The author marked it as not ready.',
+  duplicate: 'An earlier open PR links the same issue.',
+  stale: 'No recent activity; nudge or close.',
+  'needs-author': 'Waiting on the author to fix a blocker.',
+  'needs-second-approval': 'One maintainer approved; needs another.',
+  ready: 'No blockers found; ready for review.',
+};
+
+/** The stylesheet class for each badge value; anything else gets the plain badge. */
+const BADGE_CLASSES: Record<QueueBadge, string> = {
+  bug: 'badge-bug',
+  feature: 'badge-feature',
+  docs: 'badge-docs',
+  refactor: 'badge-refactor',
+  chore: 'badge-chore',
+  yes: 'badge-yes',
+  possible: 'badge-possible',
+  no: 'badge-no',
+};
+
+/**
+ * Helm's brand palette from helm/community, light and dark from
+ * `prefers-color-scheme`, a navy masthead, bucket cards, and readable tables.
+ */
 const STYLE = `
-:root { color-scheme: light dark; --fg: #1f2328; --bg: #ffffff; --muted: #59636e; --line: #d1d9e0; --link: #0969da; }
-@media (prefers-color-scheme: dark) {
-  :root { --fg: #f0f6fc; --bg: #0d1117; --muted: #9198a1; --line: #3d444d; --link: #4493f8; }
+:root {
+  color-scheme: light dark;
+  --helm-navy: #0F1689; --helm-blue-light: #1B53C2; --helm-shade-dark: #050843;
+  --helm-shade-mid: #B7C2E9; --helm-shade-light: #DBE1F3;
+  --helm-accent-blue: #3B82BF; --helm-accent-green: #2F84A7; --helm-accent-red: #95297C; --helm-accent-yellow: #D1AA9B;
+  --fg: #1f2328; --bg: #f5f7fc; --surface: #ffffff; --muted: #59636e; --line: #dbe1f3; --link: #1B53C2; --row-hover: #f0f3fb;
+  --tone-red: #95297C; --tone-tan: #87533f; --tone-blue: #1B53C2; --tone-green: #1d6a87; --tone-navy: #0F1689; --tone-gray: #59636e;
 }
-body { margin: 0 auto; max-width: 80rem; padding: 1rem; font: 14px/1.5 system-ui, sans-serif; color: var(--fg); background: var(--bg); }
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #e8ebf7; --bg: #050843; --surface: #0b1052; --muted: #a7b0d8; --line: #232b78; --link: #9db8ff; --row-hover: #121a66;
+    --tone-red: #e597d4; --tone-tan: #e6c4b6; --tone-blue: #9db8ff; --tone-green: #85cbe2; --tone-navy: #c3cdf0; --tone-gray: #a7b0d8;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--fg); background: var(--bg); }
 a { color: var(--link); }
-header p, .empty, .notes { color: var(--muted); }
-.counts { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; padding: 0; list-style: none; }
-.table-wrap { overflow-x: auto; }
+.wrap { margin: 0 auto; max-width: 80rem; padding: 0 1rem; }
+.masthead { background: var(--helm-navy); color: #ffffff; padding: 1.25rem 0; }
+.masthead .wrap { display: flex; align-items: center; gap: 1rem; }
+.masthead a { color: #ffffff; }
+.logo { flex: none; width: 3rem; height: 3rem; }
+.eyebrow { margin: 0; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--helm-shade-mid); }
+h1 { margin: 0; font-size: 1.5rem; line-height: 1.25; }
+.meta { margin: 0.25rem 0 0; color: var(--helm-shade-light); }
+.buckets { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.75rem; margin: 1.5rem 0; padding: 0; list-style: none; }
+.bucket-card { display: block; height: 100%; padding: 0.75rem 1rem; border: 1px solid var(--line); border-top: 4px solid var(--accent); border-radius: 0.5rem; background: var(--surface); color: var(--fg); text-decoration: none; }
+.bucket-card:hover { border-color: var(--accent); }
+.bucket-count { display: block; font-size: 2rem; font-weight: 700; line-height: 1.1; }
+.bucket-empty .bucket-count { color: var(--muted); }
+.bucket-title { display: block; font-weight: 600; }
+.bucket-hint, .hint, .empty, .notes { color: var(--muted); }
+.bucket-hint { display: block; font-size: 0.8125rem; }
+.bucket-draft { --accent: var(--helm-shade-mid); }
+.bucket-duplicate { --accent: var(--helm-accent-blue); }
+.bucket-stale { --accent: var(--helm-accent-yellow); }
+.bucket-needs-author { --accent: var(--helm-accent-red); }
+.bucket-needs-second-approval { --accent: var(--helm-blue-light); }
+.bucket-ready { --accent: var(--helm-accent-green); }
+section { margin: 2rem 0; }
+h2 { display: flex; align-items: center; gap: 0.5rem; margin: 0; padding-left: 0.625rem; border-left: 4px solid var(--accent); font-size: 1.125rem; }
+.count { padding: 0 0.5rem; border-radius: 999px; background: var(--line); font-size: 0.8125rem; }
+.hint { margin: 0.25rem 0 0.75rem; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 0.5rem; background: var(--surface); }
 table { width: 100%; border-collapse: collapse; }
-th, td { padding: 0.25rem 0.5rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: var(--row-hover); }
 .col-pr, .col-age, .col-waiting-since, .col-kind, .col-breaking, .col-needs-hip { white-space: nowrap; }
 .col-title { min-width: 12rem; }
+.col-pr a { font-weight: 600; }
+.col-author, .col-age, .col-waiting-since { color: var(--muted); }
+.badge { --tone: var(--tone-gray); display: inline-block; padding: 0 0.5rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; line-height: 1.5rem; color: var(--tone); background: color-mix(in srgb, var(--tone) 14%, transparent); }
+.badge-bug, .badge-yes { --tone: var(--tone-red); }
+.badge-possible { --tone: var(--tone-tan); }
+.badge-feature { --tone: var(--tone-blue); }
+.badge-docs { --tone: var(--tone-green); }
+.badge-refactor { --tone: var(--tone-navy); }
+.badge-no { font-weight: 400; background: transparent; }
+footer { padding: 1rem 0 2rem; border-top: 1px solid var(--line); font-size: 0.8125rem; }
+footer p { margin: 0.25rem 0; }
 `;
 
 /** `value` with every HTML-significant character replaced by its entity. */
@@ -56,12 +135,7 @@ export function renderQueueHtml(sections: QueueSection[], options: QueueHtmlOpti
   const columns = options.columns ?? QUEUE_COLUMNS;
   const repo = escapeHtml(options.repo);
   const generatedAt = escapeHtml(options.now.toISOString());
-  const counts = sections
-    .map(
-      (section) =>
-        `<li><a href="#${section.bucket}">${escapeHtml(BUCKET_TITLES[section.bucket])}</a>: ${section.entries.length}</li>`,
-    )
-    .join('\n');
+  const openCount = sections.reduce((total, section) => total + section.entries.length, 0);
   const notes = (options.notes ?? []).map((note) => `<p>${escapeHtml(note)}</p>`).join('\n');
 
   return `<!doctype html>
@@ -73,30 +147,53 @@ export function renderQueueHtml(sections: QueueSection[], options: QueueHtmlOpti
 <style>${STYLE}</style>
 </head>
 <body>
-<header>
+<header class="masthead">
+<div class="wrap">
+${HELM_LOGO_SVG}
+<div>
+<p class="eyebrow">helm-triage</p>
 <h1>PR queue: ${repo}</h1>
-<p>Generated <time datetime="${generatedAt}">${generatedAt}</time></p>
-<ul class="counts">
-${counts}
-</ul>
+<p class="meta"><a href="https://github.com/${repo}/pulls">Showing ${openCount} open ${openCount === 1 ? 'pull request' : 'pull requests'}</a> · Generated <time datetime="${generatedAt}">${generatedAt}</time></p>
+</div>
+</div>
 </header>
+<div class="wrap">
+<nav aria-label="Buckets">
+<ul class="buckets">
+${sections.map(bucketCardHtml).join('\n')}
+</ul>
+</nav>
 <main>
 ${sections.map((section) => sectionHtml(section, columns, options)).join('\n')}
 </main>
-${notes === '' ? '' : `<footer class="notes">\n${notes}\n</footer>\n`}</body>
+<footer class="notes">
+${notes === '' ? '' : `${notes}\n`}<p>Generated by <a href="${TOOL_URL}">helm-triage</a>. Buckets sort each pull request by who acts next; AI columns are advisory.</p>
+<p>Helm and the Helm logo are trademarks of The Linux Foundation. This dashboard is not an official Helm project.</p>
+</footer>
+</div>
+</body>
 </html>
 `;
 }
 
-/** One bucket: its heading with the count, then its table, or a line saying it is empty. */
+/** One bucket's card: its count, title, and hint, linking to its section. */
+function bucketCardHtml(section: QueueSection): string {
+  const emptyClass = section.entries.length === 0 ? ' bucket-empty' : '';
+
+  return `<li><a class="bucket-card bucket-${section.bucket}${emptyClass}" href="#${section.bucket}"><span class="bucket-count">${section.entries.length}</span><span class="bucket-title">${escapeHtml(BUCKET_TITLES[section.bucket])}</span><span class="bucket-hint">${escapeHtml(BUCKET_HINTS[section.bucket])}</span></a></li>`;
+}
+
+/** One bucket: its heading with the count and hint, then its table, or a line saying it is empty. */
 function sectionHtml(
   section: QueueSection,
   columns: QueueColumn[],
   options: QueueHtmlOptions,
 ): string {
-  const heading = `<h2>${escapeHtml(BUCKET_TITLES[section.bucket])} (${section.entries.length})</h2>`;
+  const heading = `<h2>${escapeHtml(BUCKET_TITLES[section.bucket])} <span class="count">${section.entries.length}</span></h2>
+<p class="hint">${escapeHtml(BUCKET_HINTS[section.bucket])}</p>`;
+  const open = `<section id="${section.bucket}" class="bucket-${section.bucket}">`;
   if (section.entries.length === 0) {
-    return `<section id="${section.bucket}">\n${heading}\n<p class="empty">None.</p>\n</section>`;
+    return `${open}\n${heading}\n<p class="empty">None.</p>\n</section>`;
   }
 
   const headerRow = columns
@@ -109,7 +206,7 @@ function sectionHtml(
     )
     .join('\n');
 
-  return `<section id="${section.bucket}">
+  return `${open}
 ${heading}
 <div class="table-wrap"><table>
 <thead><tr>${headerRow}</tr></thead>
@@ -130,13 +227,26 @@ function columnClass(column: QueueColumn): string {
   return `col-${slug}`;
 }
 
-/** A cell's escaped text, linked to the pull request when its column asks for that. */
+/**
+ * A cell's escaped text: linked to the pull request when its column asks for
+ * that, or drawn as a badge when its column has a typed value for the row.
+ */
 function cellHtml(column: QueueColumn, entry: QueueEntry, options: QueueHtmlOptions): string {
   const text = escapeHtml(column.cell(entry, options.now));
-  if (!column.linksToPr) {
+  if (column.linksToPr) {
+    const url = `https://github.com/${options.repo}/pull/${entry.snapshot.number}`;
+    return `<a href="${escapeHtml(url)}">${text}</a>`;
+  }
+
+  const badge = column.badge?.(entry);
+  if (badge === undefined) {
     return text;
   }
 
-  const url = `https://github.com/${options.repo}/pull/${entry.snapshot.number}`;
-  return `<a href="${escapeHtml(url)}">${text}</a>`;
+  return `<span class="${badgeClass(badge)}">${text}</span>`;
+}
+
+/** The badge's classes, from the fixed table only, so model output never reaches an attribute. */
+function badgeClass(badge: QueueBadge): string {
+  return Object.hasOwn(BADGE_CLASSES, badge) ? `badge ${BADGE_CLASSES[badge]}` : 'badge';
 }

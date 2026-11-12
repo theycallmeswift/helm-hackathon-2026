@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
-
+import type { Likelihood, PrKind } from '../../../src/pr/types.ts';
 import { groupIntoSections, toEntry } from '../../../src/queue/build.ts';
 import { escapeHtml, renderQueueHtml } from '../../../src/queue/html.ts';
-import { QUEUE_AI_COLUMNS, QUEUE_COLUMNS } from '../../../src/queue/render.ts';
+import { QUEUE_AI_COLUMNS, QUEUE_COLUMNS, type QueueBadge } from '../../../src/queue/render.ts';
 import { FACTORY_NOW, makePrSnapshot } from '../../support/pr-snapshot.ts';
 
 const REPO = 'theycallmeswift/helm';
@@ -13,6 +13,26 @@ const HOSTILE_ESCAPED =
 /** A queue of the given snapshots, bucketed as the queue command would. */
 function sectionsOf(...snapshots: ReturnType<typeof makePrSnapshot>[]) {
   return groupIntoSections(snapshots.map((snapshot) => toEntry(snapshot, FACTORY_NOW)));
+}
+
+/** A one-PR queue whose entry carries AI flags with the given kind and verdicts. */
+function sectionsWithAi(flags: { kind: PrKind; breaking: Likelihood; needsHip: Likelihood }) {
+  const sections = sectionsOf(makePrSnapshot({ number: 1 }));
+  const flag = { confidence: 'high' as const, reason: 'Because.', evidence: [] };
+  for (const entry of sections.flatMap((section) => section.entries)) {
+    entry.ai = {
+      status: 'ok',
+      model: 'test/model',
+      flags: {
+        kind: { ...flag, kind: flags.kind },
+        breakingChange: { ...flag, verdict: flags.breaking },
+        needsHip: { ...flag, verdict: flags.needsHip },
+        summary: { summary: 'A change.', reviewFocus: 'main.go', evidence: [] },
+      },
+    };
+  }
+
+  return sections;
 }
 
 test.each([
@@ -37,10 +57,12 @@ test('the page lists every bucket with its count, empty buckets included', () =>
   const page = renderQueueHtml(sections, { repo: REPO, now: FACTORY_NOW });
 
   expect(page).toMatch(/^<!doctype html>/);
-  expect(page).toContain('<h2>Draft (1)</h2>');
-  expect(page).toContain('<h2>Ready for review (2)</h2>');
-  expect(page).toContain('<h2>Stale (0)</h2>');
-  expect(page).toContain('<li><a href="#stale">Stale</a>: 0</li>');
+  expect(page).toContain('<h2>Draft <span class="count">1</span></h2>');
+  expect(page).toContain('<h2>Ready for review <span class="count">2</span></h2>');
+  expect(page).toContain('<h2>Stale <span class="count">0</span></h2>');
+  expect(page).toContain(
+    '<a class="bucket-card bucket-stale bucket-empty" href="#stale"><span class="bucket-count">0</span><span class="bucket-title">Stale</span>',
+  );
   expect(page.match(/<p class="empty">None\.<\/p>/g)).toHaveLength(4);
   expect(page).toContain(`<time datetime="${FACTORY_NOW.toISOString()}">`);
   expect(page).toContain('<th class="col-pr">PR</th><th class="col-title">Title</th>');
@@ -101,4 +123,71 @@ test('hostile titles, logins, AI text, and notes are escaped', () => {
   expect(page).not.toContain('<img');
   expect(page.split(HOSTILE_ESCAPED)).toHaveLength(5);
   expect(page).toContain('href="https://github.com/theycallmeswift/helm/pull/7"');
+});
+
+test('the masthead shows the Helm logo inline and the total open pull requests', () => {
+  const sections = sectionsOf(
+    makePrSnapshot({ number: 1, isDraft: true }),
+    makePrSnapshot({ number: 2 }),
+  );
+
+  const page = renderQueueHtml(sections, { repo: REPO, now: FACTORY_NOW });
+
+  expect(page).toContain('<svg class="logo"');
+  expect(page).toContain(
+    '<a href="https://github.com/theycallmeswift/helm/pulls">Showing 2 open pull requests</a>',
+  );
+  expect(page).not.toMatch(/<script|<link|src=/);
+});
+
+test.each<[PrKind, Likelihood, Likelihood, string[]]>([
+  ['bug', 'yes', 'no', ['badge badge-bug', 'badge badge-yes', 'badge badge-no']],
+  ['feature', 'possible', 'possible', ['badge badge-feature', 'badge badge-possible']],
+  ['docs', 'no', 'yes', ['badge badge-docs', 'badge badge-no', 'badge badge-yes']],
+])(
+  'AI flags %s, breaking %s, HIP %s draw as colored badges',
+  (kind, breaking, needsHip, classes) => {
+    const sections = sectionsWithAi({ kind, breaking, needsHip });
+
+    const page = renderQueueHtml(sections, {
+      repo: REPO,
+      now: FACTORY_NOW,
+      columns: [...QUEUE_COLUMNS, ...QUEUE_AI_COLUMNS],
+    });
+
+    for (const badgeClass of classes) {
+      expect(page).toContain(`<span class="${badgeClass}">`);
+    }
+    expect(page).toContain(
+      `<td class="col-kind"><span class="badge badge-${kind}">${kind} (high)</span></td>`,
+    );
+  },
+);
+
+test('AI columns without flags show the plain dash, not a badge', () => {
+  const sections = sectionsOf(makePrSnapshot({ number: 1 }));
+
+  const page = renderQueueHtml(sections, {
+    repo: REPO,
+    now: FACTORY_NOW,
+    columns: [...QUEUE_COLUMNS, ...QUEUE_AI_COLUMNS],
+  });
+
+  expect(page).toContain('<td class="col-kind">-</td>');
+  expect(page).not.toContain('<span class="badge');
+});
+
+test('a badge value outside the fixed table gets the plain badge, never its own class', () => {
+  const sections = sectionsOf(makePrSnapshot({ number: 1 }));
+  const unexpected = JSON.parse('"constructor\\" onmouseover=\\"x"') as QueueBadge;
+  const oddColumn = { header: 'Odd', cell: () => 'odd', badge: () => unexpected };
+
+  const page = renderQueueHtml(sections, {
+    repo: REPO,
+    now: FACTORY_NOW,
+    columns: [...QUEUE_COLUMNS, oddColumn],
+  });
+
+  expect(page).toContain('<td class="col-odd"><span class="badge">odd</span></td>');
+  expect(page).not.toContain('onmouseover');
 });

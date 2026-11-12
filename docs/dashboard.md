@@ -8,17 +8,22 @@ text and markdown formats.
 
 ## The page
 
-| Part     | Content                                                                |
-| -------- | ---------------------------------------------------------------------- |
-| Header   | The repository, the generation time, and each bucket's count           |
-| Sections | One per bucket, in precedence order; an empty bucket says `None.`      |
-| Rows     | The `QUEUE_COLUMNS`, plus `QUEUE_AI_COLUMNS` with `--ai`               |
-| Links    | Each pull request number links to `https://github.com/<repo>/pull/<n>` |
-| Footer   | With `--ai`, the counts of pull requests left without AI flags, if any |
+| Part     | Content                                                                         |
+| -------- | ------------------------------------------------------------------------------- |
+| Masthead | The Helm logo, the repository, how many open pull requests it shows, and when   |
+| Cards    | One per bucket with its count and who acts next, linking to its section         |
+| Sections | One per bucket, in precedence order, with a one-line hint; empty says `None.`   |
+| Rows     | The `QUEUE_COLUMNS`, plus `QUEUE_AI_COLUMNS` with `--ai`                        |
+| Badges   | Kind, Breaking, and Needs HIP draw as colored badges; a row without flags `-`   |
+| Links    | Each pull request number links to `https://github.com/<repo>/pull/<n>`          |
+| Footer   | With `--ai`, the counts left without AI flags, then credit and a trademark note |
 
-The page has inline CSS, no JavaScript, and no external assets, and follows
-`prefers-color-scheme` for light and dark. Short columns don't wrap and the
-title column keeps a minimum width, so it stays readable on a phone.
+The page uses Helm's brand palette from `helm/community` (navy `#0F1689` and
+its secondary, shade, and accent colors) and the Helm icon from the CNCF
+artwork repository, inlined from `src/queue/helm-logo.ts`. It has inline CSS,
+no JavaScript, and no external assets, and follows `prefers-color-scheme` for
+light and dark. Bucket cards wrap, short columns don't wrap, and the title
+column keeps a minimum width, so it stays readable on a phone.
 `renderQueueHtml` in `src/queue/html.ts` builds it.
 
 ## Publishing
@@ -52,6 +57,9 @@ by anyone, so:
   page.
 - Links are built only from the repository and pull request number, never
   from pull request text.
+- Badge classes come from a fixed table keyed by the typed AI value; a value
+  outside it gets the plain badge, so model output never reaches an
+  attribute.
 - The workflow's token only reads (`contents`, `pull-requests`, `issues`,
   `checks`, `statuses`); its only writes are `pages` and `id-token`, which the
   Pages deployment needs. It never comments, labels, or touches `helm/helm`.

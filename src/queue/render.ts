@@ -6,6 +6,7 @@
  */
 
 import { isoDate } from '../checks/context.ts';
+import type { Likelihood, PrKind } from '../pr/types.ts';
 import { escapeMarkdown, table } from '../report/markdown.ts';
 import { flatten } from '../report/text.ts';
 import { BUCKET_TITLES } from './buckets.ts';
@@ -20,7 +21,12 @@ export interface QueueColumn {
   cell: (entry: QueueEntry, now: Date) => string;
   /** Whether formats with links link this cell to the pull request. */
   linksToPr?: boolean;
+  /** The typed value behind the cell, for formats that draw it as a colored badge. */
+  badge?: (entry: QueueEntry) => QueueBadge | undefined;
 }
+
+/** A value an AI column can show as a badge: a suggested kind or a likelihood. */
+export type QueueBadge = PrKind | Likelihood;
 
 /** The columns every queue row shows, in order. */
 export const QUEUE_COLUMNS: QueueColumn[] = [
@@ -43,15 +49,19 @@ export const QUEUE_AI_COLUMNS: QueueColumn[] = [
       entry.ai?.status === 'ok'
         ? `${entry.ai.flags.kind.kind} (${entry.ai.flags.kind.confidence})`
         : NO_AI_DATA,
+    badge: (entry) => (entry.ai?.status === 'ok' ? entry.ai.flags.kind.kind : undefined),
   },
   {
     header: 'Breaking',
     cell: (entry) =>
       entry.ai?.status === 'ok' ? entry.ai.flags.breakingChange.verdict : NO_AI_DATA,
+    badge: (entry) =>
+      entry.ai?.status === 'ok' ? entry.ai.flags.breakingChange.verdict : undefined,
   },
   {
     header: 'Needs HIP',
     cell: (entry) => (entry.ai?.status === 'ok' ? entry.ai.flags.needsHip.verdict : NO_AI_DATA),
+    badge: (entry) => (entry.ai?.status === 'ok' ? entry.ai.flags.needsHip.verdict : undefined),
   },
 ];
 
