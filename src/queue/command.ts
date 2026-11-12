@@ -8,8 +8,9 @@ import { parseArgs } from 'node:util';
 
 import { type Environment, loadConfig, parseRepoName } from '../config/load.ts';
 import type { RepoName } from '../pr/types.ts';
+import { aiFooterLines, fillAiFlags } from './ai-columns.ts';
 import { buildQueue } from './build.ts';
-import { renderQueueMarkdown, renderQueueText } from './render.ts';
+import { QUEUE_AI_COLUMNS, QUEUE_COLUMNS, renderQueueMarkdown, renderQueueText } from './render.ts';
 
 /** The output formats `--format` accepts. */
 const FORMATS = ['text', 'md'] as const;
@@ -27,6 +28,7 @@ interface QueueRequest {
   repo?: RepoName;
   format: Format;
   limit?: number;
+  ai: boolean;
 }
 
 /**
@@ -46,15 +48,19 @@ export async function runQueueCommand(args: string[], env: Environment): Promise
     now,
     ...(request.limit === undefined ? {} : { limit: request.limit }),
   });
-  process.stdout.write(
-    request.format === 'md' ? renderQueueMarkdown(sections, now) : renderQueueText(sections, now),
-  );
+  const footer = request.ai ? aiFooterLines(await fillAiFlags(sections, config)) : [];
+  const columns = request.ai ? [...QUEUE_COLUMNS, ...QUEUE_AI_COLUMNS] : QUEUE_COLUMNS;
+  const render = request.format === 'md' ? renderQueueMarkdown : renderQueueText;
+  process.stdout.write(render(sections, now, columns));
+  if (footer.length > 0) {
+    process.stdout.write(`\n${footer.join('\n')}\n`);
+  }
 
   return 0;
 }
 
 /**
- * Reads `[--repo owner/name] [--format text|md] [--limit N]`.
+ * Reads `[--repo owner/name] [--format text|md] [--limit N] [--ai]`.
  *
  * @throws {QueueUsageError} when an argument is unknown or malformed.
  */
@@ -65,6 +71,7 @@ function parseQueueArgs(args: string[]): QueueRequest {
       repo: { type: 'string' },
       format: { type: 'string', default: 'text' },
       limit: { type: 'string' },
+      ai: { type: 'boolean', default: false },
     },
     allowPositionals: false,
     strict: true,
@@ -81,6 +88,7 @@ function parseQueueArgs(args: string[]): QueueRequest {
 
   return {
     format: values.format,
+    ai: values.ai,
     ...(values.repo === undefined ? {} : { repo: parseRepoName(values.repo, '--repo') }),
     ...(values.limit === undefined ? {} : { limit: Number(values.limit) }),
   };

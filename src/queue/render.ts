@@ -1,7 +1,8 @@
 /**
  * Renders the queue as plain text or a markdown table: one section per
  * bucket with its count, then one row per pull request. Every row is built
- * from `QUEUE_COLUMNS`, so a new column is one entry there.
+ * from `QUEUE_COLUMNS`, plus `QUEUE_AI_COLUMNS` with `--ai`, so a new column
+ * is one entry there.
  */
 
 import { isoDate } from '../checks/context.ts';
@@ -29,6 +30,29 @@ export const QUEUE_COLUMNS: QueueColumn[] = [
   { header: 'Reason', cell: (entry) => entry.reason },
 ];
 
+/** Shown in an AI column when a pull request has no usable AI flags. */
+export const NO_AI_DATA = '-';
+
+/** The columns `--ai` adds after `QUEUE_COLUMNS`, read from `entry.ai`. */
+export const QUEUE_AI_COLUMNS: QueueColumn[] = [
+  {
+    header: 'Kind',
+    cell: (entry) =>
+      entry.ai?.status === 'ok'
+        ? `${entry.ai.flags.kind.kind} (${entry.ai.flags.kind.confidence})`
+        : NO_AI_DATA,
+  },
+  {
+    header: 'Breaking',
+    cell: (entry) =>
+      entry.ai?.status === 'ok' ? entry.ai.flags.breakingChange.verdict : NO_AI_DATA,
+  },
+  {
+    header: 'Needs HIP',
+    cell: (entry) => (entry.ai?.status === 'ok' ? entry.ai.flags.needsHip.verdict : NO_AI_DATA),
+  },
+];
+
 /** Whole days from `from` to `to`, rounded down. */
 function wholeDaysBetween(from: Date, to: Date): number {
   return Math.floor((to.getTime() - from.getTime()) / MILLISECONDS_PER_DAY);
@@ -43,21 +67,28 @@ function sectionHeading(section: QueueSection): string {
  * The queue as terminal text, ending with a newline: each section's heading,
  * then its rows with columns separated by two spaces and padded to line up.
  */
-export function renderQueueText(sections: QueueSection[], now: Date): string {
+export function renderQueueText(
+  sections: QueueSection[],
+  now: Date,
+  columns: QueueColumn[] = QUEUE_COLUMNS,
+): string {
   const blocks = sections.map((section) => {
     const rows = section.entries.map((entry) =>
-      QUEUE_COLUMNS.map((column) => flatten(column.cell(entry, now))),
+      columns.map((column) => flatten(column.cell(entry, now))),
     );
 
-    return [sectionHeading(section), ...alignColumns(rows).map((line) => `  ${line}`)].join('\n');
+    return [
+      sectionHeading(section),
+      ...alignColumns(rows, columns.length).map((line) => `  ${line}`),
+    ].join('\n');
   });
 
   return `${blocks.join('\n\n')}\n`;
 }
 
 /** Pads every cell but the last to its column's widest, so rows line up. */
-function alignColumns(rows: string[][]): string[] {
-  const widths = QUEUE_COLUMNS.map((_, index) =>
+function alignColumns(rows: string[][], columnCount: number): string[] {
+  const widths = Array.from({ length: columnCount }, (_, index) =>
     Math.max(...rows.map((row) => (row[index] ?? '').length)),
   );
 
@@ -69,7 +100,11 @@ function alignColumns(rows: string[][]): string[] {
 }
 
 /** The queue as markdown, ending with a newline: a heading and table per non-empty section. */
-export function renderQueueMarkdown(sections: QueueSection[], now: Date): string {
+export function renderQueueMarkdown(
+  sections: QueueSection[],
+  now: Date,
+  columns: QueueColumn[] = QUEUE_COLUMNS,
+): string {
   const blocks = sections.map((section) => {
     const heading = `## ${sectionHeading(section)}`;
     if (section.entries.length === 0) {
@@ -77,10 +112,10 @@ export function renderQueueMarkdown(sections: QueueSection[], now: Date): string
     }
 
     const rows = section.entries.map((entry) =>
-      QUEUE_COLUMNS.map((column) => escapeMarkdown(column.cell(entry, now))),
+      columns.map((column) => escapeMarkdown(column.cell(entry, now))),
     );
     return `${heading}\n\n${table(
-      QUEUE_COLUMNS.map((column) => column.header),
+      columns.map((column) => column.header),
       rows,
     )}`;
   });

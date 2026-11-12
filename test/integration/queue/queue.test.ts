@@ -1,23 +1,10 @@
-import { readdirSync } from 'node:fs';
-
 import { afterEach, expect, test } from 'vitest';
 
 import { loadConfig } from '../../../src/config/load.ts';
-import type { Recording } from '../../../src/github/recording.ts';
-import type { RepoName } from '../../../src/pr/types.ts';
 import { buildQueue } from '../../../src/queue/build.ts';
 import { renderQueueMarkdown, renderQueueText } from '../../../src/queue/render.ts';
-import {
-  type GithubReplay,
-  loadRecording,
-  RECORDED_DIR,
-  startGithubReplay,
-} from '../../support/github-replay.ts';
-
-const REPO: RepoName = 'theycallmeswift/helm';
-
-/** The request the open pull request listing makes. */
-const LISTING_KEY = `GET /repos/${REPO}/pulls?state=open&sort=created&direction=asc&per_page=100`;
+import { type GithubReplay, startGithubReplay } from '../../support/github-replay.ts';
+import { FORK_REPO as REPO, recordedFork } from './recorded-fork.ts';
 
 /** A day after the fork's pull requests were opened, so none is stale. */
 const NOW = new Date('2026-11-13T12:00:00Z');
@@ -28,24 +15,6 @@ afterEach(async () => {
   await replay?.close();
   replay = undefined;
 });
-
-/**
- * Every recorded fork pull request in one recording, plus a listing of them
- * oldest opened first, built from their recorded pull request bodies.
- */
-function recordedFork(): Recording {
-  const recording: Recording = {};
-  for (const fileName of readdirSync(RECORDED_DIR).filter((name) => /^pr-\d+\.json$/.test(name))) {
-    Object.assign(recording, loadRecording(fileName));
-  }
-  const pulls = Object.entries(recording)
-    .filter(([key]) => new RegExp(`^GET /repos/${REPO}/pulls/\\d+$`).test(key))
-    .map(([, responses]) => responses.at(-1)?.body as { number: number; created_at: string })
-    .sort((left, right) => left.created_at.localeCompare(right.created_at));
-  recording[LISTING_KEY] = [{ status: 200, headers: {}, body: pulls }];
-
-  return recording;
-}
 
 /** Builds the queue for the fork against the replay server. */
 async function forkQueue(limit?: number) {
