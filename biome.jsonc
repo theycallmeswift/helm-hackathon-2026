@@ -1,0 +1,15 @@
+{
+  "files": { "includes": ["**", "!.github/pull_request_template.md"] },
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 100 },
+  "javascript": { "formatter": { "quoteStyle": "single" } },
+  "linter": {
+    "rules": {
+      "preset": "recommended",
+      "nursery": { "noFloatingPromises": "error" },
+      "suspicious": { "noExplicitAny": "error" },
+      "style": { "noNonNullAssertion": "error" },
+      "correctness": { "useImportExtensions": "error" }
+    }
+  }
+}

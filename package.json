@@ -1,0 +1,20 @@
+{
+  "name": "helm-hackathon-11-2026",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=26"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "lint": "biome check . && tsc && markdownlint-cli2",
+    "format": "biome check --write ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.7",
+    "@types/node": "^26.6.6",
+    "markdownlint-cli2": "^0.24.1",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}

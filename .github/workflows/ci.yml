@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Whether a pull request changes only documentation: files under docs/, or
+  # the root README.md, AGENTS.md, or CLAUDE.md. Such a PR runs lint, which
+  # checks the Markdown, and skips the tests. Drop a path from the pattern once
+  # a test reads it. Renames count both paths, so moving a file into docs/
+  # still changes where it came from. Pushes to main run every job.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      docs_only: ${{ steps.classify.outputs.docs_only }}
+    steps:
+      - name: Check out the repository
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check whether only documentation changed
+        id: classify
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          docs_only=false
+          if [ "$EVENT" = pull_request ]; then
+            changed=$(git diff --name-only --no-renames "$PR_BASE...$PR_HEAD")
+            printf 'Changed files:\n%s\n' "$changed"
+            if [ -n "$changed" ] &&
+              ! grep -qvE '^(docs/|(README|AGENTS|CLAUDE)\.md$)' <<<"$changed"; then
+              docs_only=true
+            fi
+          fi
+          echo "docs_only=$docs_only" | tee -a "$GITHUB_OUTPUT"
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "26"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+  test:
+    needs: changes
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "26"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+  # The one check branch protection requires. The test job skips on a
+  # docs-only PR, and requiring each job by name breaks once a skipped job is
+  # a matrix, which reports under its unexpanded name. This job passes when
+  # every job passed or skipped, and fails on a failed or cancelled one.
+  ci-passed:
+    name: CI passed
+    if: always()
+    needs: [changes, lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check every job passed or skipped
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Job results: $RESULTS"
+          for result in $RESULTS; do
+            if [ "$result" != success ] && [ "$result" != skipped ]; then
+              exit 1
+            fi
+          done

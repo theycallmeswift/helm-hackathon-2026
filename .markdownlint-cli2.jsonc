@@ -1,0 +1,10 @@
+{
+  "globs": ["**/*.md"],
+  "gitignore": true,
+  // Its placeholders read as HTML, and it opens without a heading by design.
+  "ignores": [".github/pull_request_template.md"],
+  "config": {
+    // Wrap prose at 80 columns; tables and code can't wrap without breaking.
+    "MD013": { "tables": false, "code_blocks": false }
+  }
+}
