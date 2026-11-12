@@ -8,7 +8,7 @@ import type { Config } from '../config/load.ts';
 import type { Fetch } from '../github/client.ts';
 import { listOpenPrNumbers } from '../github/open-prs.ts';
 import { fetchPrSnapshot } from '../github/snapshot.ts';
-import type { CheckResult, PrSnapshot, RepoName } from '../pr/types.ts';
+import type { AiOutcome, CheckResult, PrSnapshot, RepoName } from '../pr/types.ts';
 import { assignBucket, BUCKET_IDS, type BucketId } from './buckets.ts';
 import { mapWithConcurrency } from './pool.ts';
 
@@ -23,6 +23,8 @@ export interface QueueEntry {
   reason: string;
   /** The later of the pull request's creation and its head commit date. */
   waitingSince: Date;
+  /** The AI flags, set only with `--ai`; never read by bucketing. */
+  ai?: AiOutcome;
 }
 
 /** One bucket and its pull requests, oldest waiting first. */
