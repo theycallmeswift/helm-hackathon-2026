@@ -6,18 +6,20 @@
  * Usage: GITHUB_TOKEN=$(gh auth token) node scripts/record-fixtures.ts [--pr N]...
  *
  * Writes `test/fixtures/recorded/pr-<N>.json` per pull request, with tokens
- * removed. A pull request that does not exist yet is reported and skipped.
+ * removed. A pull request that does not exist yet is reported and skipped; one
+ * whose mergeability GitHub is still computing is not written, and the run fails.
  */
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { loadConfig, parseRepoName, requireGithubToken } from '../src/config/load.ts';
 import { GithubApiError } from '../src/github/client.ts';
 import { type Recording, recordingFetch } from '../src/github/recording.ts';
 import { fetchPrSnapshot } from '../src/github/snapshot.ts';
 
-const FIXTURES_DIR = new URL('../test/fixtures/', import.meta.url).pathname;
+const FIXTURES_DIR = fileURLToPath(new URL('../test/fixtures/', import.meta.url));
 const MANIFEST_PATH = join(FIXTURES_DIR, 'synthetic-prs.json');
 const RECORDED_DIR = join(FIXTURES_DIR, 'recorded');
 
@@ -35,6 +37,7 @@ const token = requireGithubToken(config);
 const wanted = values.pr?.map(Number);
 const prs = manifest.prs.filter((pr) => wanted === undefined || wanted.includes(pr.pr_number));
 const missing: string[] = [];
+const unsettled: string[] = [];
 
 mkdirSync(RECORDED_DIR, { recursive: true });
 for (const pr of prs) {
@@ -46,7 +49,11 @@ for (const pr of prs) {
     recording,
   });
   try {
-    await fetchPrSnapshot(config, repo, pr.pr_number, { fetch });
+    const snapshot = await fetchPrSnapshot(config, repo, pr.pr_number, { fetch });
+    if (snapshot.mergeableState === 'unknown') {
+      unsettled.push(`${pr.id} (#${pr.pr_number})`);
+      continue;
+    }
   } catch (error) {
     if (error instanceof GithubApiError && error.status === 404) {
       missing.push(`${pr.id} (#${pr.pr_number})`);
@@ -67,4 +74,11 @@ for (const pr of prs) {
 
 if (missing.length > 0) {
   process.stdout.write(`not found, skipped: ${missing.join(', ')}\n`);
+}
+
+if (unsettled.length > 0) {
+  process.stderr.write(
+    `GitHub was still computing mergeability, not recorded; run again: ${unsettled.join(', ')}\n`,
+  );
+  process.exitCode = 1;
 }

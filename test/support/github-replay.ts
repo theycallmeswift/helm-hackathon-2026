@@ -8,11 +8,12 @@ import { readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import type { Recording } from '../../src/github/recording.ts';
 
 /** Where the recorder writes fixtures, one file per pull request. */
-export const RECORDED_DIR = new URL('../fixtures/recorded/', import.meta.url).pathname;
+export const RECORDED_DIR = fileURLToPath(new URL('../fixtures/recorded/', import.meta.url));
 
 /** A running replay server. */
 export interface GithubReplay {

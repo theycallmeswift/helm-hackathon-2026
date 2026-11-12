@@ -2,7 +2,11 @@ import { afterEach, describe, expect, test } from 'vitest';
 
 import { loadConfig } from '../../../src/config/load.ts';
 import type { RecordedResponse, Recording } from '../../../src/github/recording.ts';
-import { fetchPrSnapshot, MERGEABLE_RETRY_DELAY_MS } from '../../../src/github/snapshot.ts';
+import {
+  fetchPrSnapshot,
+  MERGEABLE_RETRIES,
+  MERGEABLE_RETRY_DELAY_MS,
+} from '../../../src/github/snapshot.ts';
 import { type GithubReplay, startGithubReplay } from '../../support/github-replay.ts';
 
 const REPO = 'octo/helm';
@@ -275,7 +279,51 @@ describe('fetchPrSnapshot', () => {
     });
 
     expect(snapshot.mergeableState).toBe('unknown');
-    expect(sleeps).toHaveLength(3);
+    expect(sleeps).toHaveLength(MERGEABLE_RETRIES);
+  });
+
+  test('a check run that failed to start counts as a failure', async () => {
+    const config = await replayConfig(
+      pullRecording({
+        [`GET /repos/${REPO}/commits/${HEAD_SHA}/check-runs?per_page=100`]: ok({
+          check_runs: [{ name: 'build', status: 'completed', conclusion: 'startup_failure' }],
+        }),
+      }),
+    );
+
+    const snapshot = await fetchPrSnapshot(config, REPO, 7);
+
+    expect(snapshot.ci.checks[0]).toEqual({ name: 'build', conclusion: 'failure' });
+  });
+
+  test('an unknown check run conclusion fails naming the request', async () => {
+    const config = await replayConfig(
+      pullRecording({
+        [`GET /repos/${REPO}/commits/${HEAD_SHA}/check-runs?per_page=100`]: ok({
+          check_runs: [{ name: 'build', status: 'completed', conclusion: 'exploded' }],
+        }),
+      }),
+    );
+
+    const fetching = fetchPrSnapshot(config, REPO, 7);
+
+    await expect(fetching).rejects.toThrow(
+      `GitHub GET /repos/${REPO}/commits/${HEAD_SHA}/check-runs returned an unknown check run conclusion "exploded" on build`,
+    );
+  });
+
+  test('an unknown commit status state fails naming the request', async () => {
+    const config = await replayConfig(
+      pullRecording({
+        [`GET /repos/${REPO}/commits/${HEAD_SHA}/status?per_page=100`]: ok({
+          statuses: [{ context: 'DCO', state: 'weird' }],
+        }),
+      }),
+    );
+
+    const fetching = fetchPrSnapshot(config, REPO, 7);
+
+    await expect(fetching).rejects.toThrow('returned an unknown status state "weird" on DCO');
   });
 
   test('a missing pull request fails naming the request', async () => {

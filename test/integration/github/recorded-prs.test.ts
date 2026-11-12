@@ -65,6 +65,7 @@ test.for(MANIFEST.prs)('$id (#$pr_number) matches the answer key', async (pr, { 
     expect(snapshot.isDraft).toBe(expected.draft);
   }
   if (expected.conflict !== null) {
+    expect(snapshot.mergeableState).not.toBe('unknown');
     expect(snapshot.mergeableState === 'dirty').toBe(expected.conflict);
   }
   expect(snapshot.linkedIssues).toEqual(

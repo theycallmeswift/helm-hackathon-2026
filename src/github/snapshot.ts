@@ -27,10 +27,10 @@ import { createGithubClient, type Fetch, GithubApiError, type GithubClient } fro
 import { parseLinkedIssues } from './linked-issues.ts';
 
 /** How many times to ask again while GitHub is still computing mergeability. */
-export const MERGEABLE_RETRIES = 3;
+export const MERGEABLE_RETRIES = 5;
 
 /** How long to wait between those attempts. */
-export const MERGEABLE_RETRY_DELAY_MS = 1000;
+export const MERGEABLE_RETRY_DELAY_MS = 2000;
 
 /** Edges a caller can replace: the network, for recording, and the clock, for tests. */
 export interface FetchSnapshotOptions {
@@ -145,6 +145,11 @@ const CHECK_CONCLUSIONS: readonly CiConclusion[] = [
   'stale',
 ];
 
+/** Check run conclusions with another name for an existing `CiConclusion`. */
+const RENAMED_CHECK_CONCLUSIONS: Readonly<Record<string, CiConclusion>> = {
+  startup_failure: 'failure',
+};
+
 /** Commit status states, mapped onto check conclusions. */
 const STATUS_CONCLUSIONS: Readonly<Record<string, CiConclusion>> = {
   success: 'success',
@@ -211,7 +216,7 @@ export async function fetchPrSnapshot(
     files: files.map(toFile),
     reviews: submittedReviews.map(toReview),
     activity: buildActivity(commits, submittedReviews, [...issueComments, ...reviewComments]),
-    ci: buildCi(checkRuns, status),
+    ci: buildCi(checkRuns, status, `/repos/${repo}/commits/${headSha}`),
     relatedOpenPrs: related,
   };
 }
@@ -336,26 +341,71 @@ function buildActivity(
   );
 }
 
-/** The head commit's check runs and commit statuses, with the overall state. */
-function buildCi(checkRuns: GithubCheckRun[], status: GithubCombinedStatus): PrSnapshot['ci'] {
+/**
+ * The head commit's check runs and commit statuses, with the overall state.
+ *
+ * @param commitPath - The head commit's API path, for errors.
+ * @throws {GithubApiError} on a conclusion or status state this tool does not know.
+ */
+function buildCi(
+  checkRuns: GithubCheckRun[],
+  status: GithubCombinedStatus,
+  commitPath: string,
+): PrSnapshot['ci'] {
   const checks: CiCheck[] = [
-    ...checkRuns.map((run) => ({ name: run.name, conclusion: checkRunConclusion(run) })),
+    ...checkRuns.map((run) => ({
+      name: run.name,
+      conclusion: checkRunConclusion(run, `${commitPath}/check-runs`),
+    })),
     ...status.statuses.map((commitStatus) => ({
       name: commitStatus.context,
-      conclusion: STATUS_CONCLUSIONS[commitStatus.state] ?? 'pending',
+      conclusion: knownConclusion(
+        STATUS_CONCLUSIONS[commitStatus.state],
+        `${commitPath}/status`,
+        `status state "${commitStatus.state}" on ${commitStatus.context}`,
+      ),
     })),
   ];
 
   return { state: ciState(checks), checks };
 }
 
-/** A check run's conclusion, or `pending` while it is queued or running. */
-function checkRunConclusion(run: GithubCheckRun): CiConclusion {
+/**
+ * A check run's conclusion, or `pending` while it is queued or running.
+ *
+ * @throws {GithubApiError} on a conclusion this tool does not know.
+ */
+function checkRunConclusion(run: GithubCheckRun, path: string): CiConclusion {
   if (run.status !== 'completed') {
     return 'pending';
   }
 
-  return CHECK_CONCLUSIONS.find((known) => known === run.conclusion) ?? 'pending';
+  const conclusion =
+    CHECK_CONCLUSIONS.find((known) => known === run.conclusion) ??
+    RENAMED_CHECK_CONCLUSIONS[run.conclusion ?? ''];
+
+  return knownConclusion(
+    conclusion,
+    path,
+    `check run conclusion "${run.conclusion}" on ${run.name}`,
+  );
+}
+
+/**
+ * Returns `conclusion`, failing loudly when the mapping found none.
+ *
+ * @throws {GithubApiError} naming the request and the unknown `value`.
+ */
+function knownConclusion(
+  conclusion: CiConclusion | undefined,
+  path: string,
+  value: string,
+): CiConclusion {
+  if (conclusion === undefined) {
+    throw new GithubApiError(`GitHub GET ${path} returned an unknown ${value}`, 200);
+  }
+
+  return conclusion;
 }
 
 /** The overall CI state, in the order `CiState` documents. */
@@ -384,7 +434,8 @@ export function ciState(checks: CiCheck[]): CiState {
 
 /**
  * Other open pull requests in `repo` whose title or body references any of
- * `linkedIssues`, found with one issue search per issue number.
+ * `linkedIssues`, found with one issue search per issue number. Only the
+ * first page of each search is read, since search pages are rate-limited.
  */
 async function fetchRelatedOpenPrs(
   client: GithubClient,
@@ -394,14 +445,13 @@ async function fetchRelatedOpenPrs(
 ): Promise<RelatedPr[]> {
   const searches = await Promise.all(
     linkedIssues.map((issue) =>
-      client.getAll<GithubSearchItem>(
-        `/search/issues?q=${encodeURIComponent(`repo:${repo} is:pr is:open ${issue}`)}`,
-        'items',
+      client.get<{ items: GithubSearchItem[] }>(
+        `/search/issues?q=${encodeURIComponent(`repo:${repo} is:pr is:open ${issue}`)}&per_page=100`,
       ),
     ),
   );
   const candidates = new Map<number, GithubSearchItem>();
-  for (const item of searches.flat()) {
+  for (const item of searches.flatMap((search) => search.items)) {
     if (item.number !== number && item.pull_request !== undefined) {
       candidates.set(item.number, item);
     }
