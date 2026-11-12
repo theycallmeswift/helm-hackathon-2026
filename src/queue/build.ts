@@ -1,12 +1,14 @@
 /**
  * Builds the queue: lists open pull requests, fetches a snapshot of each,
  * runs the checks, and groups the results by bucket, oldest waiting first.
+ * Related pull requests are matched from the listing, so a queue of any size
+ * makes no issue searches.
  */
 
 import { runChecks } from '../checks/run.ts';
 import type { Config } from '../config/load.ts';
 import type { Fetch } from '../github/client.ts';
-import { listOpenPrNumbers } from '../github/open-prs.ts';
+import { listOpenPrs } from '../github/open-prs.ts';
 import { fetchPrSnapshot } from '../github/snapshot.ts';
 import type { AiOutcome, CheckResult, PrSnapshot, RepoName } from '../pr/types.ts';
 import { assignBucket, BUCKET_IDS, type BucketId } from './buckets.ts';
@@ -60,11 +62,11 @@ export async function buildQueue(
     ...(options.fetch === undefined ? {} : { fetch: options.fetch }),
     ...(options.sleep === undefined ? {} : { sleep: options.sleep }),
   };
-  const numbers = await listOpenPrNumbers(config, options.repo, fetchOptions);
-  const selected = options.limit === undefined ? numbers : numbers.slice(0, options.limit);
+  const openPrs = await listOpenPrs(config, options.repo, fetchOptions);
+  const selected = options.limit === undefined ? openPrs : openPrs.slice(0, options.limit);
 
-  const snapshots = await mapWithConcurrency(selected, SNAPSHOT_CONCURRENCY, (number) =>
-    fetchPrSnapshot(config, options.repo, number, fetchOptions),
+  const snapshots = await mapWithConcurrency(selected, SNAPSHOT_CONCURRENCY, (openPr) =>
+    fetchPrSnapshot(config, options.repo, openPr.number, { ...fetchOptions, openPrs }),
   );
 
   return groupIntoSections(snapshots.map((snapshot) => toEntry(snapshot, options.now)));

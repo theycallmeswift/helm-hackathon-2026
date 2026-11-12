@@ -25,6 +25,7 @@ import type {
 } from '../pr/types.ts';
 import { createGithubClient, type Fetch, GithubApiError, type GithubClient } from './client.ts';
 import { parseLinkedIssues } from './linked-issues.ts';
+import { findRelatedPrs, type GithubPullSummary, type OpenPr, toOpenPr } from './open-prs.ts';
 
 /** How many times to ask again while GitHub is still computing mergeability. */
 export const MERGEABLE_RETRIES = 5;
@@ -32,11 +33,20 @@ export const MERGEABLE_RETRIES = 5;
 /** How long to wait between those attempts. */
 export const MERGEABLE_RETRY_DELAY_MS = 2000;
 
-/** Edges a caller can replace: the network, for recording, and the clock, for tests. */
+/**
+ * Edges a caller can replace: the network, for recording, and the clock, for
+ * tests. A caller that already listed the open pull requests passes them too.
+ */
 export interface FetchSnapshotOptions {
   fetch?: Fetch;
   /** Waits `milliseconds`; defaults to a real timer. */
   sleep?: (milliseconds: number) => Promise<void>;
+  /**
+   * Every open pull request in the repository. When given, related pull
+   * requests are matched from it with no issue search, which GitHub limits
+   * to 30 requests a minute.
+   */
+  openPrs?: OpenPr[];
 }
 
 /** A GitHub account as REST responses embed it. */
@@ -111,13 +121,7 @@ interface GithubCombinedStatus {
 }
 
 /** One search result from the issue search endpoint. */
-interface GithubSearchItem {
-  number: number;
-  title: string;
-  body: string | null;
-  html_url: string;
-  user: GithubUser;
-  created_at: string;
+interface GithubSearchItem extends GithubPullSummary {
   pull_request?: unknown;
 }
 
@@ -190,7 +194,9 @@ export async function fetchPrSnapshot(
       client.getAll<GithubComment>(`${pullPath}/comments`),
       client.getAll<GithubCheckRun>(`/repos/${repo}/commits/${headSha}/check-runs`, 'check_runs'),
       client.get<GithubCombinedStatus>(`/repos/${repo}/commits/${headSha}/status?per_page=100`),
-      fetchRelatedOpenPrs(client, repo, number, linkedIssues),
+      options.openPrs === undefined
+        ? searchRelatedOpenPrs(client, repo, number, linkedIssues)
+        : findRelatedPrs(number, linkedIssues, options.openPrs),
     ]);
   const submittedReviews = reviews.filter((review) => review.state !== 'PENDING');
 
@@ -437,7 +443,7 @@ export function ciState(checks: CiCheck[]): CiState {
  * `linkedIssues`, found with one issue search per issue number. Only the
  * first page of each search is read, since search pages are rate-limited.
  */
-async function fetchRelatedOpenPrs(
+async function searchRelatedOpenPrs(
   client: GithubClient,
   repo: RepoName,
   number: number,
@@ -450,29 +456,10 @@ async function fetchRelatedOpenPrs(
       ),
     ),
   );
-  const candidates = new Map<number, GithubSearchItem>();
-  for (const item of searches.flatMap((search) => search.items)) {
-    if (item.number !== number && item.pull_request !== undefined) {
-      candidates.set(item.number, item);
-    }
-  }
+  const pullRequests = searches
+    .flatMap((search) => search.items)
+    .filter((item) => item.pull_request !== undefined)
+    .map(toOpenPr);
 
-  return [...candidates.values()]
-    .map((item) => toRelatedPr(item, linkedIssues))
-    .filter((related) => related.sharedIssues.length > 0)
-    .sort((left, right) => left.number - right.number);
-}
-
-/** Maps a search result, keeping only the issues both pull requests reference. */
-function toRelatedPr(item: GithubSearchItem, linkedIssues: number[]): RelatedPr {
-  const theirIssues = new Set(parseLinkedIssues(item.title, item.body ?? ''));
-
-  return {
-    number: item.number,
-    title: item.title,
-    url: item.html_url,
-    author: item.user.login,
-    createdAt: new Date(item.created_at),
-    sharedIssues: linkedIssues.filter((issue) => theirIssues.has(issue)),
-  };
+  return findRelatedPrs(number, linkedIssues, pullRequests);
 }
