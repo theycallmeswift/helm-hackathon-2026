@@ -1,7 +1,10 @@
 /**
  * A small GitHub REST client on global `fetch`: authenticated GET requests,
- * pagination by `Link` header, and errors that name the failed request.
+ * pagination by `Link` header, retries of transient server errors, and errors
+ * that name the failed request.
  */
+
+import { setTimeout as delay } from 'node:timers/promises';
 
 /** The `fetch` signature the client calls, so a recorder can wrap it. */
 export type Fetch = typeof fetch;
@@ -15,6 +18,16 @@ const ACCEPT = 'application/vnd.github+json';
 /** The REST API version this client is written against. */
 const API_VERSION = '2022-11-28';
 
+/**
+ * How long to wait before each retry of a server error. GitHub answers the
+ * odd request with a 5xx under load, and a GET is safe to repeat, so a long
+ * queue run survives one instead of losing the whole page.
+ */
+const SERVER_ERROR_RETRY_DELAYS_MS = [1000, 3000];
+
+/** Server errors that mean "try again"; a 501, for one, never will succeed. */
+const TRANSIENT_SERVER_ERRORS: ReadonlySet<number> = new Set([500, 502, 503, 504]);
+
 /** How to reach the API. */
 export interface GithubClientOptions {
   /** Base URL with no trailing slash, such as `https://api.github.com`. */
@@ -22,6 +35,8 @@ export interface GithubClientOptions {
   token: string;
   /** Defaults to global `fetch`. */
   fetch?: Fetch;
+  /** Waits `milliseconds` before a retry; defaults to a real timer. */
+  sleep?: (milliseconds: number) => Promise<void>;
 }
 
 /** A GitHub request failed. The message names the request and the reason. */
@@ -57,16 +72,32 @@ export interface GithubClient {
 /** Creates a client for the API at `options.baseUrl`. */
 export function createGithubClient(options: GithubClientOptions): GithubClient {
   const fetchImpl = options.fetch ?? fetch;
+  const sleep = options.sleep ?? defaultSleep;
 
-  /** GETs `url` and fails loudly on anything but a success. */
+  /**
+   * GETs `url`, retrying transient server errors after each delay in
+   * `SERVER_ERROR_RETRY_DELAYS_MS`, and fails loudly on anything else but a
+   * success, or on a server error that outlasts the retries.
+   */
   async function request(url: string): Promise<Response> {
-    const response = await fetchImpl(url, {
-      headers: {
-        Accept: ACCEPT,
-        Authorization: `Bearer ${options.token}`,
-        'X-GitHub-Api-Version': API_VERSION,
-      },
-    });
+    const get = () =>
+      fetchImpl(url, {
+        headers: {
+          Accept: ACCEPT,
+          Authorization: `Bearer ${options.token}`,
+          'X-GitHub-Api-Version': API_VERSION,
+        },
+      });
+
+    let response = await get();
+    for (const retryDelay of SERVER_ERROR_RETRY_DELAYS_MS) {
+      if (!TRANSIENT_SERVER_ERRORS.has(response.status)) {
+        break;
+      }
+      await response.body?.cancel();
+      await sleep(retryDelay);
+      response = await get();
+    }
     if (!response.ok) {
       throw await requestError(response, url.slice(options.baseUrl.length));
     }
@@ -94,6 +125,11 @@ export function createGithubClient(options: GithubClientOptions): GithubClient {
       return items;
     },
   };
+}
+
+/** Waits `milliseconds` on a real timer. */
+async function defaultSleep(milliseconds: number): Promise<void> {
+  await delay(milliseconds);
 }
 
 /** Adds `per_page=100` to `path`'s query. */

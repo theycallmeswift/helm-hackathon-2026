@@ -19,7 +19,11 @@ reads from GitHub.
 
 It lists open pull requests oldest opened first, fetches each one's snapshot
 with at most 5 in flight, since one snapshot costs several REST requests, and
-runs the [readiness checks](checks.md) on it.
+runs the [readiness checks](checks.md) on it. A request GitHub answers with a
+transient server error (500, 502, 503, or 504) is retried twice, after 1 and
+then 3 seconds, since a queue of a hundred pull requests makes hundreds of
+requests and GitHub drops the odd one under load; any other error, or a server
+error that outlasts the retries, fails the run.
 
 Related pull requests, which the `duplicates` check reads, are matched from
 that listing: two pull requests are related when their titles or bodies close
