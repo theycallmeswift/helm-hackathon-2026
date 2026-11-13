@@ -1,7 +1,11 @@
 # Queue
 
-`helm-triage queue [--repo owner/name] [--format text|md|html] [--limit N] [--ai]`
-sorts every open pull request into one bucket by who must act next, so a
+```sh
+helm-triage queue [--repo owner/name] [--format text|md|html]
+  [--limit N [--newest]] [--ai] [--nav label=path ...]
+```
+
+It sorts every open pull request into one bucket by who must act next, so a
 triager works down a list instead of opening every pull request. It only
 reads from GitHub.
 
@@ -9,7 +13,9 @@ reads from GitHub.
 - `--format md` prints a markdown table per bucket, and `--format html` a
   [dashboard page](dashboard.md); the default is plain text.
 - `--limit N` queues only the N oldest opened pull requests, for quick runs
-  and demos.
+  and demos; add `--newest` to queue the N newest instead.
+- `--nav label=path` adds a link to another queue page in the HTML masthead;
+  repeat it for more. The path must be relative or an `https://` URL.
 
 It lists open pull requests oldest opened first, fetches each one's snapshot
 with at most 5 in flight, since one snapshot costs several REST requests, and

@@ -77,6 +77,14 @@ test('the dashboard workflow runs hourly or on demand, only on the fork', () => 
   expect(WORKFLOW).toContain('--format html --ai > site/index.html');
 });
 
+test('the dashboard workflow also publishes the newest 100 helm/helm pull requests, read-only', () => {
+  expect(WORKFLOW).toContain(
+    'queue --repo helm/helm --limit 100 --newest --nav "Fork demo queue=../../" --format html --ai > site/helm/helm/index.html',
+  );
+  expect(WORKFLOW).toContain('--nav "helm/helm queue=helm/helm/"');
+  expect(WORKFLOW).not.toMatch(/gh (pr|issue) (comment|edit|close|merge)|--comment|--post/);
+});
+
 test('no job-level env reads the runner context, which Actions rejects there', () => {
   const jobEnvBlocks = [...WORKFLOW.matchAll(/^ {4}env:\n((?: {6}.*\n)*)/gm)].map(
     ([, block = '']) => block,

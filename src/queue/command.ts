@@ -10,7 +10,7 @@ import { type Environment, loadConfig, parseRepoName } from '../config/load.ts';
 import type { RepoName } from '../pr/types.ts';
 import { aiFooterLines, fillAiFlags } from './ai-columns.ts';
 import { buildQueue } from './build.ts';
-import { renderQueueHtml } from './html.ts';
+import { type QueueNavLink, renderQueueHtml } from './html.ts';
 import { QUEUE_AI_COLUMNS, QUEUE_COLUMNS, renderQueueMarkdown, renderQueueText } from './render.ts';
 
 /** The output formats `--format` accepts. */
@@ -29,7 +29,10 @@ interface QueueRequest {
   repo?: RepoName;
   format: Format;
   limit?: number;
+  newest: boolean;
   ai: boolean;
+  /** Links the HTML page shows to other queue pages. */
+  nav: QueueNavLink[];
 }
 
 /**
@@ -48,12 +51,15 @@ export async function runQueueCommand(args: string[], env: Environment): Promise
   const sections = await buildQueue(config, {
     repo,
     now,
+    newest: request.newest,
     ...(request.limit === undefined ? {} : { limit: request.limit }),
   });
   const footer = request.ai ? aiFooterLines(await fillAiFlags(sections, config)) : [];
   const columns = request.ai ? [...QUEUE_COLUMNS, ...QUEUE_AI_COLUMNS] : QUEUE_COLUMNS;
   if (request.format === 'html') {
-    process.stdout.write(renderQueueHtml(sections, { repo, now, columns, notes: footer }));
+    process.stdout.write(
+      renderQueueHtml(sections, { repo, now, columns, notes: footer, nav: request.nav }),
+    );
 
     return 0;
   }
@@ -68,7 +74,8 @@ export async function runQueueCommand(args: string[], env: Environment): Promise
 }
 
 /**
- * Reads `[--repo owner/name] [--format text|md|html] [--limit N] [--ai]`.
+ * Reads `[--repo owner/name] [--format text|md|html] [--limit N [--newest]]
+ * [--ai] [--nav label=path ...]`.
  *
  * @throws {QueueUsageError} when an argument is unknown or malformed.
  */
@@ -79,7 +86,9 @@ function parseQueueArgs(args: string[]): QueueRequest {
       repo: { type: 'string' },
       format: { type: 'string', default: 'text' },
       limit: { type: 'string' },
+      newest: { type: 'boolean', default: false },
       ai: { type: 'boolean', default: false },
+      nav: { type: 'string', multiple: true, default: [] },
     },
     allowPositionals: false,
     strict: true,
@@ -93,13 +102,40 @@ function parseQueueArgs(args: string[]): QueueRequest {
   if (values.limit !== undefined && !/^[1-9]\d*$/.test(values.limit)) {
     throw new QueueUsageError(`--limit must be a positive whole number, got "${values.limit}"`);
   }
+  if (values.newest && values.limit === undefined) {
+    throw new QueueUsageError(
+      '--newest needs --limit, since without a limit every pull request is queued',
+    );
+  }
 
   return {
     format: values.format,
+    newest: values.newest,
     ai: values.ai,
+    nav: values.nav.map(parseNavLink),
     ...(values.repo === undefined ? {} : { repo: parseRepoName(values.repo, '--repo') }),
     ...(values.limit === undefined ? {} : { limit: Number(values.limit) }),
   };
+}
+
+/**
+ * A `--nav label=path` value as a link. The target must be a relative path or
+ * an `https://` URL, so a link can't run script or leave for another scheme.
+ *
+ * @throws {QueueUsageError} when the value has no label or an unsafe target.
+ */
+function parseNavLink(value: string): QueueNavLink {
+  const separator = value.lastIndexOf('=');
+  const label = value.slice(0, separator).trim();
+  const href = value.slice(separator + 1).trim();
+  const safeHref = href.startsWith('https://') || (href !== '' && !href.includes(':'));
+  if (separator < 0 || label === '' || !safeHref) {
+    throw new QueueUsageError(
+      `--nav must be label=path with a relative path or https:// URL, got "${value}"`,
+    );
+  }
+
+  return { label, href };
 }
 
 /** Whether `value` names an output format. */
