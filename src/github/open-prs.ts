@@ -42,12 +42,13 @@ export interface GithubPullSummary {
 export async function listOpenPrs(
   config: Config,
   repo: RepoName,
-  options: { fetch?: Fetch } = {},
+  options: { fetch?: Fetch; sleep?: (milliseconds: number) => Promise<void> } = {},
 ): Promise<OpenPr[]> {
   const client = createGithubClient({
     baseUrl: config.githubApiUrl,
     token: requireGithubToken(config),
     ...(options.fetch === undefined ? {} : { fetch: options.fetch }),
+    ...(options.sleep === undefined ? {} : { sleep: options.sleep }),
   });
   const pulls = await client.getAll<GithubPullSummary>(
     `/repos/${repo}/pulls?state=open&sort=created&direction=asc`,

@@ -179,6 +179,7 @@ export async function fetchPrSnapshot(
     baseUrl: config.githubApiUrl,
     token: requireGithubToken(config),
     ...(options.fetch === undefined ? {} : { fetch: options.fetch }),
+    ...(options.sleep === undefined ? {} : { sleep: options.sleep }),
   });
   const pullPath = `/repos/${repo}/pulls/${number}`;
   const pull = await fetchSettledPull(client, pullPath, options.sleep ?? defaultSleep);
