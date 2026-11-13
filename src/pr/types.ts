@@ -175,8 +175,10 @@ export interface PrSnapshot {
   headSha: string;
   /** Label names. */
   labels: string[];
-  /** Issue numbers the title or body references, through closing keywords or `#N`. */
-  linkedIssues: number[];
+  /** Issue numbers the title or body references as `#N`, with or without a closing keyword. */
+  referencedIssues: number[];
+  /** Issue numbers the title or body links with a closing keyword such as `Fixes #N`. */
+  closingIssues: number[];
   mergeableState: MergeableState;
   /** Oldest first. */
   commits: PrCommit[];

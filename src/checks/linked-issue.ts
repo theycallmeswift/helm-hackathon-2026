@@ -6,7 +6,7 @@ import type { CheckResult, PrSnapshot } from '../pr/types.ts';
 export function checkLinkedIssue(snapshot: PrSnapshot): CheckResult {
   const result = { id: 'linked-issue', title: 'Linked issue' } as const;
 
-  if (snapshot.linkedIssues.length === 0) {
+  if (snapshot.referencedIssues.length === 0) {
     return {
       ...result,
       status: 'warn',
@@ -18,7 +18,7 @@ export function checkLinkedIssue(snapshot: PrSnapshot): CheckResult {
   return {
     ...result,
     status: 'pass',
-    summary: `References ${snapshot.linkedIssues.map((issue) => `#${issue}`).join(', ')}.`,
-    evidence: snapshot.linkedIssues.map((issue) => `references issue #${issue}`),
+    summary: `References ${snapshot.referencedIssues.map((issue) => `#${issue}`).join(', ')}.`,
+    evidence: snapshot.referencedIssues.map((issue) => `references issue #${issue}`),
   };
 }

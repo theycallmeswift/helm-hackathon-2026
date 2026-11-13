@@ -1,17 +1,17 @@
-/** The duplicates check: other open pull requests that target the same issue. */
+/** The duplicates check: other open pull requests that close the same issue. */
 
 import type { CheckResult, PrSnapshot, RelatedPr } from '../pr/types.ts';
 import { isoDate } from './context.ts';
 
-/** One related pull request, with its author, age, and the issues both reference. */
+/** One related pull request, with its author, age, and the issues both close. */
 function describeRelatedPr(related: RelatedPr): string {
   const issues = related.sharedIssues.map((issue) => `#${issue}`).join(', ');
-  return `#${related.number} by ${related.author}, opened ${isoDate(related.createdAt)}, also references ${issues}: ${related.url}`;
+  return `#${related.number} by ${related.author}, opened ${isoDate(related.createdAt)}, also closes ${issues}: ${related.url}`;
 }
 
 /**
- * Warns when another open pull request references one of the same issues.
- * Without a linked issue there is nothing to compare, so it reports `info`.
+ * Warns when another open pull request closes one of the same issues. Without
+ * a closing keyword reference there is nothing to compare, so it reports `info`.
  */
 export function checkDuplicates(snapshot: PrSnapshot): CheckResult {
   const result = { id: 'duplicates', title: 'Duplicates' } as const;
@@ -21,25 +21,25 @@ export function checkDuplicates(snapshot: PrSnapshot): CheckResult {
     return {
       ...result,
       status: 'warn',
-      summary: `${related.length} other open pull requests reference the same issue.`,
+      summary: `${related.length} other open pull requests close the same issue.`,
       evidence: related.map(describeRelatedPr),
     };
   }
 
-  if (snapshot.linkedIssues.length === 0) {
+  if (snapshot.closingIssues.length === 0) {
     return {
       ...result,
       status: 'info',
-      summary: 'No linked issue to compare against other pull requests.',
-      evidence: [`#${snapshot.number} references no issue`],
+      summary: 'No closing issue reference to compare against other pull requests.',
+      evidence: [`#${snapshot.number} closes no issue`],
     };
   }
 
-  const issues = snapshot.linkedIssues.map((issue) => `#${issue}`).join(', ');
+  const issues = snapshot.closingIssues.map((issue) => `#${issue}`).join(', ');
   return {
     ...result,
     status: 'pass',
-    summary: 'No other open pull request references the same issue.',
-    evidence: [`no other open pull request references ${issues}`],
+    summary: 'No other open pull request closes the same issue.',
+    evidence: [`no other open pull request closes ${issues}`],
   };
 }

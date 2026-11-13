@@ -16,12 +16,16 @@ with at most 5 in flight, since one snapshot costs several REST requests, and
 runs the [readiness checks](checks.md) on it.
 
 Related pull requests, which the `duplicates` check reads, are matched from
-that listing: two pull requests are related when their titles or bodies
-reference the same issue. So the queue makes no issue searches, which GitHub
-limits to 30 a minute, and a full queue of a few hundred pull requests fits
-the core REST limit. With `--limit`, matching still covers every open pull
-request, not only the queued ones. The single-PR `pr` command has no listing
-and finds related pull requests with one issue search per linked issue.
+that listing: two pull requests are related when their titles or bodies close
+the same issue with a closing keyword such as `Fixes #10`. A bare `#10`
+mention, or a reference inside a `<details>` or `<blockquote>` block such as
+dependabot's quoted release notes, does not count; see
+[issue references](checks.md#issue-references). So the queue makes no issue
+searches, which GitHub limits to 30 a minute, and a full queue of a few
+hundred pull requests fits the core REST limit. With `--limit`, matching still
+covers every open pull request, not only the queued ones. The single-PR `pr`
+command has no listing and finds related pull requests with one issue search
+per closed issue.
 
 ## Buckets
 

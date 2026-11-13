@@ -29,8 +29,8 @@ theycallmeswift/helm#14 urlutil: keep trailing slash when joining URLs (ff038f8)
     - ff038f8: no Signed-off-by trailer
   ❌ CI: CI failed: build.
     - build: failure
-  ⚠️ Duplicates: 1 other open pull requests reference the same issue.
-    - #13 by theycallmeswift, opened 2026-11-12, also references #10: https://github.com/theycallmeswift/helm/pull/13
+  ⚠️ Duplicates: 1 other open pull requests close the same issue.
+    - #13 by theycallmeswift, opened 2026-11-12, also closes #10: https://github.com/theycallmeswift/helm/pull/13
   🤖 AI flags skipped: AI flags skipped because OPENROUTER_API_KEY is not set; set it to an OpenRouter API key to enable them
 ```
 

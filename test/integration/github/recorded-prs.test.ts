@@ -68,7 +68,7 @@ test.for(MANIFEST.prs)('$id (#$pr_number) matches the answer key', async (pr, { 
     expect(snapshot.mergeableState).not.toBe('unknown');
     expect(snapshot.mergeableState === 'dirty').toBe(expected.conflict);
   }
-  expect(snapshot.linkedIssues).toEqual(
+  expect(snapshot.closingIssues).toEqual(
     expected.linked_issue === null ? [] : [expected.linked_issue],
   );
   if (expected.duplicate_of !== null) {
