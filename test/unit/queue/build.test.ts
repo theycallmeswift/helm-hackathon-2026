@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { groupIntoSections, toEntry } from '../../../src/queue/build.ts';
+import { groupIntoSections, selectOpenPrs, toEntry } from '../../../src/queue/build.ts';
 import { daysAgo, FACTORY_NOW, makeCommit, makePrSnapshot } from '../../support/pr-snapshot.ts';
 
 test('a bucket lists its PRs oldest waiting first, waiting since the later of creation and head commit', () => {
@@ -49,4 +49,15 @@ test('every bucket is listed in precedence order, empty ones included', () => {
     ['needs-second-approval', 0],
     ['ready', 0],
   ]);
+});
+
+test.each([
+  { options: {}, expected: [1, 2, 3, 4, 5] },
+  { options: { limit: 2 }, expected: [1, 2] },
+  { options: { limit: 2, newest: false }, expected: [1, 2] },
+  { options: { limit: 2, newest: true }, expected: [4, 5] },
+  { options: { limit: 9, newest: true }, expected: [1, 2, 3, 4, 5] },
+  { options: { newest: true }, expected: [1, 2, 3, 4, 5] },
+])('selecting $options from a listing oldest first keeps $expected', ({ options, expected }) => {
+  expect(selectOpenPrs([1, 2, 3, 4, 5], options)).toEqual(expected);
 });

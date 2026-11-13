@@ -69,4 +69,27 @@ describe('helm-triage', () => {
     expect(run.exitCode).not.toBe(0);
     expect(run.stderr).toBe('helm-triage: --limit must be a positive whole number, got "0"\n');
   });
+
+  test('queue rejects --newest without --limit', () => {
+    const run = runCli(['queue', '--newest']);
+
+    expect(run.exitCode).not.toBe(0);
+    expect(run.stderr).toBe(
+      'helm-triage: --newest needs --limit, since without a limit every pull request is queued\n',
+    );
+  });
+
+  test.each([
+    'no-equals-sign',
+    '=helm/helm/',
+    'Script=javascript:alert(1)',
+    'Other scheme=http://example.com/',
+  ])('queue rejects the unsafe or malformed --nav %j', (nav) => {
+    const run = runCli(['queue', '--nav', nav]);
+
+    expect(run.exitCode).not.toBe(0);
+    expect(run.stderr).toMatch(
+      /^helm-triage: --nav must be label=path with a relative path or https:\/\/ URL/,
+    );
+  });
 });

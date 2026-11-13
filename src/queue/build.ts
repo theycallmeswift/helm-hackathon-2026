@@ -39,8 +39,10 @@ export interface QueueSection {
 /** What to build the queue for. */
 export interface BuildQueueOptions {
   repo: RepoName;
-  /** Only the `limit` oldest opened pull requests; all when absent. */
+  /** Only `limit` pull requests, the oldest opened unless `newest`; all when absent. */
   limit?: number;
+  /** With `limit`, keep the newest opened pull requests instead of the oldest. */
+  newest?: boolean;
   /** The instant staleness and ages are measured to. */
   now: Date;
   /** Network and clock edges, replaced in tests. */
@@ -64,13 +66,29 @@ export async function buildQueue(
     ...(options.sleep === undefined ? {} : { sleep: options.sleep }),
   };
   const openPrs = await listOpenPrs(config, options.repo, fetchOptions);
-  const selected = options.limit === undefined ? openPrs : openPrs.slice(0, options.limit);
+  const selected = selectOpenPrs(openPrs, options);
 
   const snapshots = await mapWithConcurrency(selected, SNAPSHOT_CONCURRENCY, (openPr) =>
     fetchPrSnapshot(config, options.repo, openPr.number, { ...fetchOptions, openPrs }),
   );
 
   return groupIntoSections(snapshots.map((snapshot) => toEntry(snapshot, options.now)));
+}
+
+/**
+ * The pull requests to queue from the listing, which runs oldest opened
+ * first: all of them, or `limit` from the oldest end, or from the newest end
+ * with `newest`.
+ */
+export function selectOpenPrs<Pr>(
+  openPrs: Pr[],
+  options: Pick<BuildQueueOptions, 'limit' | 'newest'>,
+): Pr[] {
+  if (options.limit === undefined) {
+    return openPrs;
+  }
+
+  return options.newest ? openPrs.slice(-options.limit) : openPrs.slice(0, options.limit);
 }
 
 /** Runs the checks on `snapshot` and assigns its bucket. */

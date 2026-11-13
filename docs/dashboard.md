@@ -34,11 +34,19 @@ column keeps a minimum width, so it stays readable on a phone.
 fork as `.github/workflows/helm-triage-dashboard.yml`. It runs hourly and on
 demand, and only when the repository is `theycallmeswift/helm`.
 
-Each run checks out this repository, sets up Node 26, renders
-`node src/index.ts queue --repo $GITHUB_REPOSITORY --format html --ai` into
-`site/index.html`, and deploys `site/` with `actions/upload-pages-artifact` and
-`actions/deploy-pages`. `actions/cache` keeps the AI cache across runs, so an
-unchanged pull request costs no OpenRouter request.
+Each run checks out this repository, sets up Node 26, renders two pages, and
+deploys `site/` with `actions/upload-pages-artifact` and `actions/deploy-pages`:
+
+| Page                        | Command                                                               |
+| --------------------------- | --------------------------------------------------------------------- |
+| `site/index.html`           | `queue --repo $GITHUB_REPOSITORY --format html --ai`, the fork's demo |
+| `site/helm/helm/index.html` | `queue --repo helm/helm --limit 100 --newest --format html --ai`      |
+
+Each page's masthead links to the other with `--nav`. The helm/helm page shows
+only the newest 100 pull requests because the workflow's token gets 1,000 REST
+requests an hour and a pull request costs about 8; 100 keeps a run near 900.
+`actions/cache` keeps the AI cache across runs, so an unchanged pull request
+costs no OpenRouter request.
 
 To enable it on the fork:
 
@@ -64,4 +72,7 @@ by anyone, so:
   request text never reach an attribute.
 - The workflow's token only reads (`contents`, `pull-requests`, `issues`,
   `checks`, `statuses`); its only writes are `pages` and `id-token`, which the
-  Pages deployment needs. It never comments, labels, or touches `helm/helm`.
+  Pages deployment needs. It only reads `helm/helm`; it never comments on,
+  labels, or otherwise writes to it.
+- `--nav` accepts only relative paths and `https://` URLs, and escapes both
+  the label and the target.

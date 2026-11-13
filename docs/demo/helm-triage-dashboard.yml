@@ -41,14 +41,24 @@ jobs:
           path: ${{ runner.temp }}/helm-triage-cache
           key: helm-triage-ai-${{ github.run_id }}
           restore-keys: helm-triage-ai-
-      - name: Render the queue
+      - name: Render the fork's queue
         env:
           HELM_TRIAGE_CACHE_DIR: ${{ runner.temp }}/helm-triage-cache
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           mkdir -p site
-          node src/index.ts queue --repo "$GITHUB_REPOSITORY" --format html --ai > site/index.html
+          node src/index.ts queue --repo "$GITHUB_REPOSITORY" --nav "helm/helm queue=helm/helm/" --format html --ai > site/index.html
+      # Read-only. The newest 100 keep a run near 900 REST requests, under the
+      # workflow token's 1,000 an hour; the full queue would need about 2,000.
+      - name: Render the helm/helm queue
+        env:
+          HELM_TRIAGE_CACHE_DIR: ${{ runner.temp }}/helm-triage-cache
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          mkdir -p site/helm/helm
+          node src/index.ts queue --repo helm/helm --limit 100 --newest --nav "Fork demo queue=../../" --format html --ai > site/helm/helm/index.html
       - uses: actions/upload-pages-artifact@v4
         with:
           path: site

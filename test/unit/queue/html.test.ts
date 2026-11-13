@@ -250,3 +250,28 @@ test('a reason kind outside the fixed table gets the plain pill, never its own c
   expect(page).toContain('<span class="pill">odd</span>');
   expect(page).not.toContain('onmouseover');
 });
+
+test('nav links to other queue pages appear in the masthead, escaped', () => {
+  const sections = sectionsOf(makePrSnapshot({ number: 1 }));
+
+  const page = renderQueueHtml(sections, {
+    repo: REPO,
+    now: FACTORY_NOW,
+    nav: [
+      { label: 'helm/helm queue', href: 'helm/helm/' },
+      { label: HOSTILE, href: '../"x"' },
+    ],
+  });
+
+  expect(page).toContain(
+    `<nav class="pages" aria-label="Other queues"><a href="helm/helm/">helm/helm queue</a><a href="../&quot;x&quot;">${HOSTILE_ESCAPED}</a></nav>`,
+  );
+});
+
+test('the masthead has no nav when there are no other queue pages', () => {
+  const sections = sectionsOf(makePrSnapshot({ number: 1 }));
+
+  const page = renderQueueHtml(sections, { repo: REPO, now: FACTORY_NOW });
+
+  expect(page).not.toContain('class="pages"');
+});
