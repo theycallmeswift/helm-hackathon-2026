@@ -25,6 +25,9 @@ const API_VERSION = '2022-11-28';
  */
 const SERVER_ERROR_RETRY_DELAYS_MS = [1000, 3000];
 
+/** Server errors that mean "try again"; a 501, for one, never will succeed. */
+const TRANSIENT_SERVER_ERRORS: ReadonlySet<number> = new Set([500, 502, 503, 504]);
+
 /** How to reach the API. */
 export interface GithubClientOptions {
   /** Base URL with no trailing slash, such as `https://api.github.com`. */
@@ -72,7 +75,7 @@ export function createGithubClient(options: GithubClientOptions): GithubClient {
   const sleep = options.sleep ?? defaultSleep;
 
   /**
-   * GETs `url`, retrying server errors after each delay in
+   * GETs `url`, retrying transient server errors after each delay in
    * `SERVER_ERROR_RETRY_DELAYS_MS`, and fails loudly on anything else but a
    * success, or on a server error that outlasts the retries.
    */
@@ -88,7 +91,7 @@ export function createGithubClient(options: GithubClientOptions): GithubClient {
 
     let response = await get();
     for (const retryDelay of SERVER_ERROR_RETRY_DELAYS_MS) {
-      if (!isServerError(response)) {
+      if (!TRANSIENT_SERVER_ERRORS.has(response.status)) {
         break;
       }
       await response.body?.cancel();
@@ -122,11 +125,6 @@ export function createGithubClient(options: GithubClientOptions): GithubClient {
       return items;
     },
   };
-}
-
-/** Whether GitHub answered with a 5xx, which may succeed on a retry. */
-function isServerError(response: Response): boolean {
-  return response.status >= 500 && response.status <= 599;
 }
 
 /** Waits `milliseconds` on a real timer. */

@@ -59,13 +59,16 @@ test('a server error that outlasts the retries fails, naming the request and sta
   expect(requests).toHaveLength(3);
 });
 
-test.each([404, 422])('a %i is not retried, since repeating it cannot help', async (status) => {
-  const { fakeFetch, requests } = scriptedFetch([status]);
-  const { client, waits } = clientWith(fakeFetch);
+test.each([404, 422, 501])(
+  'a %i is not retried, since repeating it cannot help',
+  async (status) => {
+    const { fakeFetch, requests } = scriptedFetch([status]);
+    const { client, waits } = clientWith(fakeFetch);
 
-  const failure = client.get('/repos/helm/helm/pulls/7');
+    const failure = client.get('/repos/helm/helm/pulls/7');
 
-  await expect(failure).rejects.toThrow();
-  expect(requests).toHaveLength(1);
-  expect(waits).toEqual([]);
-});
+    await expect(failure).rejects.toThrow();
+    expect(requests).toHaveLength(1);
+    expect(waits).toEqual([]);
+  },
+);
